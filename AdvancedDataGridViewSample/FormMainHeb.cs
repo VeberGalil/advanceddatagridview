@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.IO;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
+using System.IO;
 using Zuby.ADGV;
+
 
 namespace AdvancedDataGridViewSample
 {
-    public partial class FormMain : Form
+    public partial class FormMainHeb : Form
     {
         private DataTable _dataTable = null;
         private DataSet _dataSet = null;
@@ -17,35 +20,13 @@ namespace AdvancedDataGridViewSample
         private SortedDictionary<int, string> _filtersaved = new SortedDictionary<int, string>();
         private SortedDictionary<int, string> _sortsaved = new SortedDictionary<int, string>();
 
-        private bool _testtranslations = false;
-        private bool _testtranslationsFromFile = false;
-
-        public FormMain()
+        public FormMainHeb()
         {
             InitializeComponent();
 
             //set localization strings
-            Dictionary<string, string> translations = new Dictionary<string, string>();
-            foreach (KeyValuePair<string, string> translation in AdvancedDataGridView.Translations)
-            {
-                if (!translations.ContainsKey(translation.Key))
-                    translations.Add(translation.Key, "." + translation.Value);
-            }
-            foreach (KeyValuePair<string, string> translation in AdvancedDataGridViewSearchToolBar.Translations)
-            {
-                if (!translations.ContainsKey(translation.Key))
-                    translations.Add(translation.Key, "." + translation.Value);
-            }
-            if (_testtranslations)
-            {
-                AdvancedDataGridView.SetTranslations(translations);
-                AdvancedDataGridViewSearchToolBar.SetTranslations(translations);
-            }
-            if (_testtranslationsFromFile)
-            {
-                AdvancedDataGridView.SetTranslations(AdvancedDataGridView.LoadTranslationsFromFile("lang.json"));
-                AdvancedDataGridViewSearchToolBar.SetTranslations(AdvancedDataGridViewSearchToolBar.LoadTranslationsFromFile("lang.json"));
-            }
+            AdvancedDataGridView.SetTranslations(AdvancedDataGridView.LoadTranslationsFromFile("heb.json"));
+            AdvancedDataGridViewSearchToolBar.SetTranslations(AdvancedDataGridViewSearchToolBar.LoadTranslationsFromFile("heb.json"));
 
             //set filter and sort saved
             _filtersaved.Add(0, "");
@@ -116,7 +97,7 @@ namespace AdvancedDataGridViewSample
                     i % 2 == 0 ? (double)i*2/3 : (double)i/2,
                     DateTime.Today.AddHours(i*2).AddHours(i%2 == 0 ?i*10+1:0).AddMinutes(i%2 == 0 ?i*10+1:0).AddSeconds(i%2 == 0 ?i*10+1:0).AddMilliseconds(i%2 == 0 ?i*10+1:0).Date,
                     DateTime.Today.AddHours(i*2).AddHours(i%2 == 0 ?i*10+1:0).AddMinutes(i%2 == 0 ?i*10+1:0).AddSeconds(i%2 == 0 ?i*10+1:0).AddMilliseconds(i%2 == 0 ?i*10+1:0),
-                    i*2 % 3 == 0 ? null : i.ToString()+" str",
+                    i*2 % 3 == 0 ? null : i.ToString()+" מחרוזת",
                     i % 2 == 0 ? true:false,
                     Guid.NewGuid(),
                     sampleimages[r.Next(0, 2)],
@@ -127,7 +108,7 @@ namespace AdvancedDataGridViewSample
             }
         }
 
-        private void FormMain_Load(object sender, EventArgs e)
+        private void FormMainHeb_Load(object sender, EventArgs e)
         {
             //add test data to bindsource
             AddTestData();
@@ -140,9 +121,10 @@ namespace AdvancedDataGridViewSample
             advancedDataGridView_main.SortDESC(advancedDataGridView_main.Columns["double"]);
             advancedDataGridView_main.SetTextFilterRemoveNodesOnSearch(advancedDataGridView_main.Columns["double"], false);
             advancedDataGridView_main.SetChecklistTextFilterRemoveNodesOnSearchMode(advancedDataGridView_main.Columns["decimal"], false);
+
         }
 
-        private void advancedDataGridView_main_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e)
+        private void advancedDataGridView_main_FilterStringChanged(object sender, AdvancedDataGridView.FilterEventArgs e)
         {
             //eventually set the FilterString here
             //if e.Cancel is set to true one have to update the datasource here using
@@ -157,7 +139,7 @@ namespace AdvancedDataGridViewSample
             textBox_filter.Text = e.FilterString;
         }
 
-        private void advancedDataGridView_main_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e)
+        private void advancedDataGridView_main_SortStringChanged(object sender, AdvancedDataGridView.SortEventArgs e)
         {
             //eventually set the SortString here
             //if e.Cancel is set to true one have to update the datasource here
@@ -171,6 +153,7 @@ namespace AdvancedDataGridViewSample
         {
             //trigger the filter string changed function when text is changed
             advancedDataGridView_main.TriggerFilterStringChanged();
+
         }
 
         private void bindingSource_main_ListChanged(object sender, ListChangedEventArgs e)
@@ -186,12 +169,14 @@ namespace AdvancedDataGridViewSample
             _sortsaved.Add((comboBox_sortsaved.Items.Count - 1) + 1, advancedDataGridView_main.SortString);
             comboBox_sortsaved.DataSource = new BindingSource(_sortsaved, null);
             comboBox_sortsaved.SelectedIndex = comboBox_sortsaved.Items.Count - 1;
+
         }
 
         private void button_setsavedfilter_Click(object sender, EventArgs e)
         {
             if (comboBox_filtersaved.SelectedIndex != -1 && comboBox_sortsaved.SelectedIndex != -1)
                 advancedDataGridView_main.LoadFilterAndSort(comboBox_filtersaved.SelectedValue.ToString(), comboBox_sortsaved.SelectedValue.ToString());
+
         }
 
         private void button_unloadfilters_Click(object sender, EventArgs e)
@@ -199,9 +184,10 @@ namespace AdvancedDataGridViewSample
             advancedDataGridView_main.CleanFilterAndSort();
             comboBox_filtersaved.SelectedIndex = -1;
             comboBox_sortsaved.SelectedIndex = -1;
+
         }
 
-        private void advancedDataGridViewSearchToolBar_main_Search(object sender, Zuby.ADGV.AdvancedDataGridViewSearchToolBarSearchEventArgs e)
+        private void advancedDataGridViewSearchToolBar_main_Search(object sender, AdvancedDataGridViewSearchToolBarSearchEventArgs e)
         {
             bool restartsearch = true;
             int startColumn = 0;
@@ -239,12 +225,6 @@ namespace AdvancedDataGridViewSample
                     e.CaseSensitive);
             if (c != null)
                 advancedDataGridView_main.CurrentCell = c;
-        }
-
-
-        private void btnHebrew_Click(object sender, EventArgs e)
-        {
-            (new FormMainHeb()).Show();
         }
     }
 }

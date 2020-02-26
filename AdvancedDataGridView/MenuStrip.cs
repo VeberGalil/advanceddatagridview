@@ -67,6 +67,44 @@ namespace Zuby.ADGV
 
         #endregion
 
+        #region RTL support
+        public override RightToLeft RightToLeft 
+        { 
+            get => base.RightToLeft; 
+            set
+            {
+                base.RightToLeft = value;
+                // MenuStrip.RightToLeft is set from ColumnHeaderCell constructor,
+                // and not expected to be changed afterwise
+                // So, we need to change LTR defaults only if control set to RTL
+                if (value == RightToLeft.Yes)
+                {
+                    // Transfer to controls
+                    foreach (ToolStripItem item in this.Items)
+                    {
+                        item.RightToLeft = RightToLeft.Yes;
+                        // Host containers
+                        ToolStripControlHost host = item as ToolStripControlHost;
+                        if(host != null)
+                        {
+                            Panel panel = host.Control as Panel;
+                            if (panel != null && panel.Controls[0] is TreeView)
+                            {
+                                (panel.Controls[0]).RightToLeft = RightToLeft.Yes;
+
+                            }
+                        }
+                    }
+                    // Resize box cursor
+                    this.resizeBoxControlHost.Control.Cursor = System.Windows.Forms.Cursors.SizeNESW;
+                    //
+                    ResizeBox(MinimumSize.Width, MinimumSize.Width);
+                }
+            }
+        }
+
+        #endregion
+
         #region costructors
 
         /// <summary>
@@ -1370,7 +1408,8 @@ namespace Zuby.ADGV
 
             //open a new Custom filter window
             FormCustomFilter flt = new FormCustomFilter(DataType, IsFilterDateAndTimeEnabled);
-
+            flt.RightToLeft = this.RightToLeft;
+            flt.RightToLeftLayout = (this.RightToLeft == RightToLeft.Yes);
             if (flt.ShowDialog() == DialogResult.OK)
             {
                 //add the new Filter presets
@@ -1673,20 +1712,29 @@ namespace Zuby.ADGV
         /// <param name="h"></param>
         private void ResizeBox(int w, int h)
         {
-            sortASCMenuItem.Width = w - 1;
-            sortDESCMenuItem.Width = w - 1;
-            cancelSortMenuItem.Width = w - 1;
-            cancelFilterMenuItem.Width = w - 1;
-            customFilterMenuItem.Width = w - 1;
-            customFilterLastFiltersListMenuItem.Width = w - 1;
-            checkFilterListControlHost.Size = new Size(w - 35, h - 160 - 25);
-            checkFilterListPanel.Size = new Size(w - 35, h - 160 - 25);
-            checkTextFilterControlHost.Width = w - 35;
-            checkList.Bounds = new Rectangle(4, 4, w - 35 - 8, h - 160 - 25 - 8);
-            checkFilterListButtonsControlHost.Size = new Size(w - 35, 24);
-            button_filter.Location = new Point(w - 35 - 164, 0);
-            button_undofilter.Location = new Point(w - 35 - 79, 0);
-            resizeBoxControlHost.Margin = new Padding(w - 46, 0, 0, 0);
+            if (this.RightToLeft == RightToLeft.Yes)
+            {
+                button_filter.Location = new Point(w - 35 - 79, 0);
+                button_undofilter.Location = new Point(w - 35 - 164, 0);
+
+            }
+            else
+            {
+                sortASCMenuItem.Width = w - 1;
+                sortDESCMenuItem.Width = w - 1;
+                cancelSortMenuItem.Width = w - 1;
+                cancelFilterMenuItem.Width = w - 1;
+                customFilterMenuItem.Width = w - 1;
+                customFilterLastFiltersListMenuItem.Width = w - 1;
+                checkFilterListControlHost.Size = new Size(w - 35, h - 160 - 25);
+                checkFilterListPanel.Size = new Size(w - 35, h - 160 - 25);
+                checkTextFilterControlHost.Width = w - 35;
+                checkList.Bounds = new Rectangle(4, 4, w - 35 - 8, h - 160 - 25 - 8);
+                checkFilterListButtonsControlHost.Size = new Size(w - 35, 24);
+                button_filter.Location = new Point(w - 35 - 164, 0);
+                button_undofilter.Location = new Point(w - 35 - 79, 0);
+                resizeBoxControlHost.Margin = new Padding(w - 46, 0, 0, 0);
+            }
             Size = new Size(w, h);
         }
 
@@ -1697,16 +1745,32 @@ namespace Zuby.ADGV
         {
             if (_resizeEndPoint.X != -1)
             {
-                Point startPoint = PointToScreen(MenuStrip._resizeStartPoint);
-
-                Rectangle rc = new Rectangle(startPoint.X, startPoint.Y, _resizeEndPoint.X, _resizeEndPoint.Y)
+                Rectangle rc = new Rectangle();
+                if (this.RightToLeft == RightToLeft.Yes)
                 {
-                    X = Math.Min(startPoint.X, _resizeEndPoint.X),
-                    Width = Math.Abs(startPoint.X - _resizeEndPoint.X),
+                    Point startPoint = PointToScreen(MenuStrip._resizeStartPoint);
+                    rc = new Rectangle()
+                    {
+                        X = Math.Min(startPoint.X, _resizeEndPoint.X),
+                        Width = Math.Abs(startPoint.X - _resizeEndPoint.X),
 
-                    Y = Math.Min(startPoint.Y, _resizeEndPoint.Y),
-                    Height = Math.Abs(startPoint.Y - _resizeEndPoint.Y)
+                        Y = Math.Min(startPoint.Y, _resizeEndPoint.Y),
+                        Height = Math.Abs(startPoint.Y - _resizeEndPoint.Y)
+                    };
+                }
+                else
+                {
+                    Point startPoint = PointToScreen(MenuStrip._resizeStartPoint);
+                    rc = new Rectangle()
+                    {
+                        X = Math.Min(startPoint.X, _resizeEndPoint.X),
+                        Width = Math.Abs(startPoint.X - _resizeEndPoint.X),
+
+                        Y = Math.Min(startPoint.Y, _resizeEndPoint.Y),
+                        Height = Math.Abs(startPoint.Y - _resizeEndPoint.Y)
+                    };
                 };
+
 
                 ControlPaint.DrawReversibleFrame(rc, Color.Black, FrameStyle.Dashed);
 
@@ -1808,7 +1872,14 @@ namespace Zuby.ADGV
         /// <param name="e"></param>
         private void ResizeBoxControlHost_Paint(Object sender, PaintEventArgs e)
         {
-            e.Graphics.DrawImage(Properties.Resources.MenuStrip_ResizeGrip, 0, 0);
+            if (this.RightToLeft == RightToLeft.Yes)
+            {
+                e.Graphics.DrawImage(Properties.Resources.MenuStrip_ResizeGrip_RTL, 0, 0);
+            }
+            else
+            {
+                e.Graphics.DrawImage(Properties.Resources.MenuStrip_ResizeGrip, 0, 0);
+            }
         }
 
         #endregion

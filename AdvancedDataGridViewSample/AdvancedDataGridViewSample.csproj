@@ -52,10 +52,19 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormMainHeb.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMainHeb.Designer.cs">
+      <DependentUpon>FormMainHeb.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormMainHeb.resx">
+      <DependentUpon>FormMainHeb.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -68,9 +77,10 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="App.config" />
-    <None Include="lang.json">
+    <None Include="heb.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="lang.json" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

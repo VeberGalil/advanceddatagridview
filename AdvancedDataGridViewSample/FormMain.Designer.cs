@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel_top = new System.Windows.Forms.Panel();
+            this.btnHebrew = new System.Windows.Forms.Button();
             this.label_strfilter = new System.Windows.Forms.Label();
             this.textBox_strfilter = new System.Windows.Forms.TextBox();
             this.button_load = new System.Windows.Forms.Button();
@@ -51,18 +52,19 @@
             this.textBox_total = new System.Windows.Forms.TextBox();
             this.panel_grid = new System.Windows.Forms.Panel();
             this.advancedDataGridView_main = new Zuby.ADGV.AdvancedDataGridView();
-            this.bindingSource_main = new System.Windows.Forms.BindingSource(this.components);
             this.panel_bottom = new System.Windows.Forms.Panel();
+            this.bindingSource_main = new System.Windows.Forms.BindingSource(this.components);
             this.panel_top.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel_grid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView_main)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource_main)).BeginInit();
             this.panel_bottom.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource_main)).BeginInit();
             this.SuspendLayout();
             // 
             // panel_top
             // 
+            this.panel_top.Controls.Add(this.btnHebrew);
             this.panel_top.Controls.Add(this.label_strfilter);
             this.panel_top.Controls.Add(this.textBox_strfilter);
             this.panel_top.Controls.Add(this.button_load);
@@ -83,6 +85,16 @@
             this.panel_top.Name = "panel_top";
             this.panel_top.Size = new System.Drawing.Size(784, 192);
             this.panel_top.TabIndex = 0;
+            // 
+            // btnHebrew
+            // 
+            this.btnHebrew.Location = new System.Drawing.Point(697, 131);
+            this.btnHebrew.Name = "btnHebrew";
+            this.btnHebrew.Size = new System.Drawing.Size(75, 23);
+            this.btnHebrew.TabIndex = 20;
+            this.btnHebrew.Text = "עברית";
+            this.btnHebrew.UseVisualStyleBackColor = true;
+            this.btnHebrew.Click += new System.EventHandler(this.btnHebrew_Click);
             // 
             // label_strfilter
             // 
@@ -266,7 +278,7 @@
             this.panel_grid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_grid.Location = new System.Drawing.Point(0, 192);
             this.panel_grid.Name = "panel_grid";
-            this.panel_grid.Size = new System.Drawing.Size(784, 269);
+            this.panel_grid.Size = new System.Drawing.Size(784, 235);
             this.panel_grid.TabIndex = 1;
             // 
             // advancedDataGridView_main
@@ -283,14 +295,10 @@
             this.advancedDataGridView_main.Name = "advancedDataGridView_main";
             this.advancedDataGridView_main.ReadOnly = true;
             this.advancedDataGridView_main.RowHeadersVisible = false;
-            this.advancedDataGridView_main.Size = new System.Drawing.Size(784, 269);
+            this.advancedDataGridView_main.Size = new System.Drawing.Size(784, 235);
             this.advancedDataGridView_main.TabIndex = 0;
             this.advancedDataGridView_main.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.advancedDataGridView_main_SortStringChanged);
             this.advancedDataGridView_main.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.advancedDataGridView_main_FilterStringChanged);
-            // 
-            // bindingSource_main
-            // 
-            this.bindingSource_main.ListChanged += new System.ComponentModel.ListChangedEventHandler(this.bindingSource_main_ListChanged);
             // 
             // panel_bottom
             // 
@@ -302,13 +310,17 @@
             this.panel_bottom.Size = new System.Drawing.Size(784, 34);
             this.panel_bottom.TabIndex = 2;
             // 
+            // bindingSource_main
+            // 
+            this.bindingSource_main.ListChanged += new System.ComponentModel.ListChangedEventHandler(this.bindingSource_main_ListChanged);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 461);
-            this.Controls.Add(this.panel_bottom);
             this.Controls.Add(this.panel_grid);
+            this.Controls.Add(this.panel_bottom);
             this.Controls.Add(this.panel_top);
             this.MinimumSize = new System.Drawing.Size(800, 500);
             this.Name = "FormMain";
@@ -320,9 +332,9 @@
             this.panel3.PerformLayout();
             this.panel_grid.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView_main)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource_main)).EndInit();
             this.panel_bottom.ResumeLayout(false);
             this.panel_bottom.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource_main)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -352,6 +364,7 @@
         private System.Windows.Forms.Label label_strfilter;
         private System.Windows.Forms.TextBox textBox_strfilter;
         private System.Windows.Forms.Panel panel_bottom;
+        private System.Windows.Forms.Button btnHebrew;
     }
 }
 

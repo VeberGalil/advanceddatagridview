@@ -812,6 +812,7 @@ namespace Zuby.ADGV
         {
             e.Column.SortMode = DataGridViewColumnSortMode.Programmatic;
             ColumnHeaderCell cell = new ColumnHeaderCell(e.Column.HeaderCell, FilterAndSortEnabled);
+            cell.RightToLeft = this.RightToLeft;
             cell.SortChanged += new ColumnHeaderCellEventHandler(Cell_SortChanged);
             cell.FilterChanged += new ColumnHeaderCellEventHandler(Cell_FilterChanged);
             cell.FilterPopup += new ColumnHeaderCellEventHandler(Cell_FilterPopup);
@@ -932,14 +933,14 @@ namespace Zuby.ADGV
                 System.Drawing.Rectangle rect = GetCellDisplayRectangle(column.Index, -1, true);
 
                 if (_filteredColumns.Contains(column.Name))
-                    filterMenu.Show(this, rect.Left, rect.Bottom, false);
+                    filterMenu.Show(this, (this.RightToLeft == RightToLeft.Yes ? rect.Right : rect.Left), rect.Bottom, false);
                 else
                 {
                     _filteredColumns.Add(column.Name);
                     if (_filterOrderList.Count() > 0 && _filterOrderList.Last() == column.Name)
-                        filterMenu.Show(this, rect.Left, rect.Bottom, true);
+                        filterMenu.Show(this, (this.RightToLeft == RightToLeft.Yes ? rect.Right : rect.Left), rect.Bottom, true);
                     else
-                        filterMenu.Show(this, rect.Left, rect.Bottom, MenuStrip.GetValuesForFilter(this, column.Name));
+                        filterMenu.Show(this, (this.RightToLeft == RightToLeft.Yes ? rect.Right : rect.Left), rect.Bottom, MenuStrip.GetValuesForFilter(this, column.Name));
                 }
             }
         }

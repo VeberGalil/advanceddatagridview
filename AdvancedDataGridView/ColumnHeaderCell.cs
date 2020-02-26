@@ -38,8 +38,33 @@ namespace Zuby.ADGV
         private Padding _filterButtonMargin = new Padding(3, 4, 3, 4);
         private bool _filterEnabled = false;
 
+
         private const bool FilterDateAndTimeDefaultEnabled = false;
 
+        /// <summary>
+        /// Indicates whether the header should be aligned to support RTL languages
+        /// </summary>
+        internal RightToLeft RightToLeft 
+        {
+            get 
+            {
+                if (MenuStrip != null)
+                {
+                    return MenuStrip.RightToLeft;
+                }
+                else
+                {
+                    return RightToLeft.No;
+                }
+            }
+            set 
+            {
+                if (MenuStrip != null)
+                {
+                    MenuStrip.RightToLeft = value;
+                }
+            } 
+        }
         #endregion
 
 
@@ -502,7 +527,7 @@ namespace Zuby.ADGV
         }
 
         /// <summary>
-        /// Pain method
+        /// Paint method
         /// </summary>
         /// <param name="graphics"></param>
         /// <param name="clipBounds"></param>
@@ -563,11 +588,17 @@ namespace Zuby.ADGV
         private Rectangle GetFilterBounds(bool withOffset = true)
         {
             Rectangle cell = DataGridView.GetCellDisplayRectangle(ColumnIndex, -1, false);
-
-            Point p = new Point(
-                (withOffset ? cell.Right : cell.Width) - _filterButtonImageSize.Width - _filterButtonMargin.Right,
-                (withOffset ? cell.Bottom : cell.Height) - _filterButtonImageSize.Height - _filterButtonMargin.Bottom);
-
+            int x = 0, y = 0;
+            if (this.RightToLeft == RightToLeft.Yes)
+            {
+                x = (withOffset ? cell.Left : 0) + _filterButtonMargin.Left;
+            }
+            else
+            {
+                x = (withOffset ? cell.Right : cell.Width) - _filterButtonImageSize.Width - _filterButtonMargin.Right;
+            }
+            y = (withOffset ? cell.Bottom : cell.Height) - _filterButtonImageSize.Height - _filterButtonMargin.Bottom;
+            Point p = new Point(x, y);
             return new Rectangle(p, _filterButtonImageSize);
         }
 

@@ -175,4 +175,7 @@
   <data name="SearchToolBar_ButtonWholeWord" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Images\SearchToolBar_ButtonWholeWord.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="MenuStrip_ResizeGrip_RTL" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Images\MenuStrip_ResizeGrip_RTL.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
