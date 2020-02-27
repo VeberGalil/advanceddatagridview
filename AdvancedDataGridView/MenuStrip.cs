@@ -307,6 +307,8 @@ namespace Zuby.ADGV
                 // So, we need to change LTR defaults only if control set to RTL
                 if (value == RightToLeft.Yes)
                 {
+
+
                     // Resize box cursor
                     this.resizeBoxControlHost.Control.Cursor = System.Windows.Forms.Cursors.SizeNESW;
                 }
@@ -427,7 +429,13 @@ namespace Zuby.ADGV
         /// <param name="vals"></param>
         public void Show(Control control, int x, int y, IEnumerable<DataGridViewCell> vals)
         {
-            BuildNodes(vals);
+            // Reinitialize layout for RTL
+            if (this.RightToLeft == RightToLeft.Yes)
+            {
+                ResizeBox(MinimumSize.Width, MinimumSize.Height);
+            }
+
+                BuildNodes(vals);
             if (_checkTextFilterRemoveNodesOnSearch && checkList.Nodes.Count != _initialNodes.Count())
             {
                 _initialNodes = new TreeNodeItemSelector[checkList.Nodes.Count];
@@ -460,6 +468,12 @@ namespace Zuby.ADGV
         /// <param name="_restoreFilter"></param>
         public void Show(Control control, int x, int y, bool _restoreFilter)
         {
+            // Reinitialize layout for RTL
+            if (this.RightToLeft == RightToLeft.Yes)
+            {
+                ResizeBox(MinimumSize.Width, MinimumSize.Height);
+            }
+
             _checkTextFilterChangedEnabled = false;
             checkTextFilter.Text = "";
             _checkTextFilterChangedEnabled = true;
@@ -1706,8 +1720,16 @@ namespace Zuby.ADGV
             checkTextFilterControlHost.Width = w - 35;
             checkList.Bounds = new Rectangle(4, 4, w - 35 - 8, h - 160 - 25 - 8);
             checkFilterListButtonsControlHost.Size = new Size(w - 35, 24);
-            button_filter.Location = new Point(w - 35 - 164, 0);
-            button_undofilter.Location = new Point(w - 35 - 79, 0);
+            if (this.RightToLeft == RightToLeft.Yes)
+            {
+                button_filter.Location = new Point(w - 35 - 79, 0);
+                button_undofilter.Location = new Point(w - 35 - 164, 0);
+            }
+            else
+            {
+                button_filter.Location = new Point(w - 35 - 164, 0);
+                button_undofilter.Location = new Point(w - 35 - 79, 0);
+            }
             resizeBoxControlHost.Margin = new Padding(w - 46, 0, 0, 0);
             Size = new Size(w, h);
         }
