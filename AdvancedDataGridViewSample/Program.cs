@@ -36,7 +36,7 @@ namespace AdvancedDataGridViewSample
                 System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(ConfigurationManager.AppSettings["culture"]);
             }
 
-            FormMain formMain = new FormMain();
+            Form formMain = new FormMain();
             if (HighDPIEnabled)
                 formMain.AutoScaleMode = AutoScaleMode.Dpi;
             Application.Run(formMain);

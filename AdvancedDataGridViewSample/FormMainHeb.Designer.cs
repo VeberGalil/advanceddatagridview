@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel_top = new System.Windows.Forms.Panel();
+            this.btnEnglish = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.advancedDataGridViewSearchToolBar_main = new Zuby.ADGV.AdvancedDataGridViewSearchToolBar();
             this.button_setsavedfilter = new System.Windows.Forms.Button();
@@ -63,6 +64,7 @@
             // 
             // panel_top
             // 
+            this.panel_top.Controls.Add(this.btnEnglish);
             this.panel_top.Controls.Add(this.panel1);
             this.panel_top.Controls.Add(this.button_setsavedfilter);
             this.panel_top.Controls.Add(this.comboBox_sortsaved);
@@ -83,6 +85,16 @@
             this.panel_top.Name = "panel_top";
             this.panel_top.Size = new System.Drawing.Size(827, 205);
             this.panel_top.TabIndex = 0;
+            // 
+            // btnEnglish
+            // 
+            this.btnEnglish.Location = new System.Drawing.Point(12, 147);
+            this.btnEnglish.Name = "btnEnglish";
+            this.btnEnglish.Size = new System.Drawing.Size(75, 23);
+            this.btnEnglish.TabIndex = 21;
+            this.btnEnglish.Text = "English";
+            this.btnEnglish.UseVisualStyleBackColor = true;
+            this.btnEnglish.Click += new System.EventHandler(this.btnEnglish_Click);
             // 
             // panel1
             // 
@@ -354,5 +366,6 @@
         private System.Windows.Forms.Button button_setsavedfilter;
         private System.Windows.Forms.Panel panel1;
         private Zuby.ADGV.AdvancedDataGridViewSearchToolBar advancedDataGridViewSearchToolBar_main;
+        private System.Windows.Forms.Button btnEnglish;
     }
 }

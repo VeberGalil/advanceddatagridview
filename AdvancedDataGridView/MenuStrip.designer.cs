@@ -1,5 +1,4 @@
-﻿
-namespace Zuby.ADGV
+﻿namespace Zuby.ADGV
 {
     partial class MenuStrip
     {

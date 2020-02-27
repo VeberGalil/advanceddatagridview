@@ -226,5 +226,11 @@ namespace AdvancedDataGridViewSample
             if (c != null)
                 advancedDataGridView_main.CurrentCell = c;
         }
+
+        private void btnEnglish_Click(object sender, EventArgs e)
+        {
+            (new FormMain()).Show();
+
+        }
     }
 }
