@@ -295,6 +295,26 @@ namespace Zuby.ADGV
         #endregion
 
 
+        #region RTL support
+        public override RightToLeft RightToLeft
+        {
+            get => base.RightToLeft;
+            set
+            {
+                base.RightToLeft = value;
+                // MenuStrip.RightToLeft is set from ColumnHeaderCell constructor,
+                // and not expected to be changed afterwise
+                // So, we need to change LTR defaults only if control set to RTL
+                if (value == RightToLeft.Yes)
+                {
+                    // Resize box cursor
+                    this.resizeBoxControlHost.Control.Cursor = System.Windows.Forms.Cursors.SizeNESW;
+                }
+            }
+        }
+
+        #endregion
+
         #region public enablers
 
         /// <summary>
@@ -1370,6 +1390,8 @@ namespace Zuby.ADGV
 
             //open a new Custom filter window
             FormCustomFilter flt = new FormCustomFilter(DataType, IsFilterDateAndTimeEnabled);
+            flt.RightToLeft = this.RightToLeft;
+            flt.RightToLeftLayout = (this.RightToLeft == RightToLeft.Yes);
 
             if (flt.ShowDialog() == DialogResult.OK)
             {
@@ -1808,7 +1830,15 @@ namespace Zuby.ADGV
         /// <param name="e"></param>
         private void ResizeBoxControlHost_Paint(Object sender, PaintEventArgs e)
         {
-            e.Graphics.DrawImage(Properties.Resources.MenuStrip_ResizeGrip, 0, 0);
+            if (this.RightToLeft == RightToLeft.Yes)
+            {
+                e.Graphics.DrawImage(Properties.Resources.MenuStrip_ResizeGrip_RTL, 0, 0);
+            }
+            else
+            {
+                e.Graphics.DrawImage(Properties.Resources.MenuStrip_ResizeGrip, 0, 0);
+            }
+
         }
 
         #endregion
