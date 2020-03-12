@@ -87,8 +87,7 @@ namespace Zuby.ADGV
             Style = oldCell.Style;
             _filterEnabled = filterEnabled;
 
-            ColumnHeaderCell oldCellt = oldCell as ColumnHeaderCell;
-            if (oldCellt != null && oldCellt.MenuStrip != null)
+            if (oldCell is ColumnHeaderCell oldCellt && oldCellt.MenuStrip != null)
             {
                 MenuStrip = oldCellt.MenuStrip;
                 _filterImage = oldCellt._filterImage;
@@ -111,6 +110,7 @@ namespace Zuby.ADGV
             IsFilterEnabled = true;
             IsFilterChecklistEnabled = true;
         }
+
         ~ColumnHeaderCell()
         {
             if (MenuStrip != null)
@@ -313,14 +313,8 @@ namespace Zuby.ADGV
         /// </summary>
         public bool IsSortEnabled
         {
-            get
-            {
-                return MenuStrip.IsSortEnabled;
-            }
-            set
-            {
-                MenuStrip.IsSortEnabled = value;
-            }
+            get => MenuStrip.IsSortEnabled;
+            set => MenuStrip.IsSortEnabled = value;
         }
 
         /// <summary>
@@ -328,14 +322,8 @@ namespace Zuby.ADGV
         /// </summary>
         public bool IsFilterEnabled
         {
-            get
-            {
-                return MenuStrip.IsFilterEnabled;
-            }
-            set
-            {
-                MenuStrip.IsFilterEnabled = value;
-            }
+            get => MenuStrip.IsFilterEnabled;
+            set => MenuStrip.IsFilterEnabled = value;
         }
 
         /// <summary>
@@ -343,14 +331,8 @@ namespace Zuby.ADGV
         /// </summary>
         public bool IsFilterChecklistEnabled
         {
-            get
-            {
-                return MenuStrip.IsFilterChecklistEnabled;
-            }
-            set
-            {
-                MenuStrip.IsFilterChecklistEnabled = value;
-            }
+            get => MenuStrip.IsFilterChecklistEnabled;
+            set => MenuStrip.IsFilterChecklistEnabled = value;
         }
 
         /// <summary>
@@ -358,14 +340,8 @@ namespace Zuby.ADGV
         /// </summary>
         public bool IsFilterDateAndTimeEnabled
         {
-            get
-            {
-                return MenuStrip.IsFilterDateAndTimeEnabled;
-            }
-            set
-            {
-                MenuStrip.IsFilterDateAndTimeEnabled = value;
-            }
+            get => MenuStrip.IsFilterDateAndTimeEnabled;
+            set => MenuStrip.IsFilterDateAndTimeEnabled = value;
         }
 
         /// <summary>
@@ -373,14 +349,8 @@ namespace Zuby.ADGV
         /// </summary>
         public bool IsMenuStripFilterNOTINLogicEnabled
         {
-            get
-            {
-                return MenuStrip.IsFilterNOTINLogicEnabled;
-            }
-            set
-            {
-                MenuStrip.IsFilterNOTINLogicEnabled = value;
-            }
+            get => MenuStrip.IsFilterNOTINLogicEnabled;
+            set => MenuStrip.IsFilterNOTINLogicEnabled = value;
         }
 
         /// <summary>
@@ -388,14 +358,8 @@ namespace Zuby.ADGV
         /// </summary>
         public bool DoesTextFilterRemoveNodesOnSearch
         {
-            get
-            {
-                return MenuStrip.DoesTextFilterRemoveNodesOnSearch;
-            }
-            set
-            {
-                MenuStrip.DoesTextFilterRemoveNodesOnSearch = value;
-            }
+            get => MenuStrip.DoesTextFilterRemoveNodesOnSearch;
+            set => MenuStrip.DoesTextFilterRemoveNodesOnSearch = value;
         }
 
         /// <summary>
@@ -588,7 +552,7 @@ namespace Zuby.ADGV
         private Rectangle GetFilterBounds(bool withOffset = true)
         {
             Rectangle cell = DataGridView.GetCellDisplayRectangle(ColumnIndex, -1, false);
-            int x = 0, y = 0;
+            int x, y;
             if (this.RightToLeft == RightToLeft.Yes)
             {
                 x = (withOffset ? cell.Left : 0) + _filterButtonMargin.Left;

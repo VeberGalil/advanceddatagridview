@@ -51,8 +51,6 @@ namespace Zuby.ADGV
 
         #region class properties
 
-        private FilterType _activeFilterType = FilterType.None;
-        private SortType _activeSortType = SortType.None;
         private TreeNodeItemSelector[] _startingNodes = null;
         private TreeNodeItemSelector[] _filterNodes = null;
         private string _sortString = null;
@@ -63,7 +61,6 @@ namespace Zuby.ADGV
         private TreeNodeItemSelector[] _initialNodes = new TreeNodeItemSelector[] { };
         private TreeNodeItemSelector[] _restoreNodes = new TreeNodeItemSelector[] { };
         private bool _checkTextFilterSetByText = false;
-        private bool _checkTextFilterRemoveNodesOnSearch = true;
 
         #endregion
 
@@ -228,24 +225,12 @@ namespace Zuby.ADGV
         /// <summary>
         /// Get the current MenuStripSortType type
         /// </summary>
-        public SortType ActiveSortType
-        {
-            get
-            {
-                return _activeSortType;
-            }
-        }
+        public SortType ActiveSortType { get; private set; } = SortType.None;
 
         /// <summary>
         /// Get the current MenuStripFilterType type
         /// </summary>
-        public FilterType ActiveFilterType
-        {
-            get
-            {
-                return _activeFilterType;
-            }
-        }
+        public FilterType ActiveFilterType { get; private set; } = FilterType.None;
 
         /// <summary>
         /// Get the DataType for the MenuStrip Filter
@@ -280,17 +265,7 @@ namespace Zuby.ADGV
         /// <summary>
         /// Set the text filter search nodes behaviour
         /// </summary>
-        public bool DoesTextFilterRemoveNodesOnSearch
-        {
-            get
-            {
-                return _checkTextFilterRemoveNodesOnSearch;
-            }
-            set
-            {
-                _checkTextFilterRemoveNodesOnSearch = value;
-            }
-        }
+        public bool DoesTextFilterRemoveNodesOnSearch { get; set; } = true;
 
         #endregion
 
@@ -388,7 +363,7 @@ namespace Zuby.ADGV
             cancelFilterMenuItem.Enabled = enabled;
             if (enabled)
             {
-                _activeFilterType = FilterType.Loaded;
+                ActiveFilterType = FilterType.Loaded;
                 _sortString = null;
                 _filterString = null;
                 _filterNodes = null;
@@ -408,7 +383,7 @@ namespace Zuby.ADGV
             }
             else
             {
-                _activeFilterType = FilterType.None;
+                ActiveFilterType = FilterType.None;
 
                 SetSortEnabled(true);
                 SetFilterEnabled(true);
@@ -435,8 +410,8 @@ namespace Zuby.ADGV
                 ResizeBox(MinimumSize.Width, MinimumSize.Height);
             }
 
-                BuildNodes(vals);
-            if (_checkTextFilterRemoveNodesOnSearch && checkList.Nodes.Count != _initialNodes.Count())
+            BuildNodes(vals);
+            if (DoesTextFilterRemoveNodesOnSearch && checkList.Nodes.Count != _initialNodes.Count())
             {
                 _initialNodes = new TreeNodeItemSelector[checkList.Nodes.Count];
                 _restoreNodes = new TreeNodeItemSelector[checkList.Nodes.Count];
@@ -449,7 +424,7 @@ namespace Zuby.ADGV
                 }
             }
 
-            if (_activeFilterType == FilterType.Custom)
+            if (ActiveFilterType == FilterType.Custom)
                 SetNodesCheckState(checkList.Nodes, false);
             DuplicateNodes();
             base.Show(control, x, y);
@@ -482,7 +457,7 @@ namespace Zuby.ADGV
             DuplicateNodes();
             base.Show(control, x, y);
 
-            if (_checkTextFilterRemoveNodesOnSearch && _checkTextFilterSetByText)
+            if (DoesTextFilterRemoveNodesOnSearch && _checkTextFilterSetByText)
             {
                 _restoreNodes = new TreeNodeItemSelector[_initialNodes.Count()];
                 int i = 0;
@@ -558,10 +533,9 @@ namespace Zuby.ADGV
         /// </summary>
         public void CleanSort()
         {
-            string oldsort = SortString;
             sortASCMenuItem.Checked = false;
             sortDESCMenuItem.Checked = false;
-            _activeSortType = SortType.None;
+            ActiveSortType = SortType.None;
             SortString = null;
         }
 
@@ -591,7 +565,7 @@ namespace Zuby.ADGV
         /// </summary>
         public void CleanFilter()
         {
-            if (_checkTextFilterRemoveNodesOnSearch)
+            if (DoesTextFilterRemoveNodesOnSearch)
             {
                 _initialNodes = new TreeNodeItemSelector[] { };
                 _restoreNodes = new TreeNodeItemSelector[] { };
@@ -602,9 +576,8 @@ namespace Zuby.ADGV
             {
                 (customFilterLastFiltersListMenuItem.DropDownItems[i] as ToolStripMenuItem).Checked = false;
             }
-            _activeFilterType = FilterType.None;
+            ActiveFilterType = FilterType.None;
             SetNodesCheckState(checkList.Nodes, true);
-            string oldsort = FilterString;
             FilterString = null;
             _filterNodes = null;
             customFilterLastFiltersListMenuItem.Checked = false;
@@ -617,9 +590,9 @@ namespace Zuby.ADGV
         /// <param name="enabled"></param>
         public void SetChecklistTextFilterRemoveNodesOnSearchMode(bool enabled)
         {
-            if (_checkTextFilterRemoveNodesOnSearch != enabled)
+            if (DoesTextFilterRemoveNodesOnSearch != enabled)
             {
-                _checkTextFilterRemoveNodesOnSearch = enabled;
+                DoesTextFilterRemoveNodesOnSearch = enabled;
                 CleanFilter();
             }
         }
@@ -645,7 +618,7 @@ namespace Zuby.ADGV
             {
                 string oldfilter = FilterString;
                 FilterString = "";
-                _activeFilterType = FilterType.CheckList;
+                ActiveFilterType = FilterType.CheckList;
 
                 if (checkList.Nodes.Count > 1)
                 {
@@ -1267,7 +1240,7 @@ namespace Zuby.ADGV
         private void Button_cancel_Click(object sender, EventArgs e)
         {
             bool restoredByFilter = false;
-            if (_checkTextFilterRemoveNodesOnSearch && _checkTextFilterSetByText)
+            if (DoesTextFilterRemoveNodesOnSearch && _checkTextFilterSetByText)
             {
                 _initialNodes = new TreeNodeItemSelector[_restoreNodes.Count()];
                 int i = 0;
@@ -1314,7 +1287,7 @@ namespace Zuby.ADGV
         /// <param name="filtersMenuItemIndex"></param>
         private void SetCustomFilter(int filtersMenuItemIndex)
         {
-            if (_activeFilterType == FilterType.CheckList)
+            if (ActiveFilterType == FilterType.CheckList)
                 SetNodesCheckState(checkList.Nodes, false);
 
             string filterstring = customFilterLastFiltersListMenuItem.DropDownItems[filtersMenuItemIndex].Tag.ToString();
@@ -1340,7 +1313,7 @@ namespace Zuby.ADGV
             }
 
             (customFilterLastFiltersListMenuItem.DropDownItems[2] as ToolStripMenuItem).Checked = true;
-            _activeFilterType = FilterType.Custom;
+            ActiveFilterType = FilterType.Custom;
 
             //get Filter string
             string oldfilter = FilterString;
@@ -1403,9 +1376,11 @@ namespace Zuby.ADGV
                 return;
 
             //open a new Custom filter window
-            FormCustomFilter flt = new FormCustomFilter(DataType, IsFilterDateAndTimeEnabled);
-            flt.RightToLeft = this.RightToLeft;
-            flt.RightToLeftLayout = (this.RightToLeft == RightToLeft.Yes);
+            FormCustomFilter flt = new FormCustomFilter(DataType, IsFilterDateAndTimeEnabled)
+            {
+                RightToLeft = this.RightToLeft,
+                RightToLeftLayout = (this.RightToLeft == RightToLeft.Yes)
+            };
 
             if (flt.ShowDialog() == DialogResult.OK)
             {
@@ -1528,7 +1503,7 @@ namespace Zuby.ADGV
                 _checkTextFilterSetByText = true;
             else
                 _checkTextFilterSetByText = false;
-            if (_checkTextFilterRemoveNodesOnSearch)
+            if (DoesTextFilterRemoveNodesOnSearch)
             {
                 _startingNodes = _initialNodes;
 
@@ -1537,13 +1512,11 @@ namespace Zuby.ADGV
             }
             TreeNodeItemSelector allnode = TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectAll.ToString()] + "            ", null, CheckState.Checked, TreeNodeItemSelector.CustomNodeType.SelectAll);
             TreeNodeItemSelector nullnode = TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectEmpty.ToString()] + "               ", null, CheckState.Checked, TreeNodeItemSelector.CustomNodeType.SelectEmpty);
-            TreeNodeItemSelector allnodesel = null;
             for (int i = checkList.Nodes.Count - 1; i >= 0; i--)
             {
                 TreeNodeItemSelector node = checkList.Nodes[i] as TreeNodeItemSelector;
                 if (node.Text == allnode.Text)
                 {
-                    allnodesel = node;
                     node.CheckState = CheckState.Indeterminate;
                 }
                 else if (node.Text == nullnode.Text)
@@ -1559,13 +1532,12 @@ namespace Zuby.ADGV
                     NodeCheckChange(node as TreeNodeItemSelector);
                 }
             }
-            if (_checkTextFilterRemoveNodesOnSearch)
+            if (DoesTextFilterRemoveNodesOnSearch)
             {
                 foreach (TreeNodeItemSelector node in _initialNodes)
                 {
                     if (node.Text == allnode.Text)
                     {
-                        allnodesel = node;
                         node.CheckState = CheckState.Indeterminate;
                     }
                     else if (node.Text == nullnode.Text)
@@ -1613,7 +1585,7 @@ namespace Zuby.ADGV
 
             sortASCMenuItem.Checked = true;
             sortDESCMenuItem.Checked = false;
-            _activeSortType = SortType.ASC;
+            ActiveSortType = SortType.ASC;
 
             //get Sort String
             string oldsort = SortString;
@@ -1648,7 +1620,7 @@ namespace Zuby.ADGV
 
             sortASCMenuItem.Checked = false;
             sortDESCMenuItem.Checked = true;
-            _activeSortType = SortType.DESC;
+            ActiveSortType = SortType.DESC;
 
             //get Sort String
             string oldsort = SortString;

@@ -32,7 +32,6 @@ namespace Zuby.ADGV
         #region class properties
 
         private CheckState _checkState = CheckState.Unchecked;
-        private TreeNodeItemSelector _parent;
 
         #endregion
 
@@ -97,20 +96,7 @@ namespace Zuby.ADGV
         /// <summary>
         /// Get Node parent
         /// </summary>
-        new public TreeNodeItemSelector Parent
-        {
-            get
-            {
-                if (_parent is TreeNodeItemSelector)
-                    return _parent;
-                else
-                    return null;
-            }
-            set
-            {
-                _parent = value;
-            }
-        }
+        new public TreeNodeItemSelector Parent { get; set; }
 
         /// <summary>
         /// Node is Checked
@@ -123,7 +109,7 @@ namespace Zuby.ADGV
             }
             set
             {
-                CheckState = (value == true ? CheckState.Checked : CheckState.Unchecked);
+                CheckState = (value ? CheckState.Checked : CheckState.Unchecked);
             }
         }
 
