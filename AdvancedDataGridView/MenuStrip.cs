@@ -282,6 +282,9 @@ namespace Zuby.ADGV
                 // So, we need to change LTR defaults only if control set to RTL
                 if (value == RightToLeft.Yes)
                 {
+                    // TreeView layout
+                    checkList.RightToLeft = RightToLeft.Yes;
+                    checkList.RightToLeftLayout = true;
 
 
                     // Resize box cursor
