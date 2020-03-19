@@ -287,6 +287,10 @@ namespace Zuby.ADGV
                 // So, we need to change LTR defaults only if control set to RTL
                 if (value == RightToLeft.Yes)
                 {
+                    foreach (ToolStripItem item in this.Items)
+                    {
+                        item.RightToLeft = RightToLeft.Yes;
+                    }
                     // TreeView layout
                     checkList.RightToLeft = RightToLeft.Yes;
                     checkList.RightToLeftLayout = true;
@@ -1707,24 +1711,37 @@ namespace Zuby.ADGV
         /// <param name="h"></param>
         private void ResizeBox(int w, int h)
         {
-            sortASCMenuItem.Width = w - 1;
-            sortDESCMenuItem.Width = w - 1;
-            cancelSortMenuItem.Width = w - 1;
-            cancelFilterMenuItem.Width = w - 1;
-            customFilterMenuItem.Width = w - 1;
-            customFilterLastFiltersListMenuItem.Width = w - 1;
-            checkFilterListControlHost.Size = new Size(w - 35, h - 160 - 25);
-            checkFilterListPanel.Size = new Size(w - 35, h - 160 - 25);
-            checkTextFilterControlHost.Width = w - 35;
-            checkList.Bounds = new Rectangle(4, 4, w - 35 - 8, h - 160 - 25 - 8);
-            checkFilterListButtonsControlHost.Size = new Size(w - 35, 24);
             if (this.RightToLeft == RightToLeft.Yes)
             {
+                sortASCMenuItem.Width = w - 1;
+                sortDESCMenuItem.Width = w - 1;
+                cancelSortMenuItem.Width = w - 1;
+                cancelFilterMenuItem.Width = w - 1;
+                customFilterMenuItem.Width = w - 1;
+                customFilterLastFiltersListMenuItem.Width = w - 1;
+
+                checkFilterListControlHost.Size = new Size(w - 35, h - 160 - 25);
+                checkFilterListPanel.Size = new Size(w - 35, h - 160 - 25);
+                checkTextFilterControlHost.Width = w - 35;
+                checkList.Bounds = new Rectangle(4, 4, w - 35 - 8, h - 160 - 25 - 8);
+                checkFilterListButtonsControlHost.Size = new Size(w - 35, 24);
+                
                 button_filter.Location = new Point(w - 35 - 79, 0);
                 button_undofilter.Location = new Point(w - 35 - 164, 0);
             }
             else
             {
+                sortASCMenuItem.Width = w - 1;
+                sortDESCMenuItem.Width = w - 1;
+                cancelSortMenuItem.Width = w - 1;
+                cancelFilterMenuItem.Width = w - 1;
+                customFilterMenuItem.Width = w - 1;
+                customFilterLastFiltersListMenuItem.Width = w - 1;
+                checkFilterListControlHost.Size = new Size(w - 35, h - 160 - 25);
+                checkFilterListPanel.Size = new Size(w - 35, h - 160 - 25);
+                checkTextFilterControlHost.Width = w - 35;
+                checkList.Bounds = new Rectangle(4, 4, w - 35 - 8, h - 160 - 25 - 8);
+                checkFilterListButtonsControlHost.Size = new Size(w - 35, 24);
                 button_filter.Location = new Point(w - 35 - 164, 0);
                 button_undofilter.Location = new Point(w - 35 - 79, 0);
             }

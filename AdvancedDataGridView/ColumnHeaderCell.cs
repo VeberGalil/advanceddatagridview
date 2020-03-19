@@ -46,17 +46,7 @@ namespace Zuby.ADGV
         /// </summary>
         internal RightToLeft RightToLeft 
         {
-            get 
-            {
-                if (MenuStrip != null)
-                {
-                    return MenuStrip.RightToLeft;
-                }
-                else
-                {
-                    return RightToLeft.No;
-                }
-            }
+            get => MenuStrip?.RightToLeft ?? RightToLeft.No;
             set 
             {
                 if (MenuStrip != null)
