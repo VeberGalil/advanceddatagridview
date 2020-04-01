@@ -206,7 +206,7 @@ namespace Zuby.ADGV
         /// <summary>
         /// Sort ASC
         /// </summary>
-        public void SortASC()
+        public void SortAsc()
         {
             if (MenuStrip != null && FilterAndSortEnabled)
             {
@@ -217,7 +217,7 @@ namespace Zuby.ADGV
         /// <summary>
         /// Sort DESC
         /// </summary>
-        public void SortDESC()
+        public void SortDesc()
         {
             if (MenuStrip != null && FilterAndSortEnabled)
             {
@@ -228,7 +228,7 @@ namespace Zuby.ADGV
         /// <summary>
         /// Get the MenuStrip for this ColumnHeaderCell
         /// </summary>
-        public MenuStrip MenuStrip { get; private set; }
+        public ISortFilterMenu MenuStrip { get; private set; }
 
         /// <summary>
         /// Get the MenuStrip SortType
@@ -657,11 +657,11 @@ namespace Zuby.ADGV
     internal delegate void ColumnHeaderCellEventHandler(object sender, ColumnHeaderCellEventArgs e);
     internal class ColumnHeaderCellEventArgs : EventArgs
     {
-        public MenuStrip FilterMenu { get; private set; }
+        public ISortFilterMenu FilterMenu { get; private set; }
 
         public DataGridViewColumn Column { get; private set; }
 
-        public ColumnHeaderCellEventArgs(MenuStrip filterMenu, DataGridViewColumn column)
+        public ColumnHeaderCellEventArgs(ISortFilterMenu filterMenu, DataGridViewColumn column)
         {
             FilterMenu = filterMenu;
             Column = column;

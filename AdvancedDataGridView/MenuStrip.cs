@@ -19,7 +19,7 @@ namespace Zuby.ADGV
 {
 
     [System.ComponentModel.DesignerCategory("")]
-    internal partial class MenuStrip : ContextMenuStrip
+    internal partial class MenuStrip : ContextMenuStrip, ISortFilterMenu
     {
 
         #region class properties
@@ -1680,7 +1680,7 @@ namespace Zuby.ADGV
                 checkTextFilterControlHost.Width = w - 35;
                 checkList.Bounds = new Rectangle(4, 4, w - 35 - 8, h - 160 - 25 - 8);
                 checkFilterListButtonsControlHost.Size = new Size(w - 35, 24);
-                
+
                 button_filter.Location = new Point(w - 35 - 79, 0);
                 button_undofilter.Location = new Point(w - 35 - 164, 0);
             }
@@ -1711,7 +1711,7 @@ namespace Zuby.ADGV
         {
             if (_resizeEndPoint.X != -1)
             {
-                Point startPoint = PointToScreen(MenuStrip._resizeStartPoint);
+                Point startPoint = PointToScreen(_resizeStartPoint);
 
                 Rectangle rc = new Rectangle(startPoint.X, startPoint.Y, _resizeEndPoint.X, _resizeEndPoint.Y)
                 {
@@ -1768,7 +1768,7 @@ namespace Zuby.ADGV
                     x = Math.Max(x, MinimumSize.Width - 1);
                     y = Math.Max(y, MinimumSize.Height - 1);
 
-                    Point StartPoint = PointToScreen(MenuStrip._resizeStartPoint);
+                    Point StartPoint = PointToScreen(_resizeStartPoint);
                     Point EndPoint = PointToScreen(new Point(x, y));
 
                     Rectangle rc = new Rectangle

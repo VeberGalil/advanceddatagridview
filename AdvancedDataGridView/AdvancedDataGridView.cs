@@ -297,8 +297,6 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                //ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                //if (cell != null)
                 if (column.HeaderCell is ColumnHeaderCell cell)
                 {
                     if (!cell.FilterAndSortEnabled && (cell.FilterString.Length > 0 || cell.SortString.Length > 0))
@@ -564,7 +562,7 @@ namespace Zuby.ADGV
             {
                 if (column.HeaderCell is ColumnHeaderCell cell)
                 {
-                    cell.SortASC();
+                    cell.SortAsc();
                 }
             }
         }
@@ -578,7 +576,7 @@ namespace Zuby.ADGV
             {
                 if (column.HeaderCell is ColumnHeaderCell cell)
                 {
-                    cell.SortDESC();
+                    cell.SortDesc();
                 }
             }
         }
@@ -959,7 +957,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(e.Column))
             {
-                MenuStrip filterMenu = e.FilterMenu;
+                ISortFilterMenu filterMenu = e.FilterMenu;
                 DataGridViewColumn column = e.Column;
 
                 System.Drawing.Rectangle rect = GetCellDisplayRectangle(column.Index, -1, true);
@@ -994,7 +992,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(e.Column))
             {
-                MenuStrip filterMenu = e.FilterMenu;
+                ISortFilterMenu filterMenu = e.FilterMenu;
                 DataGridViewColumn column = e.Column;
 
                 _filterOrderList.Remove(column.Name);
@@ -1055,7 +1053,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(e.Column))
             {
-                MenuStrip filterMenu = e.FilterMenu;
+                ISortFilterMenu filterMenu = e.FilterMenu;
                 DataGridViewColumn column = e.Column;
 
                 _sortOrderList.Remove(column.Name);
