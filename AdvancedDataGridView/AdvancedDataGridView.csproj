@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="ColumnHeaderCell.cs" />
     <Compile Include="AdvancedDataGridView.cs" />
+    <Compile Include="FilterSortType.cs" />
     <Compile Include="MenuStrip.cs" />
     <Compile Include="MenuStrip.designer.cs">
       <DependentUpon>MenuStrip.cs</DependentUpon>

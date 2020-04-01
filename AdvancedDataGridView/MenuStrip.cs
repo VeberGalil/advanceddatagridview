@@ -22,35 +22,7 @@ namespace Zuby.ADGV
     internal partial class MenuStrip : ContextMenuStrip
     {
 
-        #region public enum
-
-        /// <summary>
-        /// MenuStrip Filter type
-        /// </summary>
-        public enum FilterType : byte
-        {
-            None = 0,
-            Custom = 1,
-            CheckList = 2,
-            Loaded = 3
-        }
-
-
-        /// <summary>
-        /// MenuStrip Sort type
-        /// </summary>
-        public enum SortType : byte
-        {
-            None = 0,
-            ASC = 1,
-            DESC = 2
-        }
-
-        #endregion
-
-
         #region class properties
-
         private TreeNodeItemSelector[] _startingNodes = null;
         private TreeNodeItemSelector[] _filterNodes = null;
         private string _sortString = null;
@@ -61,7 +33,6 @@ namespace Zuby.ADGV
         private TreeNodeItemSelector[] _initialNodes = new TreeNodeItemSelector[] { };
         private TreeNodeItemSelector[] _restoreNodes = new TreeNodeItemSelector[] { };
         private bool _checkTextFilterSetByText = false;
-
         #endregion
 
         #region costructors
@@ -1615,7 +1586,7 @@ namespace Zuby.ADGV
 
             sortASCMenuItem.Checked = true;
             sortDESCMenuItem.Checked = false;
-            ActiveSortType = SortType.ASC;
+            ActiveSortType = SortType.Asc;
 
             //get Sort String
             string oldsort = SortString;
@@ -1650,7 +1621,7 @@ namespace Zuby.ADGV
 
             sortASCMenuItem.Checked = false;
             sortDESCMenuItem.Checked = true;
-            ActiveSortType = SortType.DESC;
+            ActiveSortType = SortType.Desc;
 
             //get Sort String
             string oldsort = SortString;

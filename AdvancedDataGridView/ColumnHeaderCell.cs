@@ -233,28 +233,28 @@ namespace Zuby.ADGV
         /// <summary>
         /// Get the MenuStrip SortType
         /// </summary>
-        public MenuStrip.SortType ActiveSortType
+        public SortType ActiveSortType
         {
             get
             {
                 if (MenuStrip != null && FilterAndSortEnabled)
                     return MenuStrip.ActiveSortType;
                 else
-                    return MenuStrip.SortType.None;
+                    return SortType.None;
             }
         }
 
         /// <summary>
         /// Get the MenuStrip FilterType
         /// </summary>
-        public MenuStrip.FilterType ActiveFilterType
+        public FilterType ActiveFilterType
         {
             get
             {
                 if (MenuStrip != null && FilterAndSortEnabled)
                     return MenuStrip.ActiveFilterType;
                 else
-                    return MenuStrip.FilterType.None;
+                    return FilterType.None;
             }
         }
 
@@ -467,26 +467,26 @@ namespace Zuby.ADGV
         /// </summary>
         private void RefreshImage()
         {
-            if (ActiveFilterType == MenuStrip.FilterType.Loaded)
+            if (ActiveFilterType == FilterType.Loaded)
             {
                 _filterImage = Properties.Resources.ColumnHeader_SavedFilters;
             }
             else
             {
-                if (ActiveFilterType == MenuStrip.FilterType.None)
+                if (ActiveFilterType == FilterType.None)
                 {
-                    if (ActiveSortType == MenuStrip.SortType.None)
+                    if (ActiveSortType == SortType.None)
                         _filterImage = Properties.Resources.ColumnHeader_UnFiltered;
-                    else if (ActiveSortType == MenuStrip.SortType.ASC)
+                    else if (ActiveSortType == SortType.Asc)
                         _filterImage = Properties.Resources.ColumnHeader_OrderedASC;
                     else
                         _filterImage = Properties.Resources.ColumnHeader_OrderedDESC;
                 }
                 else
                 {
-                    if (ActiveSortType == MenuStrip.SortType.None)
+                    if (ActiveSortType == SortType.None)
                         _filterImage = Properties.Resources.ColumnHeader_Filtered;
-                    else if (ActiveSortType == MenuStrip.SortType.ASC)
+                    else if (ActiveSortType == SortType.Asc)
                         _filterImage = Properties.Resources.ColumnHeader_FilteredAndOrderedASC;
                     else
                         _filterImage = Properties.Resources.ColumnHeader_FilteredAndOrderedDESC;

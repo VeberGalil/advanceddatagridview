@@ -162,9 +162,9 @@ namespace Zuby.ADGV
 
         #region class properties
 
-        private List<string> _sortOrderList = new List<string>();
-        private List<string> _filterOrderList = new List<string>();
-        private List<string> _filteredColumns = new List<string>();
+        private readonly List<string> _sortOrderList = new List<string>();
+        private readonly List<string> _filterOrderList = new List<string>();
+        private readonly List<string> _filteredColumns = new List<string>();
 
         private bool _loadedFilter = false;
         private string _sortString = null;
@@ -273,8 +273,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                 {
                     if (cell.FilterAndSortEnabled == true && (cell.SortString.Length > 0 || cell.FilterString.Length > 0))
                     {
@@ -298,8 +297,9 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                //ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
+                //if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                 {
                     if (!cell.FilterAndSortEnabled && (cell.FilterString.Length > 0 || cell.SortString.Length > 0))
                         CleanFilter(true);
@@ -347,8 +347,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                 {
                     cell.SetFilterChecklistEnabled(false);
                 }
@@ -363,8 +362,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                 {
                     cell.SetFilterChecklistEnabled(true);
                 }
@@ -392,8 +390,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                 {
                     cell.SetFilterCustomEnabled(false);
                 }
@@ -408,8 +405,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                 {
                     cell.SetFilterCustomEnabled(true);
                 }
@@ -538,8 +534,7 @@ namespace Zuby.ADGV
             //sort datasource
             if (sortEventArgs.Cancel == false)
             {
-                BindingSource datasource = this.DataSource as BindingSource;
-                if (datasource != null)
+                if (this.DataSource is BindingSource datasource)
                     datasource.Sort = sortEventArgs.SortString;
             }
         }
@@ -553,8 +548,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                 {
                     cell.SetSortEnabled(enabled);
                 }
@@ -568,8 +562,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                 {
                     cell.SortASC();
                 }
@@ -583,8 +576,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                 {
                     cell.SortDESC();
                 }
@@ -653,8 +645,7 @@ namespace Zuby.ADGV
             //sort datasource
             if (filterEventArgs.Cancel == false)
             {
-                BindingSource datasource = this.DataSource as BindingSource;
-                if (datasource != null)
+                if (this.DataSource is BindingSource datasource)
                     datasource.Filter = filterEventArgs.FilterString;
             }
         }
@@ -668,8 +659,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                 {
                     cell.IsFilterDateAndTimeEnabled = enabled;
                 }
@@ -685,8 +675,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                 {
                     cell.SetFilterEnabled(enabled);
                 }
@@ -702,8 +691,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                 {
                     cell.SetChecklistTextFilterRemoveNodesOnSearchMode(enabled);
                 }
@@ -739,8 +727,7 @@ namespace Zuby.ADGV
         {
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                     cell.DoesTextFilterRemoveNodesOnSearch = enabled;
             }
         }
@@ -753,8 +740,7 @@ namespace Zuby.ADGV
             Nullable<bool> ret = null;
             if (Columns.Contains(column))
             {
-                ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                if (cell != null)
+                if (column.HeaderCell is ColumnHeaderCell cell)
                     ret = cell.DoesTextFilterRemoveNodesOnSearch;
             }
             return ret;
@@ -856,8 +842,10 @@ namespace Zuby.ADGV
         protected override void OnColumnAdded(DataGridViewColumnEventArgs e)
         {
             e.Column.SortMode = DataGridViewColumnSortMode.Programmatic;
-            ColumnHeaderCell cell = new ColumnHeaderCell(e.Column.HeaderCell, FilterAndSortEnabled);
-            cell.RightToLeft = this.RightToLeft;
+            ColumnHeaderCell cell = new ColumnHeaderCell(e.Column.HeaderCell, FilterAndSortEnabled)
+            {
+                RightToLeft = this.RightToLeft
+            };
             cell.SortChanged += new ColumnHeaderCellEventHandler(Cell_SortChanged);
             cell.FilterChanged += new ColumnHeaderCellEventHandler(Cell_FilterChanged);
             cell.FilterPopup += new ColumnHeaderCellEventHandler(Cell_FilterPopup);
@@ -879,8 +867,8 @@ namespace Zuby.ADGV
             _filterOrderList.Remove(e.Column.Name);
             _sortOrderList.Remove(e.Column.Name);
 
-            ColumnHeaderCell cell = e.Column.HeaderCell as ColumnHeaderCell;
-            if (cell != null)
+
+            if (e.Column.HeaderCell is ColumnHeaderCell cell)
             {
                 cell.SortChanged -= Cell_SortChanged;
                 cell.FilterChanged -= Cell_FilterChanged;
@@ -945,16 +933,15 @@ namespace Zuby.ADGV
 
             foreach (string filterOrder in _filterOrderList)
             {
-                DataGridViewColumn Column = Columns[filterOrder];
+                DataGridViewColumn column = Columns[filterOrder];
 
-                if (Column != null)
+                if (column != null)
                 {
-                    ColumnHeaderCell cell = Column.HeaderCell as ColumnHeaderCell;
-                    if (cell != null)
+                    if (column.HeaderCell is ColumnHeaderCell cell)
                     {
-                        if (cell.FilterAndSortEnabled && cell.ActiveFilterType != MenuStrip.FilterType.None)
+                        if (cell.FilterAndSortEnabled && cell.ActiveFilterType != FilterType.None)
                         {
-                            sb.AppendFormat(appx + "(" + cell.FilterString + ")", Column.DataPropertyName);
+                            sb.AppendFormat(appx + "(" + cell.FilterString + ")", column.DataPropertyName);
                             appx = " AND ";
                         }
                     }
@@ -1003,7 +990,7 @@ namespace Zuby.ADGV
                 DataGridViewColumn column = e.Column;
 
                 _filterOrderList.Remove(column.Name);
-                if (filterMenu.ActiveFilterType != MenuStrip.FilterType.None)
+                if (filterMenu.ActiveFilterType != FilterType.None)
                     _filterOrderList.Add(column.Name);
 
                 FilterString = BuildFilterString();
@@ -1037,10 +1024,9 @@ namespace Zuby.ADGV
 
                 if (column != null)
                 {
-                    ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                    if (cell != null)
+                    if (column.HeaderCell is ColumnHeaderCell cell)
                     {
-                        if (cell.FilterAndSortEnabled && cell.ActiveSortType != MenuStrip.SortType.None)
+                        if (cell.FilterAndSortEnabled && cell.ActiveSortType != SortType.None)
                         {
                             sb.AppendFormat(appx + cell.SortString, column.DataPropertyName);
                             appx = ", ";
@@ -1065,7 +1051,7 @@ namespace Zuby.ADGV
                 DataGridViewColumn column = e.Column;
 
                 _sortOrderList.Remove(column.Name);
-                if (filterMenu.ActiveSortType != MenuStrip.SortType.None)
+                if (filterMenu.ActiveSortType != SortType.None)
                     _sortOrderList.Add(column.Name);
                 SortString = BuildSortString();
             }
