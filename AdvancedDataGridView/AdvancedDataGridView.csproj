@@ -83,6 +83,9 @@
     <Compile Include="FormCustomFilter.Designer.cs">
       <DependentUpon>FormCustomFilter.cs</DependentUpon>
     </Compile>
+    <Compile Include="SortFilterMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="TreeNodeItemSelector.cs" />
   </ItemGroup>
   <ItemGroup>

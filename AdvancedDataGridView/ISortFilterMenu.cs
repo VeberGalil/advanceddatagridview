@@ -17,7 +17,6 @@ namespace Zuby.ADGV
         bool IsFilterEnabled { get; set; }
         bool IsFilterNOTINLogicEnabled { get; set; }
         bool IsSortEnabled { get; set; }
-        RightToLeft RightToLeft { get; set; }
         string SortString { get; }
 
         event EventHandler FilterChanged;
