@@ -210,7 +210,7 @@ namespace Zuby.ADGV
         {
             if (MenuStrip != null && FilterAndSortEnabled)
             {
-                MenuStrip.SortASC();
+                MenuStrip.SortAsc();
             }
         }
 
@@ -221,7 +221,7 @@ namespace Zuby.ADGV
         {
             if (MenuStrip != null && FilterAndSortEnabled)
             {
-                MenuStrip.SortDESC();
+                MenuStrip.SortDesc();
             }
         }
 

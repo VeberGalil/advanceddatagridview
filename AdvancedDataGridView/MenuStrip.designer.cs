@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.sortASCMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sortDESCMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sortAscMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sortDescMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cancelSortMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1MenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.cancelFilterMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,8 +65,8 @@
             this.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(MenuStrip_Closed);
             this.LostFocus += new System.EventHandler(MenuStrip_LostFocus);
             this.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            sortASCMenuItem,
-            sortDESCMenuItem,
+            sortAscMenuItem,
+            sortDescMenuItem,
             cancelSortMenuItem,
             toolStripSeparator1MenuItem,
             cancelFilterMenuItem,
@@ -79,21 +79,21 @@
             //
             // sortASCMenuItem
             //
-            this.sortASCMenuItem.Name = "sortASCMenuItem";
-            this.sortASCMenuItem.AutoSize = false;
-            this.sortASCMenuItem.Size = new System.Drawing.Size(Width - 1, 22);
-            this.sortASCMenuItem.Click += new System.EventHandler(SortASCMenuItem_Click);
-            this.sortASCMenuItem.MouseEnter += new System.EventHandler(SortASCMenuItem_MouseEnter);
-            this.sortASCMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.sortAscMenuItem.Name = "sortASCMenuItem";
+            this.sortAscMenuItem.AutoSize = false;
+            this.sortAscMenuItem.Size = new System.Drawing.Size(Width - 1, 22);
+            this.sortAscMenuItem.Click += new System.EventHandler(SortAscMenuItem_Click);
+            this.sortAscMenuItem.MouseEnter += new System.EventHandler(SortAscMenuItem_MouseEnter);
+            this.sortAscMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             //
             // sortDESCMenuItem
             //
-            this.sortDESCMenuItem.Name = "sortDESCMenuItem";
-            this.sortDESCMenuItem.AutoSize = false;
-            this.sortDESCMenuItem.Size = new System.Drawing.Size(Width - 1, 22);
-            this.sortDESCMenuItem.Click += new System.EventHandler(SortDESCMenuItem_Click);
-            this.sortDESCMenuItem.MouseEnter += new System.EventHandler(SortDESCMenuItem_MouseEnter);
-            this.sortDESCMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.sortDescMenuItem.Name = "sortDESCMenuItem";
+            this.sortDescMenuItem.AutoSize = false;
+            this.sortDescMenuItem.Size = new System.Drawing.Size(Width - 1, 22);
+            this.sortDescMenuItem.Click += new System.EventHandler(SortDescMenuItem_Click);
+            this.sortDescMenuItem.MouseEnter += new System.EventHandler(SortDescMenuItem_MouseEnter);
+            this.sortDescMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             //
             // cancelSortMenuItem
             //
@@ -321,8 +321,8 @@
 
         #endregion
 
-        private System.Windows.Forms.ToolStripMenuItem sortASCMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem sortDESCMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sortAscMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sortDescMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cancelSortMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1MenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2MenuItem;

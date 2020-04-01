@@ -62,14 +62,14 @@ namespace Zuby.ADGV
         /// </summary>
         public enum TranslationKey
         {
-            ADGVSortDateTimeASC,
-            ADGVSortDateTimeDESC,
-            ADGVSortBoolASC,
-            ADGVSortBoolDESC,
-            ADGVSortNumASC,
-            ADGVSortNumDESC,
-            ADGVSortTextASC,
-            ADGVSortTextDESC,
+            ADGVSortDateTimeAsc,
+            ADGVSortDateTimeDesc,
+            ADGVSortBoolAsc,
+            ADGVSortBoolDesc,
+            ADGVSortNumAsc,
+            ADGVSortNumDesc,
+            ADGVSortTextAsc,
+            ADGVSortTextDesc,
             ADGVAddCustomFilter,
             ADGVCustomFilter,
             ADGVClearFilter,
@@ -112,14 +112,14 @@ namespace Zuby.ADGV
         /// </summary>
         public static Dictionary<string, string> Translations = new Dictionary<string, string>()
         {
-            { TranslationKey.ADGVSortDateTimeASC.ToString(), "Sort Oldest to Newest" },
-            { TranslationKey.ADGVSortDateTimeDESC.ToString(), "Sort Newest to Oldest" },
-            { TranslationKey.ADGVSortBoolASC.ToString(), "Sort by False/True" },
-            { TranslationKey.ADGVSortBoolDESC.ToString(), "Sort by True/False" },
-            { TranslationKey.ADGVSortNumASC.ToString(), "Sort Smallest to Largest" },
-            { TranslationKey.ADGVSortNumDESC.ToString(), "Sort Largest to Smallest" },
-            { TranslationKey.ADGVSortTextASC.ToString(), "Sort А to Z" },
-            { TranslationKey.ADGVSortTextDESC.ToString(), "Sort Z to A" },
+            { TranslationKey.ADGVSortDateTimeAsc.ToString(), "Sort Oldest to Newest" },
+            { TranslationKey.ADGVSortDateTimeDesc.ToString(), "Sort Newest to Oldest" },
+            { TranslationKey.ADGVSortBoolAsc.ToString(), "Sort by False/True" },
+            { TranslationKey.ADGVSortBoolDesc.ToString(), "Sort by True/False" },
+            { TranslationKey.ADGVSortNumAsc.ToString(), "Sort Smallest to Largest" },
+            { TranslationKey.ADGVSortNumDesc.ToString(), "Sort Largest to Smallest" },
+            { TranslationKey.ADGVSortTextAsc.ToString(), "Sort А to Z" },
+            { TranslationKey.ADGVSortTextDesc.ToString(), "Sort Z to A" },
             { TranslationKey.ADGVAddCustomFilter.ToString(), "Add a Custom Filter" },
             { TranslationKey.ADGVCustomFilter.ToString(), "Custom Filter" },
             { TranslationKey.ADGVClearFilter.ToString(), "Clear Filter" },
@@ -965,14 +965,22 @@ namespace Zuby.ADGV
                 System.Drawing.Rectangle rect = GetCellDisplayRectangle(column.Index, -1, true);
 
                 if (_filteredColumns.Contains(column.Name))
+                {
                     filterMenu.Show(this, (this.RightToLeft == RightToLeft.Yes ? rect.Right : rect.Left), rect.Bottom, false);
+                }
                 else
                 {
                     _filteredColumns.Add(column.Name);
                     if (_filterOrderList.Count() > 0 && _filterOrderList.Last() == column.Name)
+                    {
                         filterMenu.Show(this, (this.RightToLeft == RightToLeft.Yes ? rect.Right : rect.Left), rect.Bottom, true);
+                    }
                     else
-                        filterMenu.Show(this, (this.RightToLeft == RightToLeft.Yes ? rect.Right : rect.Left), rect.Bottom, MenuStrip.GetValuesForFilter(this, column.Name));
+                    {
+                        IEnumerable<DataGridViewCell> valuesForFilter = from DataGridViewRow nulls in this.Rows
+                                                                        select nulls.Cells[column.Name];
+                        filterMenu.Show(this, (this.RightToLeft == RightToLeft.Yes ? rect.Right : rect.Left), rect.Bottom, valuesForFilter);
+                    }
                 }
             }
         }
