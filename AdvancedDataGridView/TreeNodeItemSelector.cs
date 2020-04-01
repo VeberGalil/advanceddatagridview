@@ -103,14 +103,8 @@ namespace Zuby.ADGV
         /// </summary>
         new public bool Checked
         {
-            get
-            {
-                return _checkState == CheckState.Checked;
-            }
-            set
-            {
-                CheckState = (value ? CheckState.Checked : CheckState.Unchecked);
-            }
+            get => (CheckState == CheckState.Checked);
+            set => CheckState = (value ? CheckState.Checked : CheckState.Unchecked);
         }
 
         /// <summary>
@@ -118,10 +112,7 @@ namespace Zuby.ADGV
         /// </summary>
         public CheckState CheckState
         {
-            get
-            {
-                return _checkState;
-            }
+            get => _checkState;
             set
             {
                 _checkState = value;
