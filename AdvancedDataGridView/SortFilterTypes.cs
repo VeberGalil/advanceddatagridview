@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#region License
+// Advanced DataGridView
+//
+// Copyright (c), 2020 Vladimir Bershadsky <vladimir@galileng.com>
+// Copyright (c), 2014 Davide Gironi <davide.gironi@gmail.com>
+// Original work Copyright (c), 2013 Zuby <zuby@me.com>
+//
+// Please refer to LICENSE file for licensing information.
+#endregion
 
 namespace Zuby.ADGV
 {
-    #region public enum
-
     /// <summary>
     /// Filter type
     /// </summary>
@@ -29,6 +31,4 @@ namespace Zuby.ADGV
         Asc = 1,
         Desc = 2
     }
-
-    #endregion
 }

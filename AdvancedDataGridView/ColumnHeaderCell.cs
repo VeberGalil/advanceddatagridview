@@ -1,8 +1,9 @@
 ﻿#region License
 // Advanced DataGridView
 //
-// Original work Copyright (c), 2013 Zuby <zuby@me.com> 
-// Modified work Copyright (c), 2014 Davide Gironi <davide.gironi@gmail.com>
+// Copyright (c), 2020 Vladimir Bershadsky <vladimir@galileng.com>
+// Copyright (c), 2014 Davide Gironi <davide.gironi@gmail.com>
+// Original work Copyright (c), 2013 Zuby <zuby@me.com>
 //
 // Please refer to LICENSE file for licensing information.
 #endregion
@@ -90,7 +91,8 @@ namespace Zuby.ADGV
             }
             else
             {
-                MenuStrip = new MenuStrip(oldCell.OwningColumn.ValueType);
+                //MenuStrip = new MenuStrip(oldCell.OwningColumn.ValueType);
+                MenuStrip = SortFilterMenuFactory.CreateDefaultMenu(oldCell.OwningColumn.ValueType);
                 MenuStrip.FilterChanged += new EventHandler(MenuStrip_FilterChanged);
                 MenuStrip.SortChanged += new EventHandler(MenuStrip_SortChanged);
             }

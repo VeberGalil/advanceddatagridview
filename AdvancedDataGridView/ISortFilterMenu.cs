@@ -2,7 +2,7 @@
 // Advanced DataGridView
 //
 // Copyright (c), 2020 Vladimir Bershadsky <vladimir@galileng.com>
-// Based on Copyright (c), 2014 Davide Gironi <davide.gironi@gmail.com>
+// Copyright (c), 2014 Davide Gironi <davide.gironi@gmail.com>
 // Original work Copyright (c), 2013 Zuby <zuby@me.com>
 //
 // Please refer to LICENSE file for licensing information.
@@ -14,6 +14,16 @@ using System.Windows.Forms;
 
 namespace Zuby.ADGV
 {
+    internal class SortFilterMenuFactory
+    {
+        public static ISortFilterMenu CreateDefaultMenu(Type columnDataType)
+        {
+            return new MenuStrip(columnDataType);
+            // when ready, replace with:
+            //return new SortFilterMenuStrip(columnDataType);
+        }
+    }
+
     internal interface ISortFilterMenu
     {
         FilterType ActiveFilterType { get; }
