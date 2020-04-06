@@ -33,6 +33,10 @@ namespace Zuby.ADGV
         private TreeNodeItemSelector[] _initialNodes = new TreeNodeItemSelector[] { };
         private TreeNodeItemSelector[] _restoreNodes = new TreeNodeItemSelector[] { };
         private bool _checkTextFilterSetByText = false;
+        /// <summary>
+        /// Get the DataType for the MenuStrip Filter
+        /// </summary>
+        private readonly Type _dataType = null;
         #endregion
 
         #region costructors
@@ -55,10 +59,10 @@ namespace Zuby.ADGV
             this.button_undofilter.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVButtonUndofilter.ToString()];
 
             //set type
-            DataType = dataType;
+            _dataType = dataType;
 
             //set components values
-            if (DataType == typeof(DateTime) || DataType == typeof(TimeSpan))
+            if (_dataType == typeof(DateTime) || _dataType == typeof(TimeSpan))
             {
                 customFilterLastFiltersListMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVCustomFilter.ToString()];
                 sortAscMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVSortDateTimeAsc.ToString()];
@@ -66,7 +70,7 @@ namespace Zuby.ADGV
                 sortAscMenuItem.Image = Properties.Resources.MenuStrip_OrderASCnum;
                 sortDescMenuItem.Image = Properties.Resources.MenuStrip_OrderDESCnum;
             }
-            else if (DataType == typeof(bool))
+            else if (_dataType == typeof(bool))
             {
                 customFilterLastFiltersListMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVCustomFilter.ToString()];
                 sortAscMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVSortBoolAsc.ToString()];
@@ -74,10 +78,10 @@ namespace Zuby.ADGV
                 sortAscMenuItem.Image = Properties.Resources.MenuStrip_OrderASCbool;
                 sortDescMenuItem.Image = Properties.Resources.MenuStrip_OrderDESCbool;
             }
-            else if (DataType == typeof(Int32) || DataType == typeof(Int64) || DataType == typeof(Int16) ||
-                DataType == typeof(UInt32) || DataType == typeof(UInt64) || DataType == typeof(UInt16) ||
-                DataType == typeof(Byte) || DataType == typeof(SByte) || DataType == typeof(Decimal) ||
-                DataType == typeof(Single) || DataType == typeof(Double))
+            else if (_dataType == typeof(Int32) || _dataType == typeof(Int64) || _dataType == typeof(Int16) ||
+                _dataType == typeof(UInt32) || _dataType == typeof(UInt64) || _dataType == typeof(UInt16) ||
+                _dataType == typeof(Byte) || _dataType == typeof(SByte) || _dataType == typeof(Decimal) ||
+                _dataType == typeof(Single) || _dataType == typeof(Double))
             {
                 customFilterLastFiltersListMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVCustomFilter.ToString()];
                 sortAscMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVSortNumAsc.ToString()];
@@ -95,7 +99,7 @@ namespace Zuby.ADGV
             }
 
             //set check filter textbox
-            if (DataType == typeof(DateTime) || DataType == typeof(TimeSpan) || DataType == typeof(bool))
+            if (_dataType == typeof(DateTime) || _dataType == typeof(TimeSpan) || _dataType == typeof(bool))
                 checkTextFilter.Enabled = false;
 
             //set default NOT IN logic
@@ -108,7 +112,7 @@ namespace Zuby.ADGV
             IsFilterDateAndTimeEnabled = true;
 
             //set default compoents
-            customFilterLastFiltersListMenuItem.Enabled = DataType != typeof(bool);
+            customFilterLastFiltersListMenuItem.Enabled = _dataType != typeof(bool);
             customFilterLastFiltersListMenuItem.Checked = ActiveFilterType == FilterType.Custom;
             MinimumSize = new Size(PreferredSize.Width, PreferredSize.Height);
             //resize
@@ -202,11 +206,6 @@ namespace Zuby.ADGV
         /// Get the current MenuStripFilterType type
         /// </summary>
         public FilterType ActiveFilterType { get; private set; } = FilterType.None;
-
-        /// <summary>
-        /// Get the DataType for the MenuStrip Filter
-        /// </summary>
-        public Type DataType { get; private set; }
 
         /// <summary>
         /// Get or Set the Filter Sort enabled
@@ -307,7 +306,7 @@ namespace Zuby.ADGV
             this.checkList.Enabled = enabled;
             this.checkTextFilter.Enabled = enabled;
             if (enabled)
-                customFilterLastFiltersListMenuItem.Enabled = DataType != typeof(bool);
+                customFilterLastFiltersListMenuItem.Enabled = _dataType != typeof(bool);
             else
                 customFilterLastFiltersListMenuItem.Enabled = false;
         }
@@ -614,7 +613,7 @@ namespace Zuby.ADGV
                     if (checkList.Nodes.Count > 2 || selectAllNode == null)
                     {
                         string filter = BuildNodesFilterString(
-                            (IsFilterNOTINLogicEnabled && (DataType != typeof(DateTime) && DataType != typeof(TimeSpan) && DataType != typeof(bool)) ?
+                            (IsFilterNOTINLogicEnabled && (_dataType != typeof(DateTime) && _dataType != typeof(TimeSpan) && _dataType != typeof(bool)) ?
                                 checkList.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(
                                     n => n.NodeType != TreeNodeItemSelector.CustomNodeType.SelectAll
                                         && n.NodeType != TreeNodeItemSelector.CustomNodeType.SelectEmpty
@@ -632,28 +631,28 @@ namespace Zuby.ADGV
                             if (FilterString.Length > 0)
                                 FilterString += " OR ";
 
-                            if (DataType == typeof(DateTime) || DataType == typeof(TimeSpan))
+                            if (_dataType == typeof(DateTime) || _dataType == typeof(TimeSpan))
                                 FilterString += filter;
-                            else if (DataType == typeof(bool))
+                            else if (_dataType == typeof(bool))
                                 FilterString += "[{0}] =" + filter;
-                            else if (DataType == typeof(Int32) || DataType == typeof(Int64) || DataType == typeof(Int16) ||
-                                        DataType == typeof(UInt32) || DataType == typeof(UInt64) || DataType == typeof(UInt16) ||
-                                        DataType == typeof(Decimal) ||
-                                        DataType == typeof(Byte) || DataType == typeof(SByte) || DataType == typeof(String))
+                            else if (_dataType == typeof(Int32) || _dataType == typeof(Int64) || _dataType == typeof(Int16) ||
+                                        _dataType == typeof(UInt32) || _dataType == typeof(UInt64) || _dataType == typeof(UInt16) ||
+                                        _dataType == typeof(Decimal) ||
+                                        _dataType == typeof(Byte) || _dataType == typeof(SByte) || _dataType == typeof(String))
                             {
                                 if (IsFilterNOTINLogicEnabled)
                                     FilterString += "[{0}] NOT IN (" + filter + ")";
                                 else
                                     FilterString += "[{0}] IN (" + filter + ")";
                             }
-                            else if (DataType == typeof(Double))
+                            else if (_dataType == typeof(Double))
                             {
                                 if (IsFilterNOTINLogicEnabled)
                                     FilterString += "Convert([{0}],System.String) NOT IN (" + filter + ")";
                                 else
                                     FilterString += "Convert([{0}],System.String) IN (" + filter + ")";
                             }
-                            else if (DataType == typeof(Bitmap))
+                            else if (_dataType == typeof(Bitmap))
                             { }
                             else
                             {
@@ -681,11 +680,11 @@ namespace Zuby.ADGV
         private string BuildNodesFilterString(IEnumerable<TreeNodeItemSelector> nodes)
         {
             StringBuilder sb = new StringBuilder("");
-            string appx = (DataType == typeof(DateTime) || DataType == typeof(TimeSpan)) ? " OR " : ", ";
+            string appx = (_dataType == typeof(DateTime) || _dataType == typeof(TimeSpan)) ? " OR " : ", ";
 
             if (nodes != null && nodes.Count() > 0)
             {
-                if (DataType == typeof(DateTime))
+                if (_dataType == typeof(DateTime))
                 {
                     foreach (TreeNodeItemSelector n in nodes)
                     {
@@ -702,7 +701,7 @@ namespace Zuby.ADGV
                         }
                     }
                 }
-                else if (DataType == typeof(TimeSpan))
+                else if (_dataType == typeof(TimeSpan))
                 {
                     foreach (TreeNodeItemSelector n in nodes)
                     {
@@ -719,7 +718,7 @@ namespace Zuby.ADGV
                         }
                     }
                 }
-                else if (DataType == typeof(bool))
+                else if (_dataType == typeof(bool))
                 {
                     foreach (TreeNodeItemSelector n in nodes)
                     {
@@ -727,19 +726,19 @@ namespace Zuby.ADGV
                         break;
                     }
                 }
-                else if (DataType == typeof(Int32) || DataType == typeof(Int64) || DataType == typeof(Int16) ||
-                    DataType == typeof(UInt32) || DataType == typeof(UInt64) || DataType == typeof(UInt16) ||
-                    DataType == typeof(Byte) || DataType == typeof(SByte))
+                else if (_dataType == typeof(Int32) || _dataType == typeof(Int64) || _dataType == typeof(Int16) ||
+                    _dataType == typeof(UInt32) || _dataType == typeof(UInt64) || _dataType == typeof(UInt16) ||
+                    _dataType == typeof(Byte) || _dataType == typeof(SByte))
                 {
                     foreach (TreeNodeItemSelector n in nodes)
                         sb.Append(n.Value.ToString() + appx);
                 }
-                else if (DataType == typeof(Single) || DataType == typeof(Double) || DataType == typeof(Decimal))
+                else if (_dataType == typeof(Single) || _dataType == typeof(Double) || _dataType == typeof(Decimal))
                 {
                     foreach (TreeNodeItemSelector n in nodes)
                         sb.Append(n.Value.ToString().Replace(",", ".") + appx);
                 }
-                else if (DataType == typeof(Bitmap))
+                else if (_dataType == typeof(Bitmap))
                 { }
                 else
                 {
@@ -748,7 +747,7 @@ namespace Zuby.ADGV
                 }
             }
 
-            if (sb.Length > appx.Length && DataType != typeof(bool))
+            if (sb.Length > appx.Length && _dataType != typeof(bool))
                 sb.Remove(sb.Length - appx.Length, appx.Length);
 
             return sb.ToString();
@@ -796,7 +795,7 @@ namespace Zuby.ADGV
                     }
 
                     //add datetime nodes
-                    if (DataType == typeof(DateTime))
+                    if (_dataType == typeof(DateTime))
                     {
                         var years =
                             from year in nonulls
@@ -874,7 +873,7 @@ namespace Zuby.ADGV
                     }
 
                     //add timespan nodes
-                    else if (DataType == typeof(TimeSpan))
+                    else if (_dataType == typeof(TimeSpan))
                     {
                         var days =
                             from day in nonulls
@@ -923,7 +922,7 @@ namespace Zuby.ADGV
                     }
 
                     //add boolean nodes
-                    else if (DataType == typeof(bool))
+                    else if (_dataType == typeof(bool))
                     {
                         var values = nonulls.Where<DataGridViewCell>(c => (bool)c.Value == true);
 
@@ -941,7 +940,7 @@ namespace Zuby.ADGV
                     }
 
                     //ignore image nodes
-                    else if (DataType == typeof(Bitmap))
+                    else if (_dataType == typeof(Bitmap))
                     { }
 
                     //add string nodes
@@ -1357,11 +1356,11 @@ namespace Zuby.ADGV
         private void CustomFilterMenuItem_Click(object sender, EventArgs e)
         {
             //ignore image nodes
-            if (DataType == typeof(Bitmap))
+            if (_dataType == typeof(Bitmap))
                 return;
 
             //open a new Custom filter window
-            FormCustomFilter flt = new FormCustomFilter(DataType, IsFilterDateAndTimeEnabled)
+            FormCustomFilter flt = new FormCustomFilter(_dataType, IsFilterDateAndTimeEnabled)
             {
                 RightToLeft = this.RightToLeft,
                 RightToLeftLayout = (this.RightToLeft == RightToLeft.Yes)
@@ -1565,7 +1564,7 @@ namespace Zuby.ADGV
         private void SortAscMenuItem_Click(object sender, EventArgs e)
         {
             //ignore image nodes
-            if (DataType == typeof(Bitmap))
+            if (_dataType == typeof(Bitmap))
                 return;
 
             sortAscMenuItem.Checked = true;
@@ -1600,7 +1599,7 @@ namespace Zuby.ADGV
         private void SortDescMenuItem_Click(object sender, EventArgs e)
         {
             //ignore image nodes
-            if (DataType == typeof(Bitmap))
+            if (_dataType == typeof(Bitmap))
                 return;
 
             sortAscMenuItem.Checked = false;
@@ -1834,6 +1833,8 @@ namespace Zuby.ADGV
         }
 
         #endregion
+
+
 
     }
 }

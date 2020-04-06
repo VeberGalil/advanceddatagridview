@@ -48,7 +48,7 @@ namespace Zuby.ADGV
             this.button_ok.TabIndex = 0;
             this.button_ok.Text = "OK";
             this.button_ok.UseVisualStyleBackColor = true;
-            this.button_ok.Click += new System.EventHandler(this.button_ok_Click);
+            this.button_ok.Click += new System.EventHandler(this.Button_ok_Click);
             // 
             // button_cancel
             // 
@@ -59,7 +59,7 @@ namespace Zuby.ADGV
             this.button_cancel.TabIndex = 1;
             this.button_cancel.Text = "Cancel";
             this.button_cancel.UseVisualStyleBackColor = true;
-            this.button_cancel.Click += new System.EventHandler(this.button_cancel_Click);
+            this.button_cancel.Click += new System.EventHandler(this.Button_cancel_Click);
             // 
             // label_columnName
             // 
@@ -78,7 +78,7 @@ namespace Zuby.ADGV
             this.comboBox_filterType.Name = "comboBox_filterType";
             this.comboBox_filterType.Size = new System.Drawing.Size(189, 21);
             this.comboBox_filterType.TabIndex = 3;
-            this.comboBox_filterType.SelectedIndexChanged += new System.EventHandler(this.comboBox_filterType_SelectedIndexChanged);
+            this.comboBox_filterType.SelectedIndexChanged += new System.EventHandler(this.ComboBox_filterType_SelectedIndexChanged);
             // 
             // label_and
             // 

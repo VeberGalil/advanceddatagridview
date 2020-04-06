@@ -30,11 +30,11 @@ namespace Zuby.ADGV
             Integer
         }
 
-        private FilterType _filterType = FilterType.Unknown;
-        private Control _valControl1 = null;
-        private Control _valControl2 = null;
+        private readonly FilterType _filterType = FilterType.Unknown;
+        private readonly Control _valControl1 = null;
+        private readonly Control _valControl2 = null;
 
-        private bool _filterDateAndTimeEnabled = true;
+        private readonly bool _filterDateAndTimeEnabled = true;
 
         private string _filterString = null;
         private string _filterStringDescription = null;
@@ -123,8 +123,8 @@ namespace Zuby.ADGV
                 case FilterType.Float:
                     _valControl1 = new TextBox();
                     _valControl2 = new TextBox();
-                    _valControl1.TextChanged += valControl_TextChanged;
-                    _valControl2.TextChanged += valControl_TextChanged;
+                    _valControl1.TextChanged += ValControl_TextChanged;
+                    _valControl2.TextChanged += ValControl_TextChanged;
                     comboBox_filterType.Items.AddRange(new string[] {
                         AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVEquals.ToString()],
                         AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotEqual.ToString()],
@@ -161,15 +161,15 @@ namespace Zuby.ADGV
             _valControl1.Size = new System.Drawing.Size(166, 20);
             _valControl1.TabIndex = 4;
             _valControl1.Visible = true;
-            _valControl1.KeyDown += valControl_KeyDown;
+            _valControl1.KeyDown += ValControl_KeyDown;
 
             _valControl2.Name = "valControl2";
             _valControl2.Location = new System.Drawing.Point(30, 108);
             _valControl2.Size = new System.Drawing.Size(166, 20);
             _valControl2.TabIndex = 5;
             _valControl2.Visible = false;
-            _valControl2.VisibleChanged += new EventHandler(valControl2_VisibleChanged);
-            _valControl2.KeyDown += valControl_KeyDown;
+            _valControl2.VisibleChanged += new EventHandler(ValControl2_VisibleChanged);
+            _valControl2.KeyDown += ValControl_KeyDown;
 
             Controls.Add(_valControl1);
             Controls.Add(_valControl2);
@@ -231,14 +231,13 @@ namespace Zuby.ADGV
         /// <returns></returns>
         private string BuildCustomFilter(FilterType filterType, bool filterDateAndTimeEnabled, string filterTypeConditionText, Control control1, Control control2)
         {
-            string filterString = "";
 
             string column = "[{0}] ";
 
             if (filterType == FilterType.Unknown)
                 column = "Convert([{0}], 'System.String') ";
 
-            filterString = column;
+            string filterString = column;
 
             switch (filterType)
             {
@@ -369,7 +368,7 @@ namespace Zuby.ADGV
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button_cancel_Click(object sender, EventArgs e)
+        private void Button_cancel_Click(object sender, EventArgs e)
         {
             _filterStringDescription = null;
             _filterString = null;
@@ -381,7 +380,7 @@ namespace Zuby.ADGV
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button_ok_Click(object sender, EventArgs e)
+        private void Button_ok_Click(object sender, EventArgs e)
         {
             if ((_valControl1.Visible && _valControl1.Tag != null && ((bool)_valControl1.Tag)) ||
                 (_valControl2.Visible && _valControl2.Tag != null && ((bool)_valControl2.Tag)))
@@ -420,7 +419,7 @@ namespace Zuby.ADGV
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void comboBox_filterType_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBox_filterType_SelectedIndexChanged(object sender, EventArgs e)
         {
             _valControl2.Visible = comboBox_filterType.Text == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVBetween.ToString()];
             button_ok.Enabled = !(_valControl1.Visible && _valControl1.Tag != null && ((bool)_valControl1.Tag)) ||
@@ -432,7 +431,7 @@ namespace Zuby.ADGV
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void valControl2_VisibleChanged(object sender, EventArgs e)
+        private void ValControl2_VisibleChanged(object sender, EventArgs e)
         {
             label_and.Visible = _valControl2.Visible;
         }
@@ -442,19 +441,16 @@ namespace Zuby.ADGV
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void valControl_TextChanged(object sender, EventArgs e)
+        private void ValControl_TextChanged(object sender, EventArgs e)
         {
             bool hasErrors = false;
             switch (_filterType)
             {
                 case FilterType.Integer:
-                    Int64 val;
-                    hasErrors = !(Int64.TryParse((sender as TextBox).Text, out val));
+                    hasErrors = !Int64.TryParse((sender as TextBox).Text, out _);   // Don't need parsed value, so use discard
                     break;
-
                 case FilterType.Float:
-                    Double val1;
-                    hasErrors = !(Double.TryParse((sender as TextBox).Text, out val1));
+                    hasErrors = !Double.TryParse((sender as TextBox).Text, out _);  // Don't need parsed value, so use discard
                     break;
             }
 
@@ -474,7 +470,7 @@ namespace Zuby.ADGV
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void valControl_KeyDown(object sender, KeyEventArgs e)
+        private void ValControl_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyData == Keys.Enter)
             {
@@ -483,11 +479,11 @@ namespace Zuby.ADGV
                     if (_valControl2.Visible)
                         _valControl2.Focus();
                     else
-                        button_ok_Click(button_ok, new EventArgs());
+                        Button_ok_Click(button_ok, new EventArgs());
                 }
                 else
                 {
-                    button_ok_Click(button_ok, new EventArgs());
+                    Button_ok_Click(button_ok, new EventArgs());
                 }
 
                 e.SuppressKeyPress = false;

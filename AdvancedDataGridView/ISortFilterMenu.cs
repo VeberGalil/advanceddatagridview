@@ -1,4 +1,14 @@
-﻿using System;
+﻿#region License
+// Advanced DataGridView
+//
+// Copyright (c), 2020 Vladimir Bershadsky <vladimir@galileng.com>
+// Based on Copyright (c), 2014 Davide Gironi <davide.gironi@gmail.com>
+// Original work Copyright (c), 2013 Zuby <zuby@me.com>
+//
+// Please refer to LICENSE file for licensing information.
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -8,7 +18,6 @@ namespace Zuby.ADGV
     {
         FilterType ActiveFilterType { get; }
         SortType ActiveSortType { get; }
-        Type DataType { get; }
         bool DoesTextFilterRemoveNodesOnSearch { get; set; }
         string FilterString { get; }
         bool IsFilterChecklistEnabled { get; set; }
@@ -18,6 +27,7 @@ namespace Zuby.ADGV
         bool IsFilterNOTINLogicEnabled { get; set; }
         bool IsSortEnabled { get; set; }
         string SortString { get; }
+        RightToLeft RightToLeft { get; set; }
 
         event EventHandler FilterChanged;
         event EventHandler SortChanged;
