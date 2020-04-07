@@ -17,7 +17,7 @@ namespace Zuby.ADGV
     internal class SortFilterMenuStripResizeEventArgs : EventArgs
     {
         public Size NewMenuSize { get; private set; }
-        public int WeightChange { get; private set; }
+        public int WidthChange { get; private set; }
         public int HeightChange { get; private set; }
 
         public SortFilterMenuStripResizeEventArgs(Size size)
@@ -28,7 +28,7 @@ namespace Zuby.ADGV
         public SortFilterMenuStripResizeEventArgs(Size size, int dX, int dY)
         {
             this.NewMenuSize = size;
-            this.WeightChange = dX;
+            this.WidthChange = dX;
             this.HeightChange = dY;
         }
     }
@@ -87,7 +87,7 @@ namespace Zuby.ADGV
         {
             base.OnOwnerChanged(e);
             // Change icon when owning SortFilterMenuStrip RTL changes
-            ((SortFilterMenuStrip)Owner).RightToLeftChanged += (s, ea) =>
+            ((ContextMenuStrip)Owner).RightToLeftChanged += (s, ea) =>
             {
                 this.RightToLeft = Owner.RightToLeft;
                 if (Owner.RightToLeft == RightToLeft.Yes)
@@ -105,6 +105,7 @@ namespace Zuby.ADGV
 
            Margin = new Padding(Owner.Width - 45, 0, 0, 0);
         }
+
         #endregion
 
         #region // Resize mechanism

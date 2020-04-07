@@ -26,7 +26,7 @@ namespace Zuby.ADGV
         /// Public constructor
         /// </summary>
         /// <param name="dataType">Type of data in ADGV column that uses this menu</param>
-        public SortFilterMenuStrip(Type dataType): base()
+        public SortFilterMenuStrip(Type dataType) : base()
         {
             _dataType = dataType;
             // Initialize UI
@@ -43,7 +43,6 @@ namespace Zuby.ADGV
                 sortDescMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVSortDateTimeDesc.ToString()];
                 sortAscMenuItem.Image = Properties.Resources.MenuStrip_OrderASCnum;
                 sortDescMenuItem.Image = Properties.Resources.MenuStrip_OrderDESCnum;
-                customFilterLastFiltersListMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVCustomFilter.ToString()];
             }
             else if (_dataType == typeof(bool))
             {
@@ -51,7 +50,6 @@ namespace Zuby.ADGV
                 sortDescMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVSortBoolDesc.ToString()];
                 sortAscMenuItem.Image = Properties.Resources.MenuStrip_OrderASCbool;
                 sortDescMenuItem.Image = Properties.Resources.MenuStrip_OrderDESCbool;
-                customFilterLastFiltersListMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVCustomFilter.ToString()];
             }
             else if (_dataType == typeof(Int32) || _dataType == typeof(Int64) || _dataType == typeof(Int16) ||
                 _dataType == typeof(UInt32) || _dataType == typeof(UInt64) || _dataType == typeof(UInt16) ||
@@ -62,7 +60,6 @@ namespace Zuby.ADGV
                 sortDescMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVSortNumDesc.ToString()];
                 sortAscMenuItem.Image = Properties.Resources.MenuStrip_OrderASCnum;
                 sortDescMenuItem.Image = Properties.Resources.MenuStrip_OrderDESCnum;
-                customFilterLastFiltersListMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVCustomFilter.ToString()];
             }
             else
             {
@@ -70,22 +67,14 @@ namespace Zuby.ADGV
                 sortDescMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVSortTextDesc.ToString()];
                 sortAscMenuItem.Image = Properties.Resources.MenuStrip_OrderASCtxt;
                 sortDescMenuItem.Image = Properties.Resources.MenuStrip_OrderDESCtxt;
-                customFilterLastFiltersListMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVCustomFilter.ToString()];
             }
             // Last custom filters
+            customFilterLastFiltersListMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVCustomFilter.ToString()];
             customFilterLastFiltersListMenuItem.Enabled = _dataType != typeof(bool);
             customFilterLastFiltersListMenuItem.Checked = ActiveFilterType == FilterType.Custom;
             // Enable/disable context search in filter list
             if (_dataType == typeof(DateTime) || _dataType == typeof(TimeSpan) || _dataType == typeof(bool))
                 filterSelectionListPanel.FilterContextSearchEnabled = false;
-            // Set default NOT IN logic
-            IsFilterNOTINLogicEnabled = false;
-            // Set enablers to default values
-            IsSortEnabled = true;
-            IsFilterEnabled = true;
-            IsFilterChecklistEnabled = true;
-            IsFilterDateAndTimeEnabled = true;
-
         }
 
         private ToolStripMenuItem sortAscMenuItem;
@@ -133,6 +122,7 @@ namespace Zuby.ADGV
             this.BackColor = SystemColors.ControlLightLight;
             this.Padding = new Padding(0);
             this.Margin = new Padding(0);
+            this.MinimumSize = new Size(200, 330);
             this.Size = new Size(287, 370);
             this.Items.AddRange(new ToolStripItem[] {
                 sortAscMenuItem,
@@ -275,6 +265,7 @@ namespace Zuby.ADGV
             filterSelectionListPanel.Size = new Size(Width - 1, 200);
             filterSelectionListPanel.FilterSelected += FilterSelectionListPanel_FilterSelected;
             filterSelectionListPanel.FilterSelectionCancelled += FilterSelectionListPanel_FilterSelectionCancelled;
+            filterSelectionListPanel.MouseLeave += FilterSelectionListPanel_MouseLeave;
             //
             // sortFilterMenuStripResizer
             //
@@ -288,30 +279,115 @@ namespace Zuby.ADGV
             this.PerformLayout();
         }
 
+        private void FilterSelectionListPanel_MouseLeave(object sender, EventArgs e)
+        {
+            Focus();
+        }
 
         #endregion
 
         #region // Private/protected data fields
         // Type of data in ADGV column that uses this menu
         private readonly Type _dataType;
+        // Selected sort order for hosting column in form of DataSet ORDER BY string 
+        private string _sortString = string.Empty;
+        // Accumulated filter for hosting column in form of DataSet WHERE string
+        private string _filterString = string.Empty;
 
 
         #endregion
 
         #region // Public properties
-        public FilterType ActiveFilterType => throw new NotImplementedException();
-        public SortType ActiveSortType => throw new NotImplementedException();
-        public Type DataType => throw new NotImplementedException();
-        public string FilterString => throw new NotImplementedException();
-        public string SortString => throw new NotImplementedException();
-        public bool IsFilterChecklistEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsFilterCustomEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsFilterDateAndTimeEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsFilterEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsFilterNOTINLogicEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsSortEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool DoesTextFilterRemoveNodesOnSearch { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override RightToLeft RightToLeft { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        /// <summary>
+        /// Get current SortType of SortFilterMenuStrip
+        /// </summary>
+        public SortType ActiveSortType { get; private set; } = SortType.None;
+
+        /// <summary>
+        /// Get selected sort order for hosting column in form of ORDER BY string 
+        /// </summary>
+        public string SortString
+        {
+            get => _sortString;
+            private set
+            {
+                _sortString = String.IsNullOrWhiteSpace(value) ? string.Empty : value;
+                cancelSortMenuItem.Enabled = _sortString.Length > 0;
+            }
+        }
+
+        /// <summary>
+        /// Are sorting capabilities enabled in menu
+        /// </summary>
+        public bool IsSortEnabled { get; set; } = true;
+
+        /// <summary>
+        /// Get current FilterType of SortFilterMenuStrip
+        /// </summary>
+        public FilterType ActiveFilterType { get; private set; } = FilterType.None;
+
+        /// <summary>
+        /// Get accumulated filter for hosting column in form of WHERE string
+        /// </summary>
+        public string FilterString
+        {
+            get => _filterString;
+            private set
+            {
+                _filterString = String.IsNullOrWhiteSpace(value) ? string.Empty : value;
+                cancelFilterMenuItem.Enabled = _filterString.Length > 0;
+            }
+        }
+
+        /// <summary>
+        /// Are filter capabilities enabled in menu
+        /// </summary>
+        public bool IsFilterEnabled { get; set; } = true;
+
+        /// <summary>
+        /// Is filter value checklist enabled
+        /// </summary>
+        public bool IsFilterChecklistEnabled 
+        {
+            get => filterSelectionListPanel.FilterChecklistEnabled;
+            set => filterSelectionListPanel.FilterChecklistEnabled = value;
+        } 
+
+        /// <summary>
+        /// Are custom filers enabled in menu
+        /// </summary>
+        public bool IsFilterCustomEnabled { get; set; } = false;
+
+        /// <summary>
+        /// Will date/time values appear in checklist as year-month-day-hour-minute-second hierarchy
+        /// </summary>
+        public bool IsFilterDateAndTimeEnabled 
+        {
+            get => filterSelectionListPanel.FilterDateAndTimeEnabled;
+            set => filterSelectionListPanel.FilterDateAndTimeEnabled = value;
+        } 
+
+        /// <summary>
+        /// Is filter selection exclusive (i.e., selected items are filtered out, like DataSet WHERE NOT IN)
+        /// </summary>
+        public bool IsFilterNOTINLogicEnabled { get; set; } = false;
+
+        /// <summary>
+        /// If true, context search in filter hides unmatched items
+        /// </summary>
+        public bool DoesTextFilterRemoveNodesOnSearch 
+        {
+            get => filterSelectionListPanel.DoesTextFilterRemoveNodesOnSearch;
+            set => filterSelectionListPanel.DoesTextFilterRemoveNodesOnSearch = value;
+        }
+
+        //TODO: Do we need this override at all???
+        public override RightToLeft RightToLeft 
+        {
+            get => base.RightToLeft;
+            set => base.RightToLeft = value;
+        }
+
         #endregion
 
         #region // Public events
@@ -320,162 +396,420 @@ namespace Zuby.ADGV
         #endregion
 
         #region // Public Filter and Sort enable/disable methods
-        
-        // Enable or disable all Filter capabilities
-        public void SetFilterEnabled(bool enabled)
-        {
-            throw new NotImplementedException();
-        }
 
-        // Enable or disable Sorting capabilities
+        /// <summary>
+        /// Enabled or disable Sorting capabilities
+        /// </summary>
+        /// <param name="enabled"></param>
         public void SetSortEnabled(bool enabled)
         {
-            throw new NotImplementedException();
+            if (!IsSortEnabled)
+                enabled = false;
+            sortAscMenuItem.Enabled = enabled;
+            sortDescMenuItem.Enabled = enabled;
+            cancelSortMenuItem.Enabled = enabled;
         }
 
-        // Enable or disable usage of CheckList Filter
+        /// <summary>
+        /// Enable or disable Filter capabilities
+        /// </summary>
+        /// <param name="enabled"></param>
+        public void SetFilterEnabled(bool enabled)
+        {
+            if (!IsFilterEnabled)
+                enabled = false;
+
+            this.cancelFilterMenuItem.Enabled = enabled;
+            if (enabled)
+                customFilterLastFiltersListMenuItem.Enabled = _dataType != typeof(bool);
+            else
+                customFilterLastFiltersListMenuItem.Enabled = false;
+            filterSelectionListPanel.SetFilterEnabled(enabled);
+        }
+
+        /// <summary>
+        /// Enable or disable Filter value checkList 
+        /// </summary>
+        /// <param name="enabled"></param>
         public void SetFilterChecklistEnabled(bool enabled)
         {
-            throw new NotImplementedException();
+            if (!IsFilterEnabled)
+                enabled = false;
+            // enable/disable checklist controls
+            filterSelectionListPanel.SetFilterChecklistEnabled(enabled);
         }
 
-        // Enable or disable Custom Filter capabilities
+        /// <summary>
+        /// Enable or disable Filter custom capabilities
+        /// </summary>
+        /// <param name="enabled"></param>
         public void SetFilterCustomEnabled(bool enabled)
         {
-            throw new NotImplementedException();
+            if (!IsFilterEnabled)
+                enabled = false;
+
+            IsFilterCustomEnabled = enabled;
+            customFilterMenuItem.Enabled = enabled;
+
+            if (!enabled)
+            {
+                UnCheckCustomFilters();
+            }
         }
 
         #endregion
 
         #region // Set preloaded mode
-
+        /// <summary>
+        /// Enable or disable preloaded filter mode
+        /// </summary>
+        /// <param name="enabled"></param>
         public void SetLoadedMode(bool enabled)
         {
-            throw new NotImplementedException();
+            customFilterMenuItem.Enabled = !enabled;
+            cancelFilterMenuItem.Enabled = enabled;
+            if (enabled)
+            {
+                ActiveFilterType = FilterType.Loaded;
+                //
+                _sortString = string.Empty;
+                _filterString = string.Empty;
+                // Clear custom filters
+                customFilterLastFiltersListMenuItem.Checked = false;
+                for (int i = 2; i < customFilterLastFiltersListMenuItem.DropDownItems.Count - 1; i++)
+                {
+                    (customFilterLastFiltersListMenuItem.DropDownItems[i] as ToolStripMenuItem).Checked = false;
+                }
+                //
+                filterSelectionListPanel.SetLoadedMode();
+                //
+                SetSortEnabled(false);
+                SetFilterEnabled(false);
+            }
+            else
+            {
+                ActiveFilterType = FilterType.None;
+                //
+                SetSortEnabled(true);
+                SetFilterEnabled(true);
+            }
         }
         #endregion
 
         #region // Show menu
 
-        public void Show(Control control, int x, int y, bool _restoreFilter)
+        /// <summary>
+        /// Show menu with or without restoring previous filter selection
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="restoreFilter"></param>
+        public void Show(Control control, int x, int y, bool restoreFilter)
         {
-            throw new NotImplementedException();
+            filterSelectionListPanel.RestoreFilter(restoreFilter);
+            base.Show(control, x, y);
         }
 
+        /// <summary>
+        /// Show the menu, populating filter checklist with column values
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="vals"></param>
         public void Show(Control control, int x, int y, IEnumerable<DataGridViewCell> vals)
         {
-            throw new NotImplementedException();
+            filterSelectionListPanel.LoadChecklist(vals, _dataType, this.ActiveFilterType);
+            base.Show(control, x, y);
         }
 
         #endregion
 
         #region // Public Sort methods
 
+        /// <summary>
+        /// Clean the Sorting
+        /// </summary>
         public void CleanSort()
         {
-            throw new NotImplementedException();
+            sortAscMenuItem.Checked = false;
+            sortDescMenuItem.Checked = false;
+            this.ActiveSortType = SortType.None;
+            this.SortString = string.Empty;
         }
 
+        /// <summary>
+        /// Sort ASC
+        /// </summary>
         public void SortAsc()
         {
-            throw new NotImplementedException();
+            SortAscMenuItem_Click(this, new EventArgs());
         }
 
+        /// <summary>
+        /// Sort DESC
+        /// </summary>
         public void SortDesc()
         {
-            throw new NotImplementedException();
+            SortDescMenuItem_Click(this, new EventArgs());
         }
 
         #endregion
 
         #region // Public Filter methods
+        /// <summary>
+        /// Clean the Filter
+        /// </summary>
         public void CleanFilter()
         {
-            throw new NotImplementedException();
+            // Reset current filter type and filter string
+            ActiveFilterType = FilterType.None;
+            FilterString = string.Empty;
+
+            // Clean custom filters
+            for (int i = 2; i < customFilterLastFiltersListMenuItem.DropDownItems.Count - 1; i++)
+            {
+                (customFilterLastFiltersListMenuItem.DropDownItems[i] as ToolStripMenuItem).Checked = false;
+            }
+            customFilterLastFiltersListMenuItem.Checked = false;
+
+            // Clean filter in checklist
+            filterSelectionListPanel.CleanFilter();
         }
+
+        /// <summary>
+        /// Set the text filter on checklist remove node mode
+        /// </summary>
+        /// <param name="enabled"></param>
         public void SetChecklistTextFilterRemoveNodesOnSearchMode(bool enabled)
         {
-            throw new NotImplementedException();
+            if (DoesTextFilterRemoveNodesOnSearch != enabled)
+            {
+                DoesTextFilterRemoveNodesOnSearch = enabled;
+                CleanFilter();
+            }
         }
 
-
         #endregion
-
-
 
         #region // Inner ContextMenu Events 
 
         protected override void OnClosed(ToolStripDropDownClosedEventArgs e)
         {
             base.OnClosed(e);
+            // Cancel resize, if in progress
+            sortFilterMenuStripResizer.CancelResize();
+            // Clear filter data
+            filterSelectionListPanel.CancelFilter();
         }
 
         protected override void OnLostFocus(EventArgs e)
         {
             base.OnLostFocus(e);
-        }
-
-        #endregion
-
-
-        #region // Sort actions
-
-        private void SortAscMenuItem_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void SortDescMenuItem_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void CancelSortMenuItem_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
+            if (!ContainsFocus)
+                Close();
         }
 
         private void ContextMenuItem_MouseEnter(object sender, EventArgs e)
         {
             if (sender is ToolStripMenuItem item)
             {
-                if (item.Enabled) 
+                if (item.Enabled)
                     item.Select();
             }
         }
 
+        // Draw glyph after Custom Filters menu item
+        private void CustomFilterLastFiltersListMenuItem_Paint(object sender, PaintEventArgs e)
+        {
+            Rectangle rect = new Rectangle(customFilterLastFiltersListMenuItem.Width - 12, 7, 10, 10);
+            ControlPaint.DrawMenuGlyph(e.Graphics, rect, MenuGlyph.Arrow, Color.Black, Color.Transparent);
+        }
+
+        // Show / hide separator after Add Custom Filter menu item
+        private void CustomFilterLastFilter1MenuItem_VisibleChanged(object sender, EventArgs e)
+        {
+            toolStripSeparator2MenuItem.Visible = !customFilterLastFilter1MenuItem.Visible;
+            (sender as ToolStripMenuItem).VisibleChanged -= CustomFilterLastFilter1MenuItem_VisibleChanged;
+        }
+
+        // Make custom filter menu item available
+        private void CustomFilterLastFilterMenuItem_TextChanged(object sender, EventArgs e)
+        {
+            (sender as ToolStripMenuItem).Available = true;
+            (sender as ToolStripMenuItem).TextChanged -= CustomFilterLastFilterMenuItem_TextChanged;
+        }
 
         #endregion
 
+        #region // Sort actions
+        /// <summary>
+        /// 'Sort ASC' click 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SortAscMenuItem_Click(object sender, EventArgs e)
+        {
+            // Ignore image nodes
+            if (_dataType == typeof(Bitmap))
+                return;
 
+            sortAscMenuItem.Checked = true;
+            sortDescMenuItem.Checked = false;
+            this.ActiveSortType = SortType.Asc;
+
+            // Get Sort string
+            string oldsort = SortString;
+            this.SortString = "[{0}] ASC";
+
+            // Fire SortChanged event
+            if (oldsort != SortString && SortChanged != null)
+                SortChanged(this, new EventArgs());
+        }
+
+        /// <summary>
+        /// 'Sort DESC' click 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SortDescMenuItem_Click(object sender, EventArgs e)
+        {
+            // ignore image nodes
+            if (_dataType == typeof(Bitmap))
+                return;
+
+            sortAscMenuItem.Checked = false;
+            sortDescMenuItem.Checked = true;
+            this.ActiveSortType = SortType.Desc;
+
+            // Get sort String
+            string oldsort = SortString;
+            this.SortString = "[{0}] DESC";
+
+            // Fire SortChanged event
+            if (oldsort != SortString && SortChanged != null)
+                SortChanged(this, new EventArgs());
+        }
+
+        /// <summary>
+        /// Cancel Sort event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CancelSortMenuItem_Click(object sender, EventArgs e)
+        {
+            string oldsort = SortString;
+            //clean Sort
+            CleanSort();
+            //fire Sort changed
+            if (oldsort != SortString && SortChanged != null)
+                SortChanged(this, new EventArgs());
+        }
+
+        #endregion
 
         #region // Filter actions
 
+        /// <summary>
+        /// Cancel Filter event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CancelFilterMenuItem_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            string oldfilter = FilterString;
+
+            //clean Filter
+            CleanFilter();
+
+            //fire Filter changed
+            if (oldfilter != FilterString && FilterChanged != null)
+                FilterChanged(this, new EventArgs());
         }
 
-        private void CustomFilterLastFiltersListMenuItem_Paint(object sender, PaintEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+
+        /// <summary>
+        /// Add Custom Filter event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CustomFilterMenuItem_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
-        }
-        private void CustomFilterLastFilter1MenuItem_VisibleChanged(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-        private void CustomFilterLastFilterMenuItem_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
+            //ignore image nodes
+            if (_dataType == typeof(Bitmap))
+                return;
+
+            //open a new Custom filter window
+            FormCustomFilter flt = new FormCustomFilter(_dataType, IsFilterDateAndTimeEnabled)
+            {
+                RightToLeft = this.RightToLeft,
+                RightToLeftLayout = (this.RightToLeft == RightToLeft.Yes)
+            };
+
+            if (flt.ShowDialog() == DialogResult.OK)
+            {
+                //add the new Filter presets
+
+                string filterString = flt.FilterString;
+                string viewFilterString = flt.FilterStringDescription;
+
+                int index = -1;
+
+                for (int i = 2; i < customFilterLastFiltersListMenuItem.DropDownItems.Count; i++)
+                {
+                    if (customFilterLastFiltersListMenuItem.DropDown.Items[i].Available)
+                    {
+                        if (customFilterLastFiltersListMenuItem.DropDownItems[i].Text == viewFilterString && 
+                            customFilterLastFiltersListMenuItem.DropDownItems[i].Tag.ToString() == filterString)
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+                    else
+                        break;
+                }
+
+                if (index < 2)
+                {
+                    for (int i = customFilterLastFiltersListMenuItem.DropDownItems.Count - 2; i > 1; i--)
+                    {
+                        if (customFilterLastFiltersListMenuItem.DropDownItems[i].Available)
+                        {
+                            customFilterLastFiltersListMenuItem.DropDownItems[i + 1].Text = customFilterLastFiltersListMenuItem.DropDownItems[i].Text;
+                            customFilterLastFiltersListMenuItem.DropDownItems[i + 1].Tag = customFilterLastFiltersListMenuItem.DropDownItems[i].Tag;
+                        }
+                    }
+                    index = 2;
+
+                    customFilterLastFiltersListMenuItem.DropDownItems[2].Text = viewFilterString;
+                    customFilterLastFiltersListMenuItem.DropDownItems[2].Tag = filterString;
+                }
+
+                // Set custom filter
+                SetCustomFilter(index);
+            }
         }
 
-        private void CustomFilterLastFilterMenuItem_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Custom Filter selection event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CustomFilterLastFilterMenuItem_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            ToolStripMenuItem menuitem = sender as ToolStripMenuItem;
+
+            for (int i = 2; i < customFilterLastFiltersListMenuItem.DropDownItems.Count; i++)
+            {
+                if (customFilterLastFiltersListMenuItem.DropDownItems[i].Text == menuitem.Text && customFilterLastFiltersListMenuItem.DropDownItems[i].Tag.ToString() == menuitem.Tag.ToString())
+                {
+                    //set current filter preset as active
+                    SetCustomFilter(i);
+                    break;
+                }
+            }
         }
 
         private void FilterSelectionListPanel_FilterSelected(object sender, EventArgs e)
@@ -490,12 +824,80 @@ namespace Zuby.ADGV
 
         #endregion
 
+
+        #region // Private filter methods
+        /// <summary>
+        /// UnCheck all Custom Filter presets
+        /// </summary>
+        private void UnCheckCustomFilters()
+        {
+            for (int i = 2; i < customFilterLastFiltersListMenuItem.DropDownItems.Count; i++)
+            {
+                (customFilterLastFiltersListMenuItem.DropDownItems[i] as ToolStripMenuItem).Checked = false;
+            }
+        }
+
+        /// <summary>
+        /// Set Custom Filter
+        /// </summary>
+        /// <param name="filtersMenuItemIndex"></param>
+        private void SetCustomFilter(int filtersMenuItemIndex)
+        {
+            string filterstring = customFilterLastFiltersListMenuItem.DropDownItems[filtersMenuItemIndex].Tag.ToString();
+            string viewfilterstring = customFilterLastFiltersListMenuItem.DropDownItems[filtersMenuItemIndex].Text;
+            // Do preset jobs
+            if (filtersMenuItemIndex != 2)
+            {
+                for (int i = filtersMenuItemIndex; i > 2; i--)
+                {
+                    customFilterLastFiltersListMenuItem.DropDownItems[i].Text = customFilterLastFiltersListMenuItem.DropDownItems[i - 1].Text;
+                    customFilterLastFiltersListMenuItem.DropDownItems[i].Tag = customFilterLastFiltersListMenuItem.DropDownItems[i - 1].Tag;
+                }
+
+                customFilterLastFiltersListMenuItem.DropDownItems[2].Text = viewfilterstring;
+                customFilterLastFiltersListMenuItem.DropDownItems[2].Tag = filterstring;
+            }
+
+            //uncheck other preset
+            for (int i = 3; i < customFilterLastFiltersListMenuItem.DropDownItems.Count; i++)
+            {
+                (customFilterLastFiltersListMenuItem.DropDownItems[i] as ToolStripMenuItem).Checked = false;
+            }
+
+            (customFilterLastFiltersListMenuItem.DropDownItems[2] as ToolStripMenuItem).Checked = true;
+            this.ActiveFilterType = FilterType.Custom;
+
+            //get Filter string
+            string oldfilter = FilterString;
+            this.FilterString = filterstring;
+
+            customFilterLastFiltersListMenuItem.Checked = true;
+
+            //
+            filterSelectionListPanel.SetCustomFilterMode();
+
+            //fire Filter changed
+            if (oldfilter != FilterString && FilterChanged != null)
+                FilterChanged(this, new EventArgs());
+        }
+
+
+        #endregion
+
+
         #region // Resize menu
 
         private void SortFilterMenuStripResizer_ResizeMenu(object sender, SortFilterMenuStripResizeEventArgs re)
         {
+            // Resize
             filterSelectionListPanel.Size = 
-                new Size(filterSelectionListPanel.Width + re.WeightChange, filterSelectionListPanel.Height + re.HeightChange);
+                new Size(filterSelectionListPanel.Width + re.WidthChange, filterSelectionListPanel.Height + re.HeightChange);
+            // Move if RTL
+            if (RightToLeft == RightToLeft.Yes)
+            {
+                int newX = Bounds.Location.X - re.WidthChange;
+                base.Show(new Point(newX, Bounds.Location.Y));
+            }
         }
 
         #endregion 

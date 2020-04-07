@@ -428,11 +428,12 @@ namespace Zuby.ADGV
             if (ActiveFilterType == FilterType.Custom)
                 SetNodesCheckState(checkList.Nodes, false);
             DuplicateNodes();
-            base.Show(control, x, y);
 
             _checkTextFilterChangedEnabled = false;
             checkTextFilter.Text = "";
             _checkTextFilterChangedEnabled = true;
+
+            base.Show(control, x, y);
         }
 
         /// <summary>
@@ -453,10 +454,12 @@ namespace Zuby.ADGV
             _checkTextFilterChangedEnabled = false;
             checkTextFilter.Text = "";
             _checkTextFilterChangedEnabled = true;
+
             if (_restoreFilter)
                 RestoreFilterNodes();
             DuplicateNodes();
-            base.Show(control, x, y);
+
+            // base.Show(control, x, y);
 
             if (DoesTextFilterRemoveNodesOnSearch && _checkTextFilterSetByText)
             {
@@ -475,6 +478,8 @@ namespace Zuby.ADGV
                 }
                 checkList.EndUpdate();
             }
+
+            base.Show(control, x, y);
         }
         #endregion
 
@@ -1652,7 +1657,6 @@ namespace Zuby.ADGV
             if ((sender as ToolStripMenuItem).Enabled)
                 (sender as ToolStripMenuItem).Select();
         }
-
 
         #endregion
 
