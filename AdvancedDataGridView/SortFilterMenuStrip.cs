@@ -122,7 +122,7 @@ namespace Zuby.ADGV
             this.BackColor = SystemColors.ControlLightLight;
             this.Padding = new Padding(0);
             this.Margin = new Padding(0);
-            this.MinimumSize = new Size(200, 330);
+            this.MinimumSize = new Size(220, 330);
             this.Size = new Size(287, 370);
             this.Items.AddRange(new ToolStripItem[] {
                 sortAscMenuItem,
@@ -382,11 +382,11 @@ namespace Zuby.ADGV
         }
 
         //TODO: Do we need this override at all???
-        public override RightToLeft RightToLeft 
-        {
-            get => base.RightToLeft;
-            set => base.RightToLeft = value;
-        }
+        //public override RightToLeft RightToLeft 
+        //{
+        //    get => base.RightToLeft;
+        //    set => base.RightToLeft = value;
+        //}
 
         #endregion
 

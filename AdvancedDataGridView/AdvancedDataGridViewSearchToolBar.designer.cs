@@ -43,7 +43,7 @@ namespace Zuby.ADGV
             // button_close
             // 
             this.button_close.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.button_close.Image = global::Zuby.Properties.Resources.SearchToolBar_ButtonCaseSensitive;
+            this.button_close.Image = Properties.Resources.SearchToolBar_ButtonCaseSensitive;
             this.button_close.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.button_close.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_close.Name = "button_close";
@@ -86,7 +86,7 @@ namespace Zuby.ADGV
             // 
             this.button_frombegin.CheckOnClick = true;
             this.button_frombegin.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.button_frombegin.Image = global::Zuby.Properties.Resources.SearchToolBar_ButtonFromBegin;
+            this.button_frombegin.Image = Properties.Resources.SearchToolBar_ButtonFromBegin;
             this.button_frombegin.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.button_frombegin.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_frombegin.Name = "button_frombegin";
@@ -96,7 +96,7 @@ namespace Zuby.ADGV
             // 
             this.button_casesensitive.CheckOnClick = true;
             this.button_casesensitive.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.button_casesensitive.Image = global::Zuby.Properties.Resources.SearchToolBar_ButtonCaseSensitive;
+            this.button_casesensitive.Image = Properties.Resources.SearchToolBar_ButtonCaseSensitive;
             this.button_casesensitive.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.button_casesensitive.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_casesensitive.Name = "button_casesensitive";
@@ -105,7 +105,7 @@ namespace Zuby.ADGV
             // button_search
             // 
             this.button_search.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.button_search.Image = global::Zuby.Properties.Resources.SearchToolBar_ButtonSearch;
+            this.button_search.Image = Properties.Resources.SearchToolBar_ButtonSearch;
             this.button_search.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.button_search.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_search.Name = "button_search";
@@ -117,7 +117,7 @@ namespace Zuby.ADGV
             // 
             this.button_wholeword.CheckOnClick = true;
             this.button_wholeword.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.button_wholeword.Image = global::Zuby.Properties.Resources.SearchToolBar_ButtonWholeWord;
+            this.button_wholeword.Image = Properties.Resources.SearchToolBar_ButtonWholeWord;
             this.button_wholeword.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.button_wholeword.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.button_wholeword.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);

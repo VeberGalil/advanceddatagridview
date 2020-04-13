@@ -1176,7 +1176,7 @@ namespace Zuby.ADGV
         }
 
         /// <summary>
-        /// CheckList NodeMouseDoubleClick event
+        /// CheckList NodeMouseDoubleClick event - check node and apply Filter
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

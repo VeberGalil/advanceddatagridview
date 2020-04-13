@@ -8,7 +8,7 @@
     <ProjectGuid>{6EBA0A55-B390-4479-A564-58D46094998D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Zuby</RootNamespace>
+    <RootNamespace>Zuby.ADGV</RootNamespace>
     <AssemblyName>AdvancedDataGridView</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -91,6 +91,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="TreeNodeItemSelector.cs" />
+    <Compile Include="TreeNodeStateImages.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AdvancedDataGridViewSearchToolBar.resx">

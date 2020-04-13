@@ -284,7 +284,7 @@
             this.checkList.Padding = new System.Windows.Forms.Padding(0);
             this.checkList.Margin = new System.Windows.Forms.Padding(0);
             this.checkList.Bounds = new System.Drawing.Rectangle(4, 4, this.checkFilterListPanel.Width - 8, this.checkFilterListPanel.Height - 8);
-            this.checkList.StateImageList = GetCheckListStateImages();
+            this.checkList.StateImageList = TreeNodeStateImages.GetCheckListStateImages();
             this.checkList.CheckBoxes = false;
             this.checkList.MouseLeave += new System.EventHandler(CheckList_MouseLeave);
             this.checkList.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(CheckList_NodeMouseClick);

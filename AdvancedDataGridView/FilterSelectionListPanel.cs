@@ -129,7 +129,8 @@ namespace Zuby.ADGV
             // treeFilterSelection
             //
             treeFilterSelection.Name = "treeFilterSelection";
-            treeFilterSelection.CheckBoxes = true;
+            treeFilterSelection.StateImageList = TreeNodeStateImages.GetCheckListStateImages();
+            treeFilterSelection.CheckBoxes = false;
             treeFilterSelection.Anchor = (AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right);
             treeFilterSelection.Location = new Point(3, 31);
             treeFilterSelection.Size = new Size(194, 139);
@@ -157,6 +158,7 @@ namespace Zuby.ADGV
             panelSelector.ResumeLayout(false);
             panelSelector.PerformLayout();
         }
+
 
         #endregion
 
@@ -391,23 +393,101 @@ namespace Zuby.ADGV
         {
             base.OnOwnerChanged(e);
             RightToLeft = Owner.RightToLeft;
-            // Set minimum size for ContextMenuStrip, which will be used by Resizer
-            Owner.MinimumSize = new Size(Math.Max(Owner.MinimumSize.Width, SelectionListPanel.MinimumSize.Width),
-                                         Math.Max(Owner.MinimumSize.Height, SelectionListPanel.MinimumSize.Height));
             // Change panel RTL layout with owning menu
             ((ContextMenuStrip)Owner).RightToLeftChanged += (s, ea) =>
             {
                 RightToLeft = Owner.RightToLeft;
             };
+            // Set minimum size for ContextMenuStrip, which will be used by Resizer
+            Owner.MinimumSize = new Size(Math.Max(Owner.MinimumSize.Width, SelectionListPanel.MinimumSize.Width),
+                                         Math.Max(Owner.MinimumSize.Height, SelectionListPanel.MinimumSize.Height));
+
         }
         #endregion
 
 
         #region // Control events
-
+        /// <summary>
+        /// Context search text changed 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TextFilterSelection_TextChanged(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            if (!_textFilterSelectionChangedEnabled)
+                return;
+            _textFilterSelectionSetByText = !string.IsNullOrWhiteSpace(textFilterSelection.Text);
+            // If context search hides irrelevant nodes, restore them before applying new search filter on nodes
+            if (DoesTextFilterRemoveNodesOnSearch)
+            {
+                _startingNodes = _initialNodes;
+
+                treeFilterSelection.BeginUpdate();  // Freeze UI update until finished with heavy update
+                RestoreNodes();
+            }
+            // Special nodes
+            TreeNodeItemSelector allnode = 
+                TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectAll.ToString()]   + "            ", 
+                                                null, 
+                                                CheckState.Checked, 
+                                                TreeNodeItemSelector.CustomNodeType.SelectAll);
+            TreeNodeItemSelector nullnode = 
+                TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectEmpty.ToString()] + "               ", 
+                                                null, 
+                                                CheckState.Checked, 
+                                                TreeNodeItemSelector.CustomNodeType.SelectEmpty);
+            // Check relevant nodes
+            for (int i = treeFilterSelection.Nodes.Count - 1; i >= 0; i--)
+            {
+                TreeNodeItemSelector node = treeFilterSelection.Nodes[i] as TreeNodeItemSelector;
+                if (node.Text == allnode.Text)
+                {
+                    node.CheckState = CheckState.Indeterminate;
+                }
+                else if (node.Text == nullnode.Text)
+                {
+                    node.CheckState = CheckState.Unchecked;
+                }
+                else
+                {
+                    node.Checked = !node.Text.ToLower().Contains(textFilterSelection.Text.ToLower());
+                    NodeCheckChange(node as TreeNodeItemSelector);
+                }
+            }
+            // If context search hides irrelevant nodes, 
+            if (DoesTextFilterRemoveNodesOnSearch)
+            {
+                // Update initial nodes check state 
+                foreach (TreeNodeItemSelector node in _initialNodes)
+                {
+                    if (node.Text == allnode.Text)
+                    {
+                        node.CheckState = CheckState.Indeterminate;
+                    }
+                    else if (node.Text == nullnode.Text)
+                    {
+                        node.CheckState = CheckState.Unchecked;
+                    }
+                    else
+                    {
+                        node.CheckState = node.Text.ToLower().Contains(textFilterSelection.Text.ToLower()) ? CheckState.Checked : CheckState.Unchecked;
+                    }
+                }
+                // Remove irrelevant nodes from UI
+                for (int i = treeFilterSelection.Nodes.Count - 1; i >= 0; i--)
+                {
+                    TreeNodeItemSelector node = treeFilterSelection.Nodes[i] as TreeNodeItemSelector;
+                    if (!(node.Text == allnode.Text || node.Text == nullnode.Text))
+                    {
+                        if (!node.Text.ToLower().Contains(textFilterSelection.Text.ToLower()))
+                        {
+                            node.Remove();
+                        }
+                    }
+                }
+                // Resume UI
+                treeFilterSelection.EndUpdate();
+            }
         }
 
 
@@ -419,7 +499,9 @@ namespace Zuby.ADGV
         private void TreeFilterSelection_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             throw new NotImplementedException();
+
         }
+
 
         private void TreeFilterSelection_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -669,6 +751,30 @@ namespace Zuby.ADGV
         }
 
         /// <summary>
+        /// Duplicate filter nodes
+        /// </summary>
+        private void DuplicateFilterNodes()
+        {
+            _filterNodes = new TreeNodeItemSelector[treeFilterSelection.Nodes.Count];
+            int i = 0;
+            foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
+            {
+                _filterNodes[i] = n.Clone();
+                i++;
+            }
+        }
+
+        /// <summary>
+        /// Restore Nodes
+        /// </summary>
+        private void RestoreNodes()
+        {
+            treeFilterSelection.Nodes.Clear();
+            if (_startingNodes != null)
+                treeFilterSelection.Nodes.AddRange(_startingNodes);
+        }
+
+        /// <summary>
         /// Restore Filter
         /// </summary>
         private void RestoreFilterNodes()
@@ -694,17 +800,94 @@ namespace Zuby.ADGV
         }
 
         /// <summary>
-        /// Duplicate filter nodes
+        /// Change node checked state
         /// </summary>
-        private void DuplicateFilterNodes()
+        /// <param name="node"></param>
+        private void NodeCheckChange(TreeNodeItemSelector node)
         {
-            _filterNodes = new TreeNodeItemSelector[treeFilterSelection.Nodes.Count];
+            node.CheckState = (node.CheckState == CheckState.Checked) ? CheckState.Unchecked : CheckState.Checked;
+            //
+            if (node.NodeType == TreeNodeItemSelector.CustomNodeType.SelectAll)
+            {
+                SetNodesCheckState(treeFilterSelection.Nodes, node.Checked);
+                btnFilter.Enabled = node.Checked;
+            }
+            else
+            {
+                // Take care of child nodes
+                if (node.Nodes.Count > 0)
+                {
+                    SetNodesCheckState(node.Nodes, node.Checked);
+                }
+                // Refresh all nodes
+                CheckState state = UpdateNodesCheckState(treeFilterSelection.Nodes);
+
+                GetSelectAllNode().CheckState = state;
+                btnFilter.Enabled = !(state == CheckState.Unchecked);
+            }
+        }
+
+        /// <summary>
+        /// Update Nodes CheckState recursively
+        /// </summary>
+        /// <param name="nodes"></param>
+        /// <returns></returns>
+        private CheckState UpdateNodesCheckState(TreeNodeCollection nodes)
+        {
+            CheckState result = CheckState.Unchecked;
+            bool isFirstNode = true;
+            bool isAllNodesSomeCheckState = true;
+
+            foreach (TreeNodeItemSelector n in nodes)
+            {
+                if (n.NodeType == TreeNodeItemSelector.CustomNodeType.SelectAll)
+                    continue;
+
+                if (n.Nodes.Count > 0)
+                {
+                    n.CheckState = UpdateNodesCheckState(n.Nodes);
+                }
+
+                if (isFirstNode)
+                {
+                    result = n.CheckState;
+                    isFirstNode = false;
+                }
+                else
+                {
+                    if (result != n.CheckState)
+                        isAllNodesSomeCheckState = false;
+                }
+            }
+
+            if (isAllNodesSomeCheckState)
+                return result;
+            else
+                return CheckState.Indeterminate;
+        }
+
+        /// <summary>
+        /// Get the SelectAll Node
+        /// </summary>
+        /// <returns></returns>
+        private TreeNodeItemSelector GetSelectAllNode()
+        {
+            TreeNodeItemSelector result = null;
             int i = 0;
             foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
             {
-                _filterNodes[i] = n.Clone();
-                i++;
+                if (n.NodeType == TreeNodeItemSelector.CustomNodeType.SelectAll)
+                {
+                    result = n;
+                    break;
+                }
+                else if (i > 2)
+                    break;
+                else
+                    i++;
             }
+
+            return result;
         }
 
         #endregion
