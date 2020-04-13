@@ -147,36 +147,36 @@ namespace Zuby.ADGV
                 Close();
         }
 
-        /// <summary>
-        /// Get all images for checkList
-        /// </summary>
-        /// <returns></returns>
-        private ImageList GetCheckListStateImages()
-        {
-            ImageList images = new System.Windows.Forms.ImageList();
-            Bitmap unCheckImg = new Bitmap(16, 16);
-            Bitmap checkImg = new Bitmap(16, 16);
-            Bitmap mixedImg = new Bitmap(16, 16);
+        ///// <summary>
+        ///// Get all images for checkList
+        ///// </summary>
+        ///// <returns></returns>
+        //private ImageList GetCheckListStateImages()
+        //{
+        //    ImageList images = new System.Windows.Forms.ImageList();
+        //    Bitmap unCheckImg = new Bitmap(16, 16);
+        //    Bitmap checkImg = new Bitmap(16, 16);
+        //    Bitmap mixedImg = new Bitmap(16, 16);
 
-            using (Bitmap img = new Bitmap(16, 16))
-            {
-                using (Graphics g = Graphics.FromImage(img))
-                {
-                    CheckBoxRenderer.DrawCheckBox(g, new Point(0, 1), System.Windows.Forms.VisualStyles.CheckBoxState.UncheckedNormal);
-                    unCheckImg = (Bitmap)img.Clone();
-                    CheckBoxRenderer.DrawCheckBox(g, new Point(0, 1), System.Windows.Forms.VisualStyles.CheckBoxState.CheckedNormal);
-                    checkImg = (Bitmap)img.Clone();
-                    CheckBoxRenderer.DrawCheckBox(g, new Point(0, 1), System.Windows.Forms.VisualStyles.CheckBoxState.MixedNormal);
-                    mixedImg = (Bitmap)img.Clone();
-                }
-            }
+        //    using (Bitmap img = new Bitmap(16, 16))
+        //    {
+        //        using (Graphics g = Graphics.FromImage(img))
+        //        {
+        //            CheckBoxRenderer.DrawCheckBox(g, new Point(0, 1), System.Windows.Forms.VisualStyles.CheckBoxState.UncheckedNormal);
+        //            unCheckImg = (Bitmap)img.Clone();
+        //            CheckBoxRenderer.DrawCheckBox(g, new Point(0, 1), System.Windows.Forms.VisualStyles.CheckBoxState.CheckedNormal);
+        //            checkImg = (Bitmap)img.Clone();
+        //            CheckBoxRenderer.DrawCheckBox(g, new Point(0, 1), System.Windows.Forms.VisualStyles.CheckBoxState.MixedNormal);
+        //            mixedImg = (Bitmap)img.Clone();
+        //        }
+        //    }
 
-            images.Images.Add("uncheck", unCheckImg);
-            images.Images.Add("check", checkImg);
-            images.Images.Add("mixed", mixedImg);
+        //    images.Images.Add("uncheck", unCheckImg);
+        //    images.Images.Add("check", checkImg);
+        //    images.Images.Add("mixed", mixedImg);
 
-            return images;
-        }
+        //    return images;
+        //}
 
         #endregion
 

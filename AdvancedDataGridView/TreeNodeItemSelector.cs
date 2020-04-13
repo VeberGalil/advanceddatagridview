@@ -33,6 +33,7 @@ namespace Zuby.ADGV
         #region class properties
 
         private CheckState _checkState = CheckState.Unchecked;
+        private readonly RightToLeft _rightToLeft = RightToLeft.Inherit;
 
         #endregion
 
@@ -46,12 +47,13 @@ namespace Zuby.ADGV
         /// <param name="value"></param>
         /// <param name="state"></param>
         /// <param name="nodeType"></param>
-        private TreeNodeItemSelector(String text, object value, CheckState state, CustomNodeType nodeType)
+        private TreeNodeItemSelector(String text, object value, CheckState state, CustomNodeType nodeType, RightToLeft rtl)
             : base(text)
         {
             CheckState = state;
             NodeType = nodeType;
             Value = value;
+            _rightToLeft = rtl;
         }
 
         #endregion
@@ -65,7 +67,7 @@ namespace Zuby.ADGV
         /// <returns></returns>
         public new TreeNodeItemSelector Clone()
         {
-            TreeNodeItemSelector n = new TreeNodeItemSelector(Text, Value, _checkState, NodeType)
+            TreeNodeItemSelector n = new TreeNodeItemSelector(Text, Value, _checkState, NodeType, _rightToLeft)
             {
                 NodeFont = NodeFont
             };
@@ -132,8 +134,8 @@ namespace Zuby.ADGV
                 switch (_checkState)
                 {
                     case CheckState.Checked:
-//                        this.StateImageKey = (this.TreeView?.RightToLeft ?? RightToLeft.No) == RightToLeft.Yes ? TreeNodeStateImages.KeyCheckedRtl : TreeNodeStateImages.KeyChecked;
-                        this.StateImageKey = TreeNodeStateImages.KeyChecked;
+                        this.StateImageKey = _rightToLeft == RightToLeft.Yes ? TreeNodeStateImages.KeyCheckedRtl : TreeNodeStateImages.KeyChecked;
+                        // this.StateImageKey = TreeNodeStateImages.KeyChecked;
                         break;
                     case CheckState.Indeterminate:
                         this.StateImageKey = TreeNodeStateImages.KeyIndeterminate;
@@ -160,8 +162,22 @@ namespace Zuby.ADGV
         /// <returns></returns>
         public static TreeNodeItemSelector CreateNode(string text, object value, CheckState state, CustomNodeType type)
         {
-            return new TreeNodeItemSelector(text, value, state, type);
+            return new TreeNodeItemSelector(text, value, state, type, RightToLeft.No);
         }
+
+        /// <summary>
+        /// Create a Node
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="value"></param>
+        /// <param name="state"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static TreeNodeItemSelector CreateNode(string text, object value, CheckState state, CustomNodeType type, RightToLeft rtl)
+        {
+            return new TreeNodeItemSelector(text, value, state, type, rtl);
+        }
+
 
         /// <summary>
         /// Create a child Node
@@ -177,7 +193,7 @@ namespace Zuby.ADGV
             //specific method for datetimenode
             if (NodeType == CustomNodeType.DateTimeNode)
             {
-                n = new TreeNodeItemSelector(text, value, state, CustomNodeType.DateTimeNode);
+                n = new TreeNodeItemSelector(text, value, state, CustomNodeType.DateTimeNode, _rightToLeft);
             }
 
             if (n != null)
