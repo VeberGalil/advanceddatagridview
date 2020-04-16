@@ -1,8 +1,7 @@
 About
 ===
 
-**[Advanced DataGridView](https://github.com/davidegironi/advanceddatagridview)** is a .NET WinForm **DataGridView with advanced Filtering and Sorting** capabilities.
-This fork is to add RTL capabilities to ADVG
+**[Advanced DataGridView](https://github.com/davidegironi/advanceddatagridview)** is a .NET WinForm **DataGridView with advanced Filtering and Sorting** capabilities. This fork was created to add RTL capabilities to ADGV.
 
 ## Download
 
