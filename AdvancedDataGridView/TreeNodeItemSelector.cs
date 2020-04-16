@@ -50,10 +50,10 @@ namespace Zuby.ADGV
         private TreeNodeItemSelector(String text, object value, CheckState state, CustomNodeType nodeType, RightToLeft rtl)
             : base(text)
         {
+            _rightToLeft = rtl;
             CheckState = state;
             NodeType = nodeType;
             Value = value;
-            _rightToLeft = rtl;
         }
 
         #endregion

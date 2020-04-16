@@ -91,7 +91,6 @@ namespace Zuby.ADGV
             }
             else
             {
-                //MenuStrip = new MenuStrip(oldCell.OwningColumn.ValueType);
                 MenuStrip = SortFilterMenuFactory.CreateDefaultMenu(oldCell.OwningColumn.ValueType);
                 MenuStrip.FilterChanged += new EventHandler(MenuStrip_FilterChanged);
                 MenuStrip.SortChanged += new EventHandler(MenuStrip_SortChanged);
