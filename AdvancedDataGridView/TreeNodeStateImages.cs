@@ -30,10 +30,12 @@ namespace Zuby.ADGV
                     unCheckImg = (Bitmap)img.Clone();
                     CheckBoxRenderer.DrawCheckBox(g, new Point(0, 1), System.Windows.Forms.VisualStyles.CheckBoxState.CheckedNormal);
                     checkImg = (Bitmap)img.Clone();
-                    checkImgRtl = (Bitmap)img.Clone();
-                    checkImgRtl.RotateFlip(RotateFlipType.RotateNoneFlipX);
                     CheckBoxRenderer.DrawCheckBox(g, new Point(0, 1), System.Windows.Forms.VisualStyles.CheckBoxState.MixedNormal);
                     mixedImg = (Bitmap)img.Clone();
+                    g.Clear(Color.White);
+                    CheckBoxRenderer.DrawCheckBox(g, new Point(3, 1), System.Windows.Forms.VisualStyles.CheckBoxState.CheckedNormal);
+                    checkImgRtl = (Bitmap)img.Clone();
+                    checkImgRtl.RotateFlip(RotateFlipType.RotateNoneFlipX);
                 }
             }
 
