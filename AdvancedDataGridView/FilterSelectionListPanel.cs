@@ -19,6 +19,20 @@ using System.Globalization;
 
 namespace Zuby.ADGV
 {
+    internal class ChecklistFilterSelectedEventArgs: EventArgs
+    {
+        public bool CancelCustomFilter { get; private set; }
+        public string CustomFilter { get; private set; }
+
+        public ChecklistFilterSelectedEventArgs(bool cancel, string filter)
+        {
+            this.CancelCustomFilter = cancel;
+            this.CustomFilter = filter;
+        }
+    }
+
+    internal delegate void CustomFilterSelectedEventHandler(object sender, ChecklistFilterSelectedEventArgs ea);
+
     internal class FilterSelectionListPanel : ToolStripControlHost
     {
         #region // Constructor 
@@ -159,18 +173,16 @@ namespace Zuby.ADGV
             panelSelector.PerformLayout();
         }
 
-
         #endregion
 
         #region // Private / protected data fields
+        private Type _filterValueType = null;
         private TreeNodeItemSelector[] _startingNodes = null;
         private TreeNodeItemSelector[] _filterNodes = null;
         private TreeNodeItemSelector[] _initialNodes = new TreeNodeItemSelector[] { };
         private TreeNodeItemSelector[] _restoreNodes = new TreeNodeItemSelector[] { };
         private bool _textFilterSelectionSetByText = false;
         private bool _textFilterSelectionChangedEnabled = true;
-
-
         #endregion
 
 
@@ -195,17 +207,20 @@ namespace Zuby.ADGV
         }
 
         /// <summary>
+        /// Is filter selection exclusive (i.e., selected items are filtered out, like DataSet WHERE NOT IN)
+        /// </summary>
+        public bool IsFilterNOTINLogicEnabled { get; set; } = false;
+
+        /// <summary>
         /// Set the text filter search nodes behaviour
         /// </summary>
         public bool DoesTextFilterRemoveNodesOnSearch { get; set; } = true;
 
         #endregion
 
-
         #region // Public events
         // or CancelEventHandler if event might be cancelled in menu code
-        public event EventHandler FilterSelected;
-        public event EventHandler FilterSelectionCancelled;
+        public event CustomFilterSelectedEventHandler FilterSelected;
 
         #endregion
 
@@ -249,7 +264,8 @@ namespace Zuby.ADGV
                     TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterChecklistDisable.ToString()] + "            ", 
                                                     null, 
                                                     CheckState.Checked, 
-                                                    TreeNodeItemSelector.CustomNodeType.SelectAll);
+                                                    TreeNodeItemSelector.CustomNodeType.SelectAll,
+                                                    this.RightToLeft);
                 disablednode.NodeFont = new Font(treeFilterSelection.Font, FontStyle.Bold);
                 treeFilterSelection.Nodes.Add(disablednode);
             }
@@ -265,7 +281,8 @@ namespace Zuby.ADGV
             TreeNodeItemSelector allnode = TreeNodeItemSelector.CreateNode("(Select All)" + "            ", 
                                                                             null, 
                                                                             CheckState.Checked, 
-                                                                            TreeNodeItemSelector.CustomNodeType.SelectAll);
+                                                                            TreeNodeItemSelector.CustomNodeType.SelectAll,
+                                                                            this.RightToLeft);
             allnode.NodeFont = new Font(treeFilterSelection.Font, FontStyle.Bold);
             allnode.CheckState = CheckState.Indeterminate;
             treeFilterSelection.Nodes.Add(allnode);
@@ -279,7 +296,8 @@ namespace Zuby.ADGV
         /// <param name="activeFilterType">Active FilterType</param>
         public void LoadChecklist(IEnumerable<DataGridViewCell> valueCells, Type valueType, FilterType activeFilterType)
         {
-            BuildNodes(valueCells, valueType);
+            _filterValueType = valueType;
+            BuildNodes(valueCells);
             if (DoesTextFilterRemoveNodesOnSearch && treeFilterSelection.Nodes.Count != _initialNodes.Count())
             {
                 _initialNodes = new TreeNodeItemSelector[treeFilterSelection.Nodes.Count];
@@ -430,12 +448,14 @@ namespace Zuby.ADGV
                 TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectAll.ToString()]   + "            ", 
                                                 null, 
                                                 CheckState.Checked, 
-                                                TreeNodeItemSelector.CustomNodeType.SelectAll);
+                                                TreeNodeItemSelector.CustomNodeType.SelectAll,
+                                                this.RightToLeft);
             TreeNodeItemSelector nullnode = 
                 TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectEmpty.ToString()] + "               ", 
                                                 null, 
                                                 CheckState.Checked, 
-                                                TreeNodeItemSelector.CustomNodeType.SelectEmpty);
+                                                TreeNodeItemSelector.CustomNodeType.SelectEmpty,
+                                                this.RightToLeft);
             // Check relevant nodes
             for (int i = treeFilterSelection.Nodes.Count - 1; i >= 0; i--)
             {
@@ -490,22 +510,45 @@ namespace Zuby.ADGV
             }
         }
 
-
-        private void TreeFilterSelection_KeyDown(object sender, KeyEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// Node 'checkbox' icon clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TreeFilterSelection_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            throw new NotImplementedException();
-
+            TreeViewHitTestInfo hitTestInfo = treeFilterSelection.HitTest(e.X, e.Y);
+            if (hitTestInfo != null && hitTestInfo.Location == TreeViewHitTestLocations.StateImage)
+            {   //check the node check status
+                NodeCheckChange(e.Node as TreeNodeItemSelector);
+            }
         }
 
-
+        /// <summary>
+        /// Double click on tree node = filter by single value
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TreeFilterSelection_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            throw new NotImplementedException();
+            TreeNodeItemSelector node = e.Node as TreeNodeItemSelector;
+            // Clear selection from all nodes, but double-clicked
+            SetNodesCheckState(treeFilterSelection.Nodes, false);
+            node.CheckState = CheckState.Unchecked;
+            NodeCheckChange(node);
+            // 'Press' Filter button
+            BtnFilter_Click(this, new EventArgs());
+        }
+
+        /// <summary>
+        /// Space key pressed on tree = change checked status of selected node
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TreeFilterSelection_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Space)
+                NodeCheckChange(treeFilterSelection.SelectedNode as TreeNodeItemSelector);
         }
 
         private void TreeFilterSelection_MouseEnter(object sender, EventArgs e)
@@ -515,13 +558,36 @@ namespace Zuby.ADGV
 
         private void BtnFilter_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
-            //((ContextMenuStrip)Owner).Close();
+            SetCheckListFilter();
+            ((ContextMenuStrip)Owner).Close();
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            bool restoredByFilter = false;
+            if (DoesTextFilterRemoveNodesOnSearch && _textFilterSelectionSetByText)
+            {
+                _initialNodes = new TreeNodeItemSelector[_restoreNodes.Count()];
+                int i = 0;
+                foreach (TreeNodeItemSelector n in _restoreNodes)
+                {
+                    _initialNodes[i] = n.Clone();
+                    i++;
+                }
+
+                restoredByFilter = true;
+                treeFilterSelection.BeginUpdate();
+                treeFilterSelection.Nodes.Clear();
+                foreach (TreeNodeItemSelector node in _restoreNodes)
+                {
+                    treeFilterSelection.Nodes.Add(node);
+                }
+                treeFilterSelection.EndUpdate();
+            }
+
+            if (!restoredByFilter)
+                RestoreNodes();
+            ((ContextMenuStrip)Owner).Close();
         }
         #endregion
 
@@ -541,7 +607,7 @@ namespace Zuby.ADGV
         /// </summary>
         /// <param name="valueCells"></param>
         /// <param name="valueType"></param>
-        private void BuildNodes(IEnumerable<DataGridViewCell> valueCells, Type valueType)
+        private void BuildNodes(IEnumerable<DataGridViewCell> valueCells)
         {
             if (!this.FilterChecklistEnabled)
                 return;
@@ -556,7 +622,8 @@ namespace Zuby.ADGV
                     TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectAll.ToString()] + "            ", 
                                                     null, 
                                                     CheckState.Checked, 
-                                                    TreeNodeItemSelector.CustomNodeType.SelectAll);
+                                                    TreeNodeItemSelector.CustomNodeType.SelectAll,
+                                                    this.RightToLeft);
                 allnode.NodeFont = new Font(treeFilterSelection.Font, FontStyle.Bold);
                 treeFilterSelection.Nodes.Add(allnode);
 
@@ -567,13 +634,18 @@ namespace Zuby.ADGV
                     //add select empty node
                     if (valueCells.Count() != nonulls.Count())
                     {
-                        TreeNodeItemSelector nullnode = TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectEmpty.ToString()] + "               ", null, CheckState.Checked, TreeNodeItemSelector.CustomNodeType.SelectEmpty);
+                        TreeNodeItemSelector nullnode = 
+                            TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectEmpty.ToString()] + "               ", 
+                                                            null, 
+                                                            CheckState.Checked, 
+                                                            TreeNodeItemSelector.CustomNodeType.SelectEmpty,
+                                                            this.RightToLeft);
                         nullnode.NodeFont = new Font(treeFilterSelection.Font, FontStyle.Bold);
                         treeFilterSelection.Nodes.Add(nullnode);
                     }
 
                     //add datetime nodes
-                    if (valueType == typeof(DateTime))
+                    if (_filterValueType == typeof(DateTime))
                     {
                         var years =
                             from year in nonulls
@@ -583,7 +655,11 @@ namespace Zuby.ADGV
 
                         foreach (var year in years)
                         {
-                            TreeNodeItemSelector yearnode = TreeNodeItemSelector.CreateNode(year.Key.ToString(), year.Key, CheckState.Checked, TreeNodeItemSelector.CustomNodeType.DateTimeNode);
+                            TreeNodeItemSelector yearnode = TreeNodeItemSelector.CreateNode(year.Key.ToString(), 
+                                                                                            year.Key, 
+                                                                                            CheckState.Checked, 
+                                                                                            TreeNodeItemSelector.CustomNodeType.DateTimeNode,
+                                                                                            this.RightToLeft);
                             treeFilterSelection.Nodes.Add(yearnode);
 
                             var months =
@@ -651,7 +727,7 @@ namespace Zuby.ADGV
                     }
 
                     //add timespan nodes
-                    else if (valueType == typeof(TimeSpan))
+                    else if (_filterValueType == typeof(TimeSpan))
                     {
                         var days =
                             from day in nonulls
@@ -661,7 +737,11 @@ namespace Zuby.ADGV
 
                         foreach (var day in days)
                         {
-                            TreeNodeItemSelector daysnode = TreeNodeItemSelector.CreateNode(day.Key.ToString("D2"), day.Key, CheckState.Checked, TreeNodeItemSelector.CustomNodeType.DateTimeNode);
+                            TreeNodeItemSelector daysnode = TreeNodeItemSelector.CreateNode(day.Key.ToString("D2"), 
+                                                                                            day.Key, 
+                                                                                            CheckState.Checked, 
+                                                                                            TreeNodeItemSelector.CustomNodeType.DateTimeNode,
+                                                                                            this.RightToLeft);
                             treeFilterSelection.Nodes.Add(daysnode);
 
                             var hours =
@@ -700,25 +780,35 @@ namespace Zuby.ADGV
                     }
 
                     //add boolean nodes
-                    else if (valueType == typeof(bool))
+                    else if (_filterValueType == typeof(bool))
                     {
                         var values = nonulls.Where<DataGridViewCell>(c => (bool)c.Value == true);
 
                         if (values.Count() != nonulls.Count())
                         {
-                            TreeNodeItemSelector node = TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectFalse.ToString()], false, CheckState.Checked, TreeNodeItemSelector.CustomNodeType.Default);
+                            TreeNodeItemSelector node = 
+                                TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectFalse.ToString()], 
+                                                                false, 
+                                                                CheckState.Checked, 
+                                                                TreeNodeItemSelector.CustomNodeType.Default,
+                                                                this.RightToLeft);
                             treeFilterSelection.Nodes.Add(node);
                         }
 
                         if (values.Count() > 0)
                         {
-                            TreeNodeItemSelector node = TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectTrue.ToString()], true, CheckState.Checked, TreeNodeItemSelector.CustomNodeType.Default);
+                            TreeNodeItemSelector node = 
+                                TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectTrue.ToString()], 
+                                                                true, 
+                                                                CheckState.Checked, 
+                                                                TreeNodeItemSelector.CustomNodeType.Default,
+                                                                this.RightToLeft);
                             treeFilterSelection.Nodes.Add(node);
                         }
                     }
 
                     //ignore image nodes
-                    else if (valueType == typeof(Bitmap))
+                    else if (_filterValueType == typeof(Bitmap))
                     { }
 
                     //add string nodes
@@ -726,7 +816,11 @@ namespace Zuby.ADGV
                     {
                         foreach (var v in nonulls.GroupBy(c => c.Value).OrderBy(g => g.Key))
                         {
-                            TreeNodeItemSelector node = TreeNodeItemSelector.CreateNode(v.First().FormattedValue.ToString(), v.Key, CheckState.Checked, TreeNodeItemSelector.CustomNodeType.Default);
+                            TreeNodeItemSelector node = TreeNodeItemSelector.CreateNode(v.First().FormattedValue.ToString(), 
+                                                                                        v.Key, 
+                                                                                        CheckState.Checked, 
+                                                                                        TreeNodeItemSelector.CustomNodeType.Default,
+                                                                                        this.RightToLeft);
                             treeFilterSelection.Nodes.Add(node);
                         }
                     }
@@ -888,6 +982,202 @@ namespace Zuby.ADGV
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Get the SelectEmpty Node
+        /// </summary>
+        /// <returns></returns>
+        private TreeNodeItemSelector GetSelectEmptyNode()
+        {
+            TreeNodeItemSelector result = null;
+            int i = 0;
+            foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
+            {
+                if (n.NodeType == TreeNodeItemSelector.CustomNodeType.SelectEmpty)
+                {
+                    result = n;
+                    break;
+                }
+                else if (i > 2)
+                    break;
+                else
+                    i++;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Build a Filter string based on selected Nodes
+        /// </summary>
+        /// <param name="nodes"></param>
+        /// <returns></returns>
+        private string BuildNodesFilterString(IEnumerable<TreeNodeItemSelector> nodes)
+        {
+            StringBuilder sb = new StringBuilder("");
+            string appx = (_filterValueType == typeof(DateTime) || _filterValueType == typeof(TimeSpan)) ? " OR " : ", ";
+
+            if (nodes != null && nodes.Count() > 0)
+            {
+                if (_filterValueType == typeof(DateTime))
+                {
+                    foreach (TreeNodeItemSelector n in nodes)
+                    {
+                        if (n.Checked && (n.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(sn => sn.CheckState != CheckState.Unchecked).Count() == 0))
+                        {
+                            DateTime dt = (DateTime)n.Value;
+                            sb.Append("(Convert([{0}], 'System.String') LIKE '%" + Convert.ToString((this.FilterDateAndTimeEnabled ? dt : dt.Date), CultureInfo.CurrentCulture) + "%')" + appx);
+                        }
+                        else if (n.CheckState != CheckState.Unchecked && n.Nodes.Count > 0)
+                        {
+                            string subnode = BuildNodesFilterString(n.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(sn => sn.CheckState != CheckState.Unchecked));
+                            if (subnode.Length > 0)
+                                sb.Append(subnode + appx);
+                        }
+                    }
+                }
+                else if (_filterValueType == typeof(TimeSpan))
+                {
+                    foreach (TreeNodeItemSelector n in nodes)
+                    {
+                        if (n.Checked && (n.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(sn => sn.CheckState != CheckState.Unchecked).Count() == 0))
+                        {
+                            TimeSpan ts = (TimeSpan)n.Value;
+                            sb.Append("(Convert([{0}], 'System.String') LIKE '%P" + ((int)ts.Days > 0 ? (int)ts.Days + "D" : "") + (ts.TotalHours > 0 ? "T" : "") + ((int)ts.Hours > 0 ? (int)ts.Hours + "H" : "") + ((int)ts.Minutes > 0 ? (int)ts.Minutes + "M" : "") + ((int)ts.Seconds > 0 ? (int)ts.Seconds + "S" : "") + "%')" + appx);
+                        }
+                        else if (n.CheckState != CheckState.Unchecked && n.Nodes.Count > 0)
+                        {
+                            string subnode = BuildNodesFilterString(n.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(sn => sn.CheckState != CheckState.Unchecked));
+                            if (subnode.Length > 0)
+                                sb.Append(subnode + appx);
+                        }
+                    }
+                }
+                else if (_filterValueType == typeof(bool))
+                {
+                    foreach (TreeNodeItemSelector n in nodes)
+                    {
+                        sb.Append(n.Value.ToString());
+                        break;
+                    }
+                }
+                else if (_filterValueType == typeof(Int32) || _filterValueType == typeof(Int64) || _filterValueType == typeof(Int16) ||
+                    _filterValueType == typeof(UInt32) || _filterValueType == typeof(UInt64) || _filterValueType == typeof(UInt16) ||
+                    _filterValueType == typeof(Byte) || _filterValueType == typeof(SByte))
+                {
+                    foreach (TreeNodeItemSelector n in nodes)
+                        sb.Append(n.Value.ToString() + appx);
+                }
+                else if (_filterValueType == typeof(Single) || _filterValueType == typeof(Double) || _filterValueType == typeof(Decimal))
+                {
+                    foreach (TreeNodeItemSelector n in nodes)
+                        sb.Append(n.Value.ToString().Replace(",", ".") + appx);
+                }
+                else if (_filterValueType == typeof(Bitmap))
+                { }
+                else
+                {
+                    foreach (TreeNodeItemSelector n in nodes)
+                        sb.Append("'" + n.Value.ToString().Replace("'", "''") + "'" + appx);
+                }
+            }
+
+            if (sb.Length > appx.Length && _filterValueType != typeof(bool))
+                sb.Remove(sb.Length - appx.Length, appx.Length);
+
+            return sb.ToString();
+        }
+
+
+        /// <summary>
+        /// Set the Filter String using checkList selected Nodes
+        /// </summary>
+        private void SetCheckListFilter()
+        {
+            bool allNodes = false;
+            string filterString = string.Empty; // No fillter by default
+            TreeNodeItemSelector selectAllNode = GetSelectAllNode();
+            if (selectAllNode != null && selectAllNode.Checked)
+            {   // Selection of 'All Items' means cancellation of selected filter
+                allNodes = true;
+            }
+            else
+            {
+                StringBuilder filterBuilder = new StringBuilder();
+                if (treeFilterSelection.Nodes.Count > 1)
+                {
+                    // Reuse variable to select Empty Value node
+                    selectAllNode = GetSelectEmptyNode();
+                    // If Empty Value checked, start filter string with this filter
+                    if (selectAllNode != null && selectAllNode.Checked)
+                        filterBuilder.Append("[{0}] IS NULL");
+                    // Traverse tree is search for seleced nodes
+                    if (treeFilterSelection.Nodes.Count > 2 || selectAllNode == null)
+                    {
+                        string nodesFilter = BuildNodesFilterString(
+                                (IsFilterNOTINLogicEnabled && 
+                                 (_filterValueType != typeof(DateTime) && _filterValueType != typeof(TimeSpan) && _filterValueType != typeof(bool)) ?
+                                treeFilterSelection.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(
+                                            n => n.NodeType != TreeNodeItemSelector.CustomNodeType.SelectAll
+                                        && n.NodeType != TreeNodeItemSelector.CustomNodeType.SelectEmpty
+                                        && n.CheckState == CheckState.Unchecked) :
+                                treeFilterSelection.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(
+                                            n => n.NodeType != TreeNodeItemSelector.CustomNodeType.SelectAll
+                                        && n.NodeType != TreeNodeItemSelector.CustomNodeType.SelectEmpty
+                                        && n.CheckState != CheckState.Unchecked
+                                ))
+                        );
+
+
+                        if (nodesFilter.Length > 0)
+                        {
+                            if (filterBuilder.Length > 0)
+                                filterBuilder.Append(" OR ");
+
+                            if (_filterValueType == typeof(DateTime) || _filterValueType == typeof(TimeSpan))
+                            {
+                                filterBuilder.Append(nodesFilter);
+                            }
+                            else if (_filterValueType == typeof(bool))
+                            {
+                                filterBuilder.Append("[{0}] =");
+                                filterBuilder.Append(nodesFilter);
+                            }
+                            else if (_filterValueType == typeof(Int32) || _filterValueType == typeof(Int64) || _filterValueType == typeof(Int16) ||
+                                        _filterValueType == typeof(UInt32) || _filterValueType == typeof(UInt64) || _filterValueType == typeof(UInt16) ||
+                                        _filterValueType == typeof(Decimal) ||
+                                        _filterValueType == typeof(Byte) || _filterValueType == typeof(SByte) || _filterValueType == typeof(String))
+                            {
+                                filterBuilder.Append(IsFilterNOTINLogicEnabled ? "[{0}] NOT IN (" : "[{0}] IN (");
+                                filterBuilder.Append(nodesFilter);
+                                filterBuilder.Append(")");
+                            }
+                            //else if (_filterValueType == typeof(Double))
+                            //{   // Do we really need to separate Doubles? 
+                            //    filterBuilder.Append(IsFilterNOTINLogicEnabled ? "Convert([{0}],System.String) NOT IN (" : "Convert([{0}],System.String) IN (");
+                            //    filterBuilder.Append(nodesFilter);
+                            //    filterBuilder.Append(")");
+                            //}
+                            else if (_filterValueType == typeof(Bitmap))
+                            { /* Exclude bitmap columns from filter */ }
+                            else
+                            {   // Any other type
+                                filterBuilder.Append(IsFilterNOTINLogicEnabled ? "Convert([{0}],System.String) NOT IN (" : "Convert([{0}],System.String) IN (");
+                                filterBuilder.Append(nodesFilter);
+                                filterBuilder.Append(")");
+                            }
+                        }
+                    }
+                }
+                //
+                DuplicateFilterNodes();
+                //
+                filterString = filterBuilder.ToString();
+            }
+
+            FilterSelected?.Invoke(this, new ChecklistFilterSelectedEventArgs(allNodes, filterString));
+
         }
 
         #endregion

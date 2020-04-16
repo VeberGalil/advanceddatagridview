@@ -18,9 +18,13 @@ namespace Zuby.ADGV
     {
         public static ISortFilterMenu CreateDefaultMenu(Type columnDataType)
         {
-            return new MenuStrip(columnDataType);
-            // when ready, replace with:
-            //return new SortFilterMenuStrip(columnDataType);
+            bool old = false;
+            ISortFilterMenu filterMenu;
+            if (old)
+                filterMenu = new MenuStrip(columnDataType);
+            else
+                filterMenu = new SortFilterMenuStrip(columnDataType);
+            return filterMenu;
         }
     }
 

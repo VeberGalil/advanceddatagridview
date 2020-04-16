@@ -15,6 +15,8 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Zuby.ADGV
 {
@@ -71,7 +73,7 @@ namespace Zuby.ADGV
             // Last custom filters
             customFilterLastFiltersListMenuItem.Text = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVCustomFilter.ToString()];
             customFilterLastFiltersListMenuItem.Enabled = _dataType != typeof(bool);
-            customFilterLastFiltersListMenuItem.Checked = ActiveFilterType == FilterType.Custom;
+            customFilterLastFiltersListMenuItem.Checked = (this.ActiveFilterType == FilterType.Custom);
             // Enable/disable context search in filter list
             if (_dataType == typeof(DateTime) || _dataType == typeof(TimeSpan) || _dataType == typeof(bool))
                 filterSelectionListPanel.FilterContextSearchEnabled = false;
@@ -122,7 +124,7 @@ namespace Zuby.ADGV
             this.BackColor = SystemColors.ControlLightLight;
             this.Padding = new Padding(0);
             this.Margin = new Padding(0);
-            this.MinimumSize = new Size(220, 330);
+            this.MinimumSize = new Size(265, 330);
             this.Size = new Size(287, 370);
             this.Items.AddRange(new ToolStripItem[] {
                 sortAscMenuItem,
@@ -139,7 +141,7 @@ namespace Zuby.ADGV
             // sortASCMenuItem
             //
             sortAscMenuItem.Name = "sortASCMenuItem";
-            sortAscMenuItem.Size = new Size(this.Width - 1, 22);
+            sortAscMenuItem.Size = new Size(286, 22);
             sortAscMenuItem.Click += SortAscMenuItem_Click;
             sortAscMenuItem.MouseEnter += ContextMenuItem_MouseEnter;
             sortAscMenuItem.ImageScaling = ToolStripItemImageScaling.None;
@@ -147,7 +149,7 @@ namespace Zuby.ADGV
             // sortDESCMenuItem
             //
             sortDescMenuItem.Name = "sortDESCMenuItem";
-            sortDescMenuItem.Size = new Size(Width - 1, 22);
+            sortDescMenuItem.Size = new Size(286, 22);
             sortDescMenuItem.Click += SortDescMenuItem_Click;
             sortDescMenuItem.MouseEnter += ContextMenuItem_MouseEnter;
             sortDescMenuItem.ImageScaling = ToolStripItemImageScaling.None;
@@ -156,27 +158,27 @@ namespace Zuby.ADGV
             //
             cancelSortMenuItem.Name = "cancelSortMenuItem";
             cancelSortMenuItem.Enabled = false;
-            cancelSortMenuItem.Size = new Size(Width - 1, 22);
+            cancelSortMenuItem.Size = new Size(286, 22);
             cancelSortMenuItem.Click += CancelSortMenuItem_Click;
             cancelSortMenuItem.MouseEnter += ContextMenuItem_MouseEnter;
             //
             // toolStripSeparator1MenuItem
             //
             this.toolStripSeparator1MenuItem.Name = "toolStripSeparator1MenuItem";
-            this.toolStripSeparator1MenuItem.Size = new Size(Width - 4, 6);
+            this.toolStripSeparator1MenuItem.Size = new Size(283, 6);
             //
             // cancelFilterMenuItem
             //
             cancelFilterMenuItem.Name = "cancelFilterMenuItem";
             cancelFilterMenuItem.Enabled = false;
-            cancelFilterMenuItem.Size = new Size(Width - 1, 22);
+            cancelFilterMenuItem.Size = new Size(286, 22);
             cancelFilterMenuItem.Click += CancelFilterMenuItem_Click;
             cancelFilterMenuItem.MouseEnter += ContextMenuItem_MouseEnter;
             //
             // customFilterLastFiltersListMenuItem
             //
             customFilterLastFiltersListMenuItem.Name = "customFilterLastFiltersListMenuItem";
-            customFilterLastFiltersListMenuItem.Size = new Size(Width - 1, 22);
+            customFilterLastFiltersListMenuItem.Size = new Size(286, 22);
             customFilterLastFiltersListMenuItem.Image = Properties.Resources.ColumnHeader_Filtered;
             customFilterLastFiltersListMenuItem.ImageScaling = ToolStripItemImageScaling.None;
             customFilterLastFiltersListMenuItem.DropDownItems.AddRange(new ToolStripItem[] {
@@ -188,7 +190,6 @@ namespace Zuby.ADGV
                 customFilterLastFilter4MenuItem,
                 customFilterLastFilter5MenuItem
             });
-            customFilterLastFiltersListMenuItem.Paint += CustomFilterLastFiltersListMenuItem_Paint;
             customFilterLastFiltersListMenuItem.MouseEnter += ContextMenuItem_MouseEnter;
             //
             // customFilterMenuItem
@@ -257,20 +258,19 @@ namespace Zuby.ADGV
             // toolStripMenuItem3
             //
             toolStripSeparator3MenuItem.Name = "toolStripSeparator3MenuItem";
-            toolStripSeparator3MenuItem.Size = new Size(Width - 4, 6);
+            toolStripSeparator3MenuItem.Size = new Size(283, 6);
             //
             // filterSelectionListPanel
             //
             filterSelectionListPanel.Name = "filterSelectionListPanel";
-            filterSelectionListPanel.Size = new Size(Width - 1, 200);
+            filterSelectionListPanel.Size = new Size(286, 200);
             filterSelectionListPanel.FilterSelected += FilterSelectionListPanel_FilterSelected;
-            filterSelectionListPanel.FilterSelectionCancelled += FilterSelectionListPanel_FilterSelectionCancelled;
             filterSelectionListPanel.MouseLeave += FilterSelectionListPanel_MouseLeave;
             //
             // sortFilterMenuStripResizer
             //
             sortFilterMenuStripResizer.Name = "sortFilterMenuStripResizer";
-            sortFilterMenuStripResizer.Size = new Size(10, 10);
+            sortFilterMenuStripResizer.Margin = new Padding(242, 0, 0, 0);
             sortFilterMenuStripResizer.ResizeMenu += SortFilterMenuStripResizer_ResizeMenu;
             //
             //
@@ -287,13 +287,13 @@ namespace Zuby.ADGV
         #endregion
 
         #region // Private/protected data fields
+
         // Type of data in ADGV column that uses this menu
         private readonly Type _dataType;
         // Selected sort order for hosting column in form of DataSet ORDER BY string 
         private string _sortString = string.Empty;
         // Accumulated filter for hosting column in form of DataSet WHERE string
         private string _filterString = string.Empty;
-
 
         #endregion
 
@@ -370,7 +370,11 @@ namespace Zuby.ADGV
         /// <summary>
         /// Is filter selection exclusive (i.e., selected items are filtered out, like DataSet WHERE NOT IN)
         /// </summary>
-        public bool IsFilterNOTINLogicEnabled { get; set; } = false;
+        public bool IsFilterNOTINLogicEnabled 
+        {
+            get => filterSelectionListPanel.IsFilterNOTINLogicEnabled;
+            set => filterSelectionListPanel.IsFilterNOTINLogicEnabled = value;
+        }
 
         /// <summary>
         /// If true, context search in filter hides unmatched items
@@ -595,6 +599,19 @@ namespace Zuby.ADGV
 
         #region // Inner ContextMenu Events 
 
+        protected override void OnOpening(CancelEventArgs e)
+        {
+            if (RightToLeft == RightToLeft.Yes)
+            {
+                sortFilterMenuStripResizer.Margin = new Padding(Width - 46, 1, 0, 0);
+            }
+            else
+            {
+                sortFilterMenuStripResizer.Margin = new Padding(Width - 45, 0, 0, 0);
+            }
+            base.OnOpening(e);
+        }
+
         protected override void OnClosed(ToolStripDropDownClosedEventArgs e)
         {
             base.OnClosed(e);
@@ -618,13 +635,6 @@ namespace Zuby.ADGV
                 if (item.Enabled)
                     item.Select();
             }
-        }
-
-        // Draw glyph after Custom Filters menu item
-        private void CustomFilterLastFiltersListMenuItem_Paint(object sender, PaintEventArgs e)
-        {
-            Rectangle rect = new Rectangle(customFilterLastFiltersListMenuItem.Width - 12, 7, 10, 10);
-            ControlPaint.DrawMenuGlyph(e.Graphics, rect, MenuGlyph.Arrow, Color.Black, Color.Transparent);
         }
 
         // Show / hide separator after Add Custom Filter menu item
@@ -812,14 +822,24 @@ namespace Zuby.ADGV
             }
         }
 
-        private void FilterSelectionListPanel_FilterSelected(object sender, EventArgs e)
+        private void FilterSelectionListPanel_FilterSelected(object sender, ChecklistFilterSelectedEventArgs e)
         {
-            throw new NotImplementedException();
-        }
-
-        private void FilterSelectionListPanel_FilterSelectionCancelled(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
+            UnCheckCustomFilters();
+            customFilterLastFiltersListMenuItem.Checked = false;
+            if (e.CancelCustomFilter)
+            {
+                CancelFilterMenuItem_Click(filterSelectionListPanel, new EventArgs());
+            }
+            else
+            {
+                ActiveFilterType = FilterType.CheckList;
+                //
+                if (e.CustomFilter != this.FilterString)
+                {
+                    this.FilterString = e.CustomFilter;
+                    FilterChanged?.Invoke(this, new EventArgs());
+                }
+            }
         }
 
         #endregion
@@ -898,6 +918,8 @@ namespace Zuby.ADGV
                 int newX = Bounds.Location.X - re.WidthChange;
                 base.Show(new Point(newX, Bounds.Location.Y));
             }
+            Debug.WriteLine($"Menu size = {Size}, panel size = {filterSelectionListPanel.Size}");
+
         }
 
         #endregion 
