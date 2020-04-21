@@ -16,24 +16,15 @@ namespace Zuby.ADGV
 {
     internal class SortFilterMenuStripResizeEventArgs : EventArgs
     {
-        public Size NewMenuSize { get; private set; }
         public int WidthChange { get; private set; }
         public int HeightChange { get; private set; }
 
-        public SortFilterMenuStripResizeEventArgs(Size size)
+        public SortFilterMenuStripResizeEventArgs(int dX, int dY)
         {
-            this.NewMenuSize = size;
-        }
-
-        public SortFilterMenuStripResizeEventArgs(Size size, int dX, int dY)
-        {
-            this.NewMenuSize = size;
             this.WidthChange = dX;
             this.HeightChange = dY;
         }
     }
-
-    internal delegate void SortFilterMenuStripResizeEventHandler(object sender, SortFilterMenuStripResizeEventArgs re);
 
     internal class SortFilterMenuStripResizer : ToolStripControlHost
     {
@@ -55,7 +46,7 @@ namespace Zuby.ADGV
 
         #region // Public event
         
-        public event SortFilterMenuStripResizeEventHandler ResizeMenu;
+        public event EventHandler<SortFilterMenuStripResizeEventArgs> ResizeMenu;
 
         #endregion
 
@@ -186,7 +177,7 @@ namespace Zuby.ADGV
                         }
                         int newHeight = Math.Max(e.Y + Owner.Height - Height, Owner.MinimumSize.Height);
                         // Raise event
-                        ResizeMenu(this, new SortFilterMenuStripResizeEventArgs(new Size(newWidth, newHeight), newWidth - Owner.Width, newHeight - Owner.Height));
+                        ResizeMenu(this, new SortFilterMenuStripResizeEventArgs(newWidth - Owner.Width, newHeight - Owner.Height));
                         // Reposition resizer icon
                         if (Owner.RightToLeft == RightToLeft.Yes)
                         {

@@ -1,4 +1,14 @@
-﻿using System.Drawing;
+﻿#region License
+// Advanced DataGridView
+//
+// Copyright (c), 2020 Vladimir Bershadsky <vladimir@galileng.com>
+// Copyright (c), 2014 Davide Gironi <davide.gironi@gmail.com>
+// Original work Copyright (c), 2013 Zuby <zuby@me.com>
+//
+// Please refer to LICENSE file for licensing information.
+#endregion
+
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Zuby.ADGV
