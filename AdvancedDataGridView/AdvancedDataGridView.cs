@@ -431,6 +431,7 @@ namespace Zuby.ADGV
         /// <param name="sorting"></param>
         public void LoadFilterAndSort(string filter, string sorting)
         {
+
             foreach (ColumnHeaderCell c in FilterableCells)
                 c.SetLoadedMode(true);
 
@@ -445,6 +446,47 @@ namespace Zuby.ADGV
                 SortString = sorting;
 
             _loadedFilter = true;
+        }
+
+
+        /// <summary>
+        /// Load sort string without locking menus.
+        /// </summary>
+        /// <param name="sorting">Desired sort string</param>
+        public void LoadSort(string sorting)
+        {
+            // Clean current sorting
+            foreach (ColumnHeaderCell c in FilterableCells)
+                c.CleanSort();
+            _sortOrderList.Clear();
+
+            // Parse sort string and set sorting in columns
+
+
+            // Do actual sorting
+            if (sorting != null)
+                SortString = sorting;
+
+        }
+
+        /// <summary>
+        /// Load filter string without locking menus
+        /// </summary>
+        /// <param name="filter">Desired filter string</param>
+        public void LoadFilter(string filter)
+        {
+            // Clean current filter
+            foreach (ColumnHeaderCell c in FilterableCells)
+                c.CleanFilter();
+            _filteredColumns.Clear();
+            _filterOrderList.Clear();
+
+            // Parse filter string and set filter in columns
+
+
+            // Do actual filtering
+            if (filter != null)
+                FilterString = filter;
         }
 
         /// <summary>
@@ -640,7 +682,7 @@ namespace Zuby.ADGV
                 Cancel = false
             };
             if (FilterStringChanged != null)
-                FilterStringChanged.Invoke(this, filterEventArgs);
+                FilterStringChanged(this, filterEventArgs);
             //sort datasource
             if (filterEventArgs.Cancel == false)
             {
@@ -933,16 +975,12 @@ namespace Zuby.ADGV
             foreach (string filterOrder in _filterOrderList)
             {
                 DataGridViewColumn column = Columns[filterOrder];
-
-                if (column != null)
+                if (column?.HeaderCell is ColumnHeaderCell cell)
                 {
-                    if (column.HeaderCell is ColumnHeaderCell cell)
+                    if (cell.FilterAndSortEnabled && cell.ActiveFilterType != FilterType.None)
                     {
-                        if (cell.FilterAndSortEnabled && cell.ActiveFilterType != FilterType.None)
-                        {
-                            sb.AppendFormat(appx + "(" + cell.FilterString + ")", column.DataPropertyName);
-                            appx = " AND ";
-                        }
+                        sb.AppendFormat(appx + "(" + cell.FilterString + ")", column.DataPropertyName);
+                        appx = " AND ";
                     }
                 }
             }
@@ -1014,7 +1052,7 @@ namespace Zuby.ADGV
         #endregion
 
 
-        #region sort events
+        #region sort events and methods
 
         /// <summary>
         /// Build the complete Sort string
@@ -1043,6 +1081,20 @@ namespace Zuby.ADGV
             }
 
             return sb.ToString();
+        }
+        
+        private void ParseSortString(string sorting)
+        {
+            string[] sortParts = sorting.Split(',');
+            foreach (string sortPart in sortParts)
+            {
+                // Extract column name from sort part
+
+                // Verify that column is allowed for sorting
+                // Extract sort type
+                // Execute SortASC or SortDESC on column
+
+            }
         }
 
         /// <summary>

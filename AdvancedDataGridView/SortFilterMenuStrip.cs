@@ -384,14 +384,6 @@ namespace Zuby.ADGV
             get => filterSelectionListPanel.DoesTextFilterRemoveNodesOnSearch;
             set => filterSelectionListPanel.DoesTextFilterRemoveNodesOnSearch = value;
         }
-
-        //TODO: Do we need this override at all???
-        //public override RightToLeft RightToLeft 
-        //{
-        //    get => base.RightToLeft;
-        //    set => base.RightToLeft = value;
-        //}
-
         #endregion
 
         #region // Public events
