@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel_top = new System.Windows.Forms.Panel();
             this.btnEnglish = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -88,7 +88,7 @@
             // 
             // btnEnglish
             // 
-            this.btnEnglish.Location = new System.Drawing.Point(12, 147);
+            this.btnEnglish.Location = new System.Drawing.Point(13, 147);
             this.btnEnglish.Name = "btnEnglish";
             this.btnEnglish.Size = new System.Drawing.Size(75, 23);
             this.btnEnglish.TabIndex = 21;
@@ -301,8 +301,8 @@
             // 
             this.advancedDataGridView_main.AllowUserToAddRows = false;
             this.advancedDataGridView_main.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.advancedDataGridView_main.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.advancedDataGridView_main.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             this.advancedDataGridView_main.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.advancedDataGridView_main.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.advancedDataGridView_main.Dock = System.Windows.Forms.DockStyle.Fill;

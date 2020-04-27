@@ -37,9 +37,6 @@ namespace Zuby.ADGV
 
         private readonly bool _filterDateAndTimeEnabled = true;
 
-        private string _filterString = null;
-        private string _filterStringDescription = null;
-
         #endregion
 
 
@@ -197,24 +194,12 @@ namespace Zuby.ADGV
         /// <summary>
         /// Get the Filter string
         /// </summary>
-        public string FilterString
-        {
-            get
-            {
-                return _filterString;
-            }
-        }
+        public string FilterString { get; private set; } = null;
 
         /// <summary>
         /// Get the Filter string description
         /// </summary>
-        public string FilterStringDescription
-        {
-            get
-            {
-                return _filterStringDescription;
-            }
-        }
+        public string FilterStringDescription { get; private set; } = null;
 
         #endregion
 
@@ -371,8 +356,8 @@ namespace Zuby.ADGV
         /// <param name="e"></param>
         private void Button_cancel_Click(object sender, EventArgs e)
         {
-            _filterStringDescription = null;
-            _filterString = null;
+            FilterStringDescription = null;
+            FilterString = null;
             Close();
         }
 
@@ -394,16 +379,16 @@ namespace Zuby.ADGV
 
             if (!String.IsNullOrEmpty(filterString))
             {
-                _filterString = filterString;
-                _filterStringDescription = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()], comboBox_filterType.Text, _valControl1.Text);
+                FilterString = filterString;
+                FilterStringDescription = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()], comboBox_filterType.Text, _valControl1.Text);
                 if (_valControl2.Visible)
-                    _filterStringDescription += " " + label_and.Text + " \"" + _valControl2.Text + "\"";
+                    FilterStringDescription += " " + label_and.Text + " \"" + _valControl2.Text + "\"";
                 DialogResult = System.Windows.Forms.DialogResult.OK;
             }
             else
             {
-                _filterString = null;
-                _filterStringDescription = null;
+                FilterString = null;
+                FilterStringDescription = null;
                 DialogResult = System.Windows.Forms.DialogResult.Cancel;
             }
 

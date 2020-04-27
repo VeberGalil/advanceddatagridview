@@ -461,7 +461,16 @@ namespace Zuby.ADGV
             _sortOrderList.Clear();
 
             // Parse sort string and set sorting in columns
+            string[] sortParts = sorting.Split(',');
+            foreach (string sortPart in sortParts)
+            {
+                // Extract column name from sort part
 
+                // Verify that column is allowed for sorting
+                // Extract sort type
+                // Execute SortASC or SortDESC on column
+
+            }
 
             // Do actual sorting
             if (sorting != null)
@@ -1083,19 +1092,6 @@ namespace Zuby.ADGV
             return sb.ToString();
         }
         
-        private void ParseSortString(string sorting)
-        {
-            string[] sortParts = sorting.Split(',');
-            foreach (string sortPart in sortParts)
-            {
-                // Extract column name from sort part
-
-                // Verify that column is allowed for sorting
-                // Extract sort type
-                // Execute SortASC or SortDESC on column
-
-            }
-        }
 
         /// <summary>
         /// SortChanged event

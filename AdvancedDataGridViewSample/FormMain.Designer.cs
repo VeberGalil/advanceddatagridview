@@ -88,6 +88,7 @@
             // 
             // btnHebrew
             // 
+            this.btnHebrew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnHebrew.Location = new System.Drawing.Point(697, 131);
             this.btnHebrew.Name = "btnHebrew";
             this.btnHebrew.Size = new System.Drawing.Size(75, 23);
