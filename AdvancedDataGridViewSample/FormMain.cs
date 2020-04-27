@@ -5,6 +5,8 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using System.Text;
+using System.Text.RegularExpressions;
 using Zuby.ADGV;
 
 namespace AdvancedDataGridViewSample
@@ -174,6 +176,56 @@ namespace AdvancedDataGridViewSample
             advancedDataGridView_main.TriggerFilterStringChanged();
         }
 
+        private void optionSort_ChechedChanged(object sender, EventArgs e)
+        {
+            //sample use of the override string sort
+            if (!optionIgnoreSort.Checked)
+            {
+                StringBuilder sb = new StringBuilder();
+                bool isSortedByDate = false;
+                if (advancedDataGridView_main.SortString != null)
+                {
+                    string[] sortOrder = advancedDataGridView_main.SortString.Split(',');
+                    foreach (string sortColumn in sortOrder)
+                    {
+                        // Check if colomn is already in sort string to preserve sort position
+                        if (Regex.IsMatch(sortColumn, @"(?<=\[)date(?=\])"))
+                        {
+                            if (optionSortAsc.Checked)
+                            {
+                                sb.Append((sb.Length == 0 ? string.Empty : ", "));
+                                sb.Append(sortColumn.Contains("ASC") ? sortColumn : "[date] ASC");
+                                isSortedByDate = true;
+                            }
+                            else if (optionSortDesc.Checked)
+                            {
+                                sb.Append((sb.Length == 0 ? string.Empty : ", "));
+                                sb.Append(sortColumn.Contains("DESC") ? sortColumn : "[date] DESC");
+                                isSortedByDate = true;
+                            }
+                            // Else, optionSortNone is checked, so we don't add column to SortString 
+                        }
+                        else
+                        {
+                            sb.Append((sb.Length == 0 ? string.Empty : ", "));
+                            sb.Append(sortColumn);
+                        }
+                    }
+                }
+
+                if (!isSortedByDate && !optionSortNone.Checked)
+                {
+                    sb.Append((sb.Length == 0 ? "[date]" : ", [date]"));
+                    sb.Append(optionSortDesc.Checked ? " DESC" : " ASC");
+                }
+
+                advancedDataGridView_main.LoadSort(sb.ToString());
+            }
+
+
+
+        }
+
         private void bindingSource_main_ListChanged(object sender, ListChangedEventArgs e)
         {
             textBox_total.Text = bindingSource_main.List.Count.ToString();
@@ -246,6 +298,17 @@ namespace AdvancedDataGridViewSample
         private void btnHebrew_Click(object sender, EventArgs e)
         {
             (new FormMainHeb()).Show();
+        }
+
+        private void btnAsc_Click(object sender, EventArgs e)
+        {
+            advancedDataGridView_main.SortASC(advancedDataGridView_main.Columns["date"]);
+        }
+
+        private void btnDesc_Click(object sender, EventArgs e)
+        {
+            advancedDataGridView_main.SortDESC(advancedDataGridView_main.Columns["date"]);
+
         }
     }
 }
