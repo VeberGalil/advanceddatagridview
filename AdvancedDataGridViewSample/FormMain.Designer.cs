@@ -31,6 +31,12 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel_top = new System.Windows.Forms.Panel();
+            this.btnDesc = new System.Windows.Forms.Button();
+            this.btnAsc = new System.Windows.Forms.Button();
+            this.optionSortDesc = new System.Windows.Forms.RadioButton();
+            this.optionSortAsc = new System.Windows.Forms.RadioButton();
+            this.optionSortNone = new System.Windows.Forms.RadioButton();
+            this.label_date_sort = new System.Windows.Forms.Label();
             this.btnHebrew = new System.Windows.Forms.Button();
             this.label_strfilter = new System.Windows.Forms.Label();
             this.textBox_strfilter = new System.Windows.Forms.TextBox();
@@ -54,6 +60,7 @@
             this.advancedDataGridView_main = new Zuby.ADGV.AdvancedDataGridView();
             this.panel_bottom = new System.Windows.Forms.Panel();
             this.bindingSource_main = new System.Windows.Forms.BindingSource(this.components);
+            this.optionIgnoreSort = new System.Windows.Forms.RadioButton();
             this.panel_top.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel_grid.SuspendLayout();
@@ -64,6 +71,13 @@
             // 
             // panel_top
             // 
+            this.panel_top.Controls.Add(this.btnDesc);
+            this.panel_top.Controls.Add(this.btnAsc);
+            this.panel_top.Controls.Add(this.optionIgnoreSort);
+            this.panel_top.Controls.Add(this.optionSortDesc);
+            this.panel_top.Controls.Add(this.optionSortAsc);
+            this.panel_top.Controls.Add(this.optionSortNone);
+            this.panel_top.Controls.Add(this.label_date_sort);
             this.panel_top.Controls.Add(this.btnHebrew);
             this.panel_top.Controls.Add(this.label_strfilter);
             this.panel_top.Controls.Add(this.textBox_strfilter);
@@ -86,12 +100,73 @@
             this.panel_top.Size = new System.Drawing.Size(784, 192);
             this.panel_top.TabIndex = 0;
             // 
+            // btnDesc
+            // 
+            this.btnDesc.Location = new System.Drawing.Point(717, 136);
+            this.btnDesc.Name = "btnDesc";
+            this.btnDesc.Size = new System.Drawing.Size(46, 23);
+            this.btnDesc.TabIndex = 23;
+            this.btnDesc.Text = "DESC";
+            this.btnDesc.UseVisualStyleBackColor = true;
+            this.btnDesc.Click += new System.EventHandler(this.btnDesc_Click);
+            // 
+            // btnAsc
+            // 
+            this.btnAsc.Location = new System.Drawing.Point(665, 136);
+            this.btnAsc.Name = "btnAsc";
+            this.btnAsc.Size = new System.Drawing.Size(46, 23);
+            this.btnAsc.TabIndex = 23;
+            this.btnAsc.Text = "ASC";
+            this.btnAsc.UseVisualStyleBackColor = true;
+            this.btnAsc.Click += new System.EventHandler(this.btnAsc_Click);
+            // 
+            // optionSortDesc
+            // 
+            this.optionSortDesc.AutoSize = true;
+            this.optionSortDesc.Location = new System.Drawing.Point(489, 139);
+            this.optionSortDesc.Name = "optionSortDesc";
+            this.optionSortDesc.Size = new System.Drawing.Size(76, 17);
+            this.optionSortDesc.TabIndex = 22;
+            this.optionSortDesc.Text = "Sort DESC";
+            this.optionSortDesc.UseVisualStyleBackColor = true;
+            this.optionSortDesc.CheckedChanged += new System.EventHandler(this.optionSort_ChechedChanged);
+            // 
+            // optionSortAsc
+            // 
+            this.optionSortAsc.AutoSize = true;
+            this.optionSortAsc.Location = new System.Drawing.Point(414, 139);
+            this.optionSortAsc.Name = "optionSortAsc";
+            this.optionSortAsc.Size = new System.Drawing.Size(68, 17);
+            this.optionSortAsc.TabIndex = 22;
+            this.optionSortAsc.Text = "Sort ASC";
+            this.optionSortAsc.UseVisualStyleBackColor = true;
+            this.optionSortAsc.CheckedChanged += new System.EventHandler(this.optionSort_ChechedChanged);
+            // 
+            // optionSortNone
+            // 
+            this.optionSortNone.AutoSize = true;
+            this.optionSortNone.Location = new System.Drawing.Point(339, 139);
+            this.optionSortNone.Name = "optionSortNone";
+            this.optionSortNone.Size = new System.Drawing.Size(69, 17);
+            this.optionSortNone.TabIndex = 22;
+            this.optionSortNone.Text = "Clear sort";
+            this.optionSortNone.UseVisualStyleBackColor = true;
+            this.optionSortNone.CheckedChanged += new System.EventHandler(this.optionSort_ChechedChanged);
+            // 
+            // label_date_sort
+            // 
+            this.label_date_sort.AutoSize = true;
+            this.label_date_sort.Location = new System.Drawing.Point(233, 141);
+            this.label_date_sort.Name = "label_date_sort";
+            this.label_date_sort.Size = new System.Drawing.Size(100, 13);
+            this.label_date_sort.TabIndex = 21;
+            this.label_date_sort.Text = "Sort column \"date\":";
+            // 
             // btnHebrew
             // 
-            this.btnHebrew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnHebrew.Location = new System.Drawing.Point(697, 131);
+            this.btnHebrew.Location = new System.Drawing.Point(141, 10);
             this.btnHebrew.Name = "btnHebrew";
-            this.btnHebrew.Size = new System.Drawing.Size(75, 23);
+            this.btnHebrew.Size = new System.Drawing.Size(114, 23);
             this.btnHebrew.TabIndex = 20;
             this.btnHebrew.Text = "עברית";
             this.btnHebrew.UseVisualStyleBackColor = true;
@@ -108,7 +183,7 @@
             // 
             // textBox_strfilter
             // 
-            this.textBox_strfilter.Location = new System.Drawing.Point(125, 138);
+            this.textBox_strfilter.Location = new System.Drawing.Point(122, 138);
             this.textBox_strfilter.Name = "textBox_strfilter";
             this.textBox_strfilter.Size = new System.Drawing.Size(100, 20);
             this.textBox_strfilter.TabIndex = 18;
@@ -188,7 +263,7 @@
             // button_unloadfilters
             // 
             this.button_unloadfilters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_unloadfilters.Location = new System.Drawing.Point(425, 37);
+            this.button_unloadfilters.Location = new System.Drawing.Point(408, 37);
             this.button_unloadfilters.Name = "button_unloadfilters";
             this.button_unloadfilters.Size = new System.Drawing.Size(150, 23);
             this.button_unloadfilters.TabIndex = 9;
@@ -200,7 +275,7 @@
             // 
             this.label_sortsaved.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label_sortsaved.AutoSize = true;
-            this.label_sortsaved.Location = new System.Drawing.Point(587, 42);
+            this.label_sortsaved.Location = new System.Drawing.Point(581, 42);
             this.label_sortsaved.Name = "label_sortsaved";
             this.label_sortsaved.Size = new System.Drawing.Size(61, 13);
             this.label_sortsaved.TabIndex = 8;
@@ -210,7 +285,7 @@
             // 
             this.label_filtersaved.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label_filtersaved.AutoSize = true;
-            this.label_filtersaved.Location = new System.Drawing.Point(584, 15);
+            this.label_filtersaved.Location = new System.Drawing.Point(581, 15);
             this.label_filtersaved.Name = "label_filtersaved";
             this.label_filtersaved.Size = new System.Drawing.Size(64, 13);
             this.label_filtersaved.TabIndex = 7;
@@ -228,18 +303,18 @@
             // button_setsavedfilter
             // 
             this.button_setsavedfilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_setsavedfilter.Location = new System.Drawing.Point(697, 66);
+            this.button_setsavedfilter.Location = new System.Drawing.Point(581, 66);
             this.button_setsavedfilter.Name = "button_setsavedfilter";
-            this.button_setsavedfilter.Size = new System.Drawing.Size(75, 23);
+            this.button_setsavedfilter.Size = new System.Drawing.Size(191, 23);
             this.button_setsavedfilter.TabIndex = 5;
-            this.button_setsavedfilter.Text = "Apply";
+            this.button_setsavedfilter.Text = "Load Saved Filter And Sort";
             this.button_setsavedfilter.UseVisualStyleBackColor = true;
             this.button_setsavedfilter.Click += new System.EventHandler(this.button_setsavedfilter_Click);
             // 
             // button_savefilters
             // 
             this.button_savefilters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_savefilters.Location = new System.Drawing.Point(425, 10);
+            this.button_savefilters.Location = new System.Drawing.Point(408, 10);
             this.button_savefilters.Name = "button_savefilters";
             this.button_savefilters.Size = new System.Drawing.Size(150, 23);
             this.button_savefilters.TabIndex = 3;
@@ -315,6 +390,19 @@
             // 
             this.bindingSource_main.ListChanged += new System.ComponentModel.ListChangedEventHandler(this.bindingSource_main_ListChanged);
             // 
+            // optionIgnoreSort
+            // 
+            this.optionIgnoreSort.AutoSize = true;
+            this.optionIgnoreSort.Checked = true;
+            this.optionIgnoreSort.Location = new System.Drawing.Point(571, 139);
+            this.optionIgnoreSort.Name = "optionIgnoreSort";
+            this.optionIgnoreSort.Size = new System.Drawing.Size(88, 17);
+            this.optionIgnoreSort.TabIndex = 22;
+            this.optionIgnoreSort.TabStop = true;
+            this.optionIgnoreSort.Text = "Sort by Menu";
+            this.optionIgnoreSort.UseVisualStyleBackColor = true;
+            this.optionIgnoreSort.CheckedChanged += new System.EventHandler(this.optionSort_ChechedChanged);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -366,6 +454,13 @@
         private System.Windows.Forms.TextBox textBox_strfilter;
         private System.Windows.Forms.Panel panel_bottom;
         private System.Windows.Forms.Button btnHebrew;
+        private System.Windows.Forms.RadioButton optionSortDesc;
+        private System.Windows.Forms.RadioButton optionSortAsc;
+        private System.Windows.Forms.RadioButton optionSortNone;
+        private System.Windows.Forms.Label label_date_sort;
+        private System.Windows.Forms.Button btnDesc;
+        private System.Windows.Forms.Button btnAsc;
+        private System.Windows.Forms.RadioButton optionIgnoreSort;
     }
 }
 

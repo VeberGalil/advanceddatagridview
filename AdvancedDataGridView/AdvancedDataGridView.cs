@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
@@ -455,26 +456,37 @@ namespace Zuby.ADGV
         /// <param name="sorting">Desired sort string</param>
         public void LoadSort(string sorting)
         {
-            // Clean current sorting
-            foreach (ColumnHeaderCell c in FilterableCells)
-                c.CleanSort();
-            _sortOrderList.Clear();
+            CleanSort(false);
 
             // Parse sort string and set sorting in columns
             string[] sortParts = sorting.Split(',');
+            Regex rxColname = new Regex(@"(?=\[?)\w+(?=\])");
             foreach (string sortPart in sortParts)
             {
-                // Extract column name from sort part
-
-                // Verify that column is allowed for sorting
-                // Extract sort type
-                // Execute SortASC or SortDESC on column
-
+                // Extract column name and sort type from sort part
+                Match match = rxColname.Match(sortPart);
+                if (match.Success)
+                {
+                    string colName = match.Value;
+                    // Verify that column is allowed for sorting
+                    if( Columns.Contains(colName) && Columns[colName].HeaderCell is ColumnHeaderCell cell)
+                    {
+                        // Execute SortASC or SortDESC on column
+                        if (sortPart.Contains("DESC"))
+                        {
+                            cell.SortDesc();
+                        }
+                        else
+                        {
+                            cell.SortAsc();
+                        }
+                    }
+                }
             }
 
-            // Do actual sorting
-            if (sorting != null)
-                SortString = sorting;
+            //// Do actual sorting
+            //if (sorting != null)
+            //    SortString = sorting;
 
         }
 
@@ -485,10 +497,8 @@ namespace Zuby.ADGV
         public void LoadFilter(string filter)
         {
             // Clean current filter
-            foreach (ColumnHeaderCell c in FilterableCells)
-                c.CleanFilter();
+            CleanFilter(false);
             _filteredColumns.Clear();
-            _filterOrderList.Clear();
 
             // Parse filter string and set filter in columns
 
@@ -497,6 +507,7 @@ namespace Zuby.ADGV
             if (filter != null)
                 FilterString = filter;
         }
+
 
         /// <summary>
         /// Clean Filter and Sort
@@ -529,19 +540,7 @@ namespace Zuby.ADGV
         /// <summary>
         /// Get or Set Filter and Sort status
         /// </summary>
-        public bool FilterAndSortEnabled
-        {
-            get
-            {
-                return _filterAndSortEnabled;
-            }
-            set
-            {
-                _filterAndSortEnabled = value;
-            }
-        }
-        private bool _filterAndSortEnabled = true;
-
+        public bool FilterAndSortEnabled { get; set; } = true;
         #endregion
 
 
