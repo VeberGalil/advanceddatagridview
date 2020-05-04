@@ -119,23 +119,10 @@ namespace Zuby.ADGV
             set
             {
                 _checkState = value;
-                //switch (_checkState)
-                //{
-                //    case CheckState.Checked:
-                //        this.StateImageIndex = 1;
-                //        break;
-                //    case CheckState.Indeterminate:
-                //        this.StateImageIndex = 2;
-                //        break;
-                //    default:
-                //        this.StateImageIndex = 0 ;
-                //        break;
-                //}
                 switch (_checkState)
                 {
                     case CheckState.Checked:
                         this.StateImageKey = _rightToLeft == RightToLeft.Yes ? TreeNodeStateImages.KeyCheckedRtl : TreeNodeStateImages.KeyChecked;
-                        // this.StateImageKey = TreeNodeStateImages.KeyChecked;
                         break;
                     case CheckState.Indeterminate:
                         this.StateImageKey = TreeNodeStateImages.KeyIndeterminate;

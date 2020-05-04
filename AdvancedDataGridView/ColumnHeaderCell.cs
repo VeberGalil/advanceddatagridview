@@ -9,6 +9,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -45,7 +46,7 @@ namespace Zuby.ADGV
         /// <summary>
         /// Indicates whether the header should be aligned to support RTL languages
         /// </summary>
-        internal RightToLeft RightToLeft 
+        public RightToLeft RightToLeft 
         {
             get => MenuStrip?.RightToLeft ?? RightToLeft.No;
             set 
@@ -415,6 +416,18 @@ namespace Zuby.ADGV
             if (MenuStrip != null)
             {
                 MenuStrip.SetChecklistTextFilterRemoveNodesOnSearchMode(enabled);
+            }
+        }
+
+        /// <summary>
+        /// Load filter string 
+        /// </summary>
+        /// <param name="filter"></param>
+        public void LoadFilter(IEnumerable<DataGridViewCell> valueCells, string filter)
+        {
+            if (MenuStrip != null && FilterAndSortEnabled)
+            {
+                MenuStrip.LoadFilter(valueCells, filter);
             }
         }
 

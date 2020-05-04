@@ -587,6 +587,21 @@ namespace Zuby.ADGV
             }
         }
 
+        /// <summary>
+        /// Load predefined filter
+        /// </summary>
+        /// <param name="filter"></param>
+        public void LoadFilter(IEnumerable<DataGridViewCell> valueCells, string filter)
+        {
+            throw new NotImplementedException();
+            // decide whether use custom filter of mark in checklist
+            // note: ADGV is not designed to handle both
+
+
+            // Something like:
+            //filterSelectionListPanel.LoadChecklist(valueCells, _dataType, this.ActiveFilterType);
+
+        }
         #endregion
 
         #region // Inner ContextMenu Events 
@@ -914,6 +929,6 @@ namespace Zuby.ADGV
 
         }
 
-        #endregion 
+        #endregion
     }
 }

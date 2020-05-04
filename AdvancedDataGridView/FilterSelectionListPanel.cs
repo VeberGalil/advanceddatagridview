@@ -296,27 +296,54 @@ namespace Zuby.ADGV
         /// <param name="activeFilterType">Active FilterType</param>
         public void LoadChecklist(IEnumerable<DataGridViewCell> valueCells, Type valueType, FilterType activeFilterType)
         {
-            _filterValueType = valueType;
-            BuildNodes(valueCells);
-            if (DoesTextFilterRemoveNodesOnSearch && treeFilterSelection.Nodes.Count != _initialNodes.Count())
-            {
-                _initialNodes = new TreeNodeItemSelector[treeFilterSelection.Nodes.Count];
-                _restoreNodes = new TreeNodeItemSelector[treeFilterSelection.Nodes.Count];
-                int i = 0;
-                foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
-                {
-                    _initialNodes[i] = n.Clone();
-                    _restoreNodes[i] = n.Clone();
-                    i++;
-                }
-            }
+            LoadChecklist(valueCells, valueType, () => {
+                if (activeFilterType == FilterType.Custom)
+                    SetNodesCheckState(treeFilterSelection.Nodes, false);
+            });
 
-            if (activeFilterType == FilterType.Custom)
-                SetNodesCheckState(treeFilterSelection.Nodes, false);
-            DuplicateNodes();
+            #region // refactoring code: moved to LoadChecklist(IEnumerable<DataGridViewCell>, Type, Action)
+            //_filterValueType = valueType;
+            //BuildNodes(valueCells);
+            //if (DoesTextFilterRemoveNodesOnSearch && treeFilterSelection.Nodes.Count != _initialNodes.Count())
+            //{
+            //    _initialNodes = new TreeNodeItemSelector[treeFilterSelection.Nodes.Count];
+            //    _restoreNodes = new TreeNodeItemSelector[treeFilterSelection.Nodes.Count];
+            //    int i = 0;
+            //    foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
+            //    {
+            //        _initialNodes[i] = n.Clone();
+            //        _restoreNodes[i] = n.Clone();
+            //        i++;
+            //    }
+            //}
 
-            ClearFilterSelectionText();
+            //if (activeFilterType == FilterType.Custom)
+            //    SetNodesCheckState(treeFilterSelection.Nodes, false);
+            //DuplicateNodes();
+
+            //ClearFilterSelectionText();
+            #endregion 
         }
+
+        /// <summary>
+        /// Populate filter checklist from column cell values
+        /// </summary>
+        /// <param name="valueCells">Filter values</param>
+        /// <param name="valueType">Data type of filter values</param>
+        /// <param name="activeFilterType">Active FilterType</param>
+        public void LoadChecklist(IEnumerable<DataGridViewCell> valueCells, Type valueType, string filter)
+        {
+            LoadChecklist(valueCells, valueType, () => {
+                if (!string.IsNullOrWhiteSpace(filter))
+                {   
+                    // Remove all check marks
+                    SetNodesCheckState(treeFilterSelection.Nodes, false);
+                    // Parse filter string and mark only unfiltered nodes
+
+                }
+            });
+        }
+
 
         /// <summary>
         /// Restore previous filter selection
@@ -1089,7 +1116,6 @@ namespace Zuby.ADGV
             return sb.ToString();
         }
 
-
         /// <summary>
         /// Set the Filter String using checkList selected Nodes
         /// </summary>
@@ -1178,6 +1204,29 @@ namespace Zuby.ADGV
 
             FilterSelected?.Invoke(this, new ChecklistFilterSelectedEventArgs(allNodes, filterString));
 
+        }
+
+        private void LoadChecklist(IEnumerable<DataGridViewCell> valueCells, Type valueType, Action setCheckState)
+        {
+            _filterValueType = valueType;
+            BuildNodes(valueCells);
+            if (DoesTextFilterRemoveNodesOnSearch && treeFilterSelection.Nodes.Count != _initialNodes.Count())
+            {
+                _initialNodes = new TreeNodeItemSelector[treeFilterSelection.Nodes.Count];
+                _restoreNodes = new TreeNodeItemSelector[treeFilterSelection.Nodes.Count];
+                int i = 0;
+                foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
+                {
+                    _initialNodes[i] = n.Clone();
+                    _restoreNodes[i] = n.Clone();
+                    i++;
+                }
+            }
+
+            setCheckState?.Invoke();
+            DuplicateNodes();
+
+            ClearFilterSelectionText();
         }
 
         #endregion

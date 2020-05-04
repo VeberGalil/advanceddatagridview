@@ -545,7 +545,7 @@ namespace Zuby.ADGV
             }
             private set
             {
-                cancelFilterMenuItem.Enabled = (value != null && value.Length > 0);
+                cancelFilterMenuItem.Enabled = !string.IsNullOrWhiteSpace(value);
                 _filterString = value;
             }
         }
@@ -587,6 +587,20 @@ namespace Zuby.ADGV
             }
         }
 
+
+        /// <summary>
+        /// Load filter 
+        /// </summary>
+        /// <param name="filter"></param>
+        public void LoadFilter(IEnumerable<DataGridViewCell> valueCells, string filter) 
+        {
+            SetLoadedMode(true);
+
+            BuildNodes(valueCells);
+
+            if (filter != null)
+                FilterString = filter;
+        }
         #endregion
 
 

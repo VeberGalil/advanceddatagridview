@@ -58,5 +58,6 @@ namespace Zuby.ADGV
         void Show(Control control, int x, int y, IEnumerable<DataGridViewCell> vals);
         void SortAsc();
         void SortDesc();
+        void LoadFilter(IEnumerable<DataGridViewCell> valueCells, string filter);
     }
 }

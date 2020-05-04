@@ -172,6 +172,8 @@ namespace Zuby.ADGV
         private string _sortString = null;
         private string _filterString = null;
 
+        private bool _blockSortEvent = false;
+        private bool _blockFilterEvent = false;
         #endregion
 
 
@@ -452,46 +454,54 @@ namespace Zuby.ADGV
 
         /// <summary>
         /// Load sort string without locking menus.
+        /// Loaded sort order replaces any existing sorting
         /// </summary>
         /// <param name="sorting">Desired sort string</param>
         public void LoadSort(string sorting)
         {
+            // Remo
             CleanSort(false);
 
-            // Parse sort string and set sorting in columns
-            string[] sortParts = sorting.Split(',');
-            Regex rxColname = new Regex(@"(?=\[?)\w+(?=\])");
-            foreach (string sortPart in sortParts)
+            if (!string.IsNullOrWhiteSpace(sorting))
             {
-                // Extract column name and sort type from sort part
-                Match match = rxColname.Match(sortPart);
-                if (match.Success)
+                // Block event untill full sort string is ready
+                _blockSortEvent = true;
+                // Parse sort string and set sorting in columns
+                string[] sortParts = sorting.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                Regex rxColname = new Regex(@"(?=\[?)\w+(?=\])");
+                foreach (string sortPart in sortParts)
                 {
-                    string colName = match.Value;
-                    // Verify that column is allowed for sorting
-                    if( Columns.Contains(colName) && Columns[colName].HeaderCell is ColumnHeaderCell cell)
+                    // Extract column name and sort type from sort part
+                    Match match = rxColname.Match(sortPart);
+                    if (match.Success)
                     {
-                        // Execute SortASC or SortDESC on column
-                        if (sortPart.Contains("DESC"))
+                        string colName = match.Value;
+                        // Verify that column is appropriate for sorting
+                        if (Columns.Contains(colName) && Columns[colName].HeaderCell is ColumnHeaderCell cell)
                         {
-                            cell.SortDesc();
-                        }
-                        else
-                        {
-                            cell.SortAsc();
+                            // Execute SortASC or SortDESC on column
+                            if (sortPart.Contains("DESC"))
+                            {
+                                cell.SortDesc();
+                            }
+                            else
+                            {   // ASC is syntactically optional (not that this will happen)
+                                cell.SortAsc();
+                            }
                         }
                     }
                 }
+                // release event
+                _blockSortEvent = false;
             }
 
-            //// Do actual sorting
-            //if (sorting != null)
-            //    SortString = sorting;
-
+            // Do actual sorting
+            TriggerSortStringChanged();
         }
 
         /// <summary>
         /// Load filter string without locking menus
+        /// Loaded filter order replaces any existing filtering
         /// </summary>
         /// <param name="filter">Desired filter string</param>
         public void LoadFilter(string filter)
@@ -500,12 +510,36 @@ namespace Zuby.ADGV
             CleanFilter(false);
             _filteredColumns.Clear();
 
-            // Parse filter string and set filter in columns
-
+            // 
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                // Block filter event until FilterString is ready
+                _blockFilterEvent = true;
+                // Parse filter string and set filter in columns
+                string colFilterPattern = @"(?<=\().*?(?=\)(\sAND|$))";
+                foreach (Match match in Regex.Matches(filter, colFilterPattern))
+                {
+                    string colFilter = match.Groups[1].ToString();
+                    Match nameMatch = Regex.Match(colFilter, @"(?=\[?)\w+(?=\])");
+                    if (nameMatch.Success)
+                    {
+                        string colName = match.Value;
+                        // Verify that column is appropriate for filter
+                        if (Columns.Contains(colName) && Columns[colName].HeaderCell is ColumnHeaderCell cell)
+                        {
+                            // Pass column filter to header cell for further parsing
+                            IEnumerable<DataGridViewCell> valuesForFilter = from DataGridViewRow row in this.Rows
+                                                                            select row.Cells[colName];
+                            cell.LoadFilter(valuesForFilter, colFilter);
+                        }
+                    }
+                }
+                // release event
+                _blockFilterEvent = false;
+            }
 
             // Do actual filtering
-            if (filter != null)
-                FilterString = filter;
+            TriggerFilterStringChanged();
         }
 
 
@@ -553,7 +587,7 @@ namespace Zuby.ADGV
         {
             get
             {
-                return (!String.IsNullOrEmpty(_sortString) ? _sortString : "");
+                return (!String.IsNullOrWhiteSpace(_sortString) ? _sortString : string.Empty);
             }
             private set
             {
@@ -562,7 +596,8 @@ namespace Zuby.ADGV
                 {
                     _sortString = value;
 
-                    TriggerSortStringChanged();
+                    if(!_blockSortEvent)
+                        TriggerSortStringChanged();
                 }
             }
         }
@@ -664,7 +699,7 @@ namespace Zuby.ADGV
         {
             get
             {
-                return (!String.IsNullOrEmpty(_filterString) ? _filterString : "");
+                return (!String.IsNullOrWhiteSpace(_filterString) ? _filterString : string.Empty);
             }
             private set
             {
@@ -673,7 +708,8 @@ namespace Zuby.ADGV
                 {
                     _filterString = value;
 
-                    TriggerFilterStringChanged();
+                    if(!_blockFilterEvent)
+                        TriggerFilterStringChanged();
                 }
             }
         }
@@ -1022,8 +1058,8 @@ namespace Zuby.ADGV
                     }
                     else
                     {
-                        IEnumerable<DataGridViewCell> valuesForFilter = from DataGridViewRow nulls in this.Rows
-                                                                        select nulls.Cells[column.Name];
+                        IEnumerable<DataGridViewCell> valuesForFilter = from DataGridViewRow row in this.Rows
+                                                                        select row.Cells[column.Name];
                         filterMenu.Show(this, (this.RightToLeft == RightToLeft.Yes ? rect.Right : rect.Left), rect.Bottom, valuesForFilter);
                     }
                 }
