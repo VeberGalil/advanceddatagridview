@@ -594,8 +594,8 @@ namespace Zuby.ADGV
         public void LoadFilter(IEnumerable<DataGridViewCell> valueCells, string filter)
         {
             throw new NotImplementedException();
-            // decide whether use custom filter of mark in checklist
-            // note: ADGV is not designed to handle both
+            // decide whether use custom filter of mark in checklist, because ADGV is not designed to handle both
+            // use Regex static methods 
 
 
             // Something like:

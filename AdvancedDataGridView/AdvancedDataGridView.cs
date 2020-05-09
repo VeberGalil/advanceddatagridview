@@ -516,14 +516,15 @@ namespace Zuby.ADGV
                 // Block filter event until FilterString is ready
                 _blockFilterEvent = true;
                 // Parse filter string and set filter in columns
-                string colFilterPattern = @"(?<=\().*?(?=\)(\sAND|$))";
+                string colFilterPattern = @"(?<=\().*?(?=\)(?:\sAND|$))";
+                Regex rxColname = new Regex(@"(?=\[?)\w+(?=\])");
                 foreach (Match match in Regex.Matches(filter, colFilterPattern))
                 {
-                    string colFilter = match.Groups[1].ToString();
-                    Match nameMatch = Regex.Match(colFilter, @"(?=\[?)\w+(?=\])");
+                    string colFilter = match.Value;
+                    Match nameMatch = rxColname.Match(colFilter);
                     if (nameMatch.Success)
                     {
-                        string colName = match.Value;
+                        string colName = nameMatch.Value;
                         // Verify that column is appropriate for filter
                         if (Columns.Contains(colName) && Columns[colName].HeaderCell is ColumnHeaderCell cell)
                         {
