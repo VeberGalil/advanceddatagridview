@@ -15,10 +15,10 @@ namespace AdvancedDataGridViewSample
     public partial class FormMainHeb : Form
     {
         private DataTable _dataTable = null;
-        private DataSet _dataSet = null;
+        private readonly DataSet _dataSet = null;
 
-        private SortedDictionary<int, string> _filtersaved = new SortedDictionary<int, string>();
-        private SortedDictionary<int, string> _sortsaved = new SortedDictionary<int, string>();
+        private readonly SortedDictionary<int, string> _filtersaved = new SortedDictionary<int, string>();
+        private readonly SortedDictionary<int, string> _sortsaved = new SortedDictionary<int, string>();
 
         public FormMainHeb()
         {
@@ -55,7 +55,7 @@ namespace AdvancedDataGridViewSample
             SetTestData();
         }
 
-        private void button_load_Click(object sender, EventArgs e)
+        private void Button_load_Click(object sender, EventArgs e)
         {
             //add test data to bindsource
             AddTestData();
@@ -124,7 +124,7 @@ namespace AdvancedDataGridViewSample
             advancedDataGridView_main.SetFilterChecklistEnabled(advancedDataGridView_main.Columns["double"], false);
         }
 
-        private void advancedDataGridView_main_FilterStringChanged(object sender, AdvancedDataGridView.FilterEventArgs e)
+        private void AdvancedDataGridView_main_FilterStringChanged(object sender, AdvancedDataGridView.FilterEventArgs e)
         {
             //eventually set the FilterString here
             //if e.Cancel is set to true one have to update the datasource here using
@@ -139,7 +139,7 @@ namespace AdvancedDataGridViewSample
             textBox_filter.Text = e.FilterString;
         }
 
-        private void advancedDataGridView_main_SortStringChanged(object sender, AdvancedDataGridView.SortEventArgs e)
+        private void AdvancedDataGridView_main_SortStringChanged(object sender, AdvancedDataGridView.SortEventArgs e)
         {
             //eventually set the SortString here
             //if e.Cancel is set to true one have to update the datasource here
@@ -149,19 +149,19 @@ namespace AdvancedDataGridViewSample
             textBox_sort.Text = e.SortString;
         }
 
-        private void textBox_strfilter_TextChanged(object sender, EventArgs e)
+        private void TextBox_strfilter_TextChanged(object sender, EventArgs e)
         {
             //trigger the filter string changed function when text is changed
             advancedDataGridView_main.TriggerFilterStringChanged();
 
         }
 
-        private void bindingSource_main_ListChanged(object sender, ListChangedEventArgs e)
+        private void BindingSource_main_ListChanged(object sender, ListChangedEventArgs e)
         {
             textBox_total.Text = bindingSource_main.List.Count.ToString();
         }
 
-        private void button_savefilters_Click(object sender, EventArgs e)
+        private void Button_savefilters_Click(object sender, EventArgs e)
         {
             _filtersaved.Add((comboBox_filtersaved.Items.Count - 1) + 1, advancedDataGridView_main.FilterString);
             comboBox_filtersaved.DataSource = new BindingSource(_filtersaved, null);
@@ -172,14 +172,14 @@ namespace AdvancedDataGridViewSample
 
         }
 
-        private void button_setsavedfilter_Click(object sender, EventArgs e)
+        private void Button_setsavedfilter_Click(object sender, EventArgs e)
         {
             if (comboBox_filtersaved.SelectedIndex != -1 && comboBox_sortsaved.SelectedIndex != -1)
                 advancedDataGridView_main.LoadFilterAndSort(comboBox_filtersaved.SelectedValue.ToString(), comboBox_sortsaved.SelectedValue.ToString());
 
         }
 
-        private void button_unloadfilters_Click(object sender, EventArgs e)
+        private void Button_unloadfilters_Click(object sender, EventArgs e)
         {
             advancedDataGridView_main.CleanFilterAndSort();
             comboBox_filtersaved.SelectedIndex = -1;
@@ -187,7 +187,7 @@ namespace AdvancedDataGridViewSample
 
         }
 
-        private void advancedDataGridViewSearchToolBar_main_Search(object sender, AdvancedDataGridViewSearchToolBarSearchEventArgs e)
+        private void AdvancedDataGridViewSearchToolBar_main_Search(object sender, AdvancedDataGridViewSearchToolBarSearchEventArgs e)
         {
             bool restartsearch = true;
             int startColumn = 0;
@@ -210,7 +210,7 @@ namespace AdvancedDataGridViewSample
             }
             DataGridViewCell c = advancedDataGridView_main.FindCell(
                 e.ValueToSearch,
-                e.ColumnToSearch != null ? e.ColumnToSearch.Name : null,
+                e.ColumnToSearch?.Name,
                 startRow,
                 startColumn,
                 e.WholeWord,
@@ -218,7 +218,7 @@ namespace AdvancedDataGridViewSample
             if (c == null && restartsearch)
                 c = advancedDataGridView_main.FindCell(
                     e.ValueToSearch,
-                    e.ColumnToSearch != null ? e.ColumnToSearch.Name : null,
+                    e.ColumnToSearch?.Name,
                     0,
                     0,
                     e.WholeWord,
@@ -227,7 +227,7 @@ namespace AdvancedDataGridViewSample
                 advancedDataGridView_main.CurrentCell = c;
         }
 
-        private void btnEnglish_Click(object sender, EventArgs e)
+        private void BtnEnglish_Click(object sender, EventArgs e)
         {
             (new FormMain()).Show();
 

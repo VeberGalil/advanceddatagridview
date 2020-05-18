@@ -516,9 +516,8 @@ namespace Zuby.ADGV
                 // Block filter event until FilterString is ready
                 _blockFilterEvent = true;
                 // Parse filter string and set filter in columns
-                string colFilterPattern = @"(?<=\().*?(?=\)(?:\sAND|$))";
                 Regex rxColname = new Regex(@"(?=\[?)\w+(?=\])");
-                foreach (Match match in Regex.Matches(filter, colFilterPattern))
+                foreach (Match match in Regex.Matches(filter, @"(?<=\().*?(?=\)(?:\sAND|$))"))
                 {
                     string colFilter = match.Value;
                     Match nameMatch = rxColname.Match(colFilter);
@@ -726,8 +725,7 @@ namespace Zuby.ADGV
                 FilterString = _filterString,
                 Cancel = false
             };
-            if (FilterStringChanged != null)
-                FilterStringChanged(this, filterEventArgs);
+            FilterStringChanged?.Invoke(this, filterEventArgs);
             //sort datasource
             if (filterEventArgs.Cancel == false)
             {

@@ -95,7 +95,7 @@
             this.btnEnglish.TabIndex = 21;
             this.btnEnglish.Text = "English";
             this.btnEnglish.UseVisualStyleBackColor = true;
-            this.btnEnglish.Click += new System.EventHandler(this.btnEnglish_Click);
+            this.btnEnglish.Click += new System.EventHandler(this.BtnEnglish_Click);
             // 
             // panel1
             // 
@@ -118,7 +118,7 @@
             this.advancedDataGridViewSearchToolBar_main.Size = new System.Drawing.Size(827, 27);
             this.advancedDataGridViewSearchToolBar_main.TabIndex = 12;
             this.advancedDataGridViewSearchToolBar_main.Text = "advancedDataGridViewSearchToolBar1";
-            this.advancedDataGridViewSearchToolBar_main.Search += new Zuby.ADGV.AdvancedDataGridViewSearchToolBarSearchEventHandler(this.advancedDataGridViewSearchToolBar_main_Search);
+            this.advancedDataGridViewSearchToolBar_main.Search += new Zuby.ADGV.AdvancedDataGridViewSearchToolBarSearchEventHandler(this.AdvancedDataGridViewSearchToolBar_main_Search);
             // 
             // button_setsavedfilter
             // 
@@ -128,7 +128,7 @@
             this.button_setsavedfilter.TabIndex = 10;
             this.button_setsavedfilter.Text = "החל";
             this.button_setsavedfilter.UseVisualStyleBackColor = true;
-            this.button_setsavedfilter.Click += new System.EventHandler(this.button_setsavedfilter_Click);
+            this.button_setsavedfilter.Click += new System.EventHandler(this.Button_setsavedfilter_Click);
             // 
             // comboBox_sortsaved
             // 
@@ -154,7 +154,7 @@
             this.button_unloadfilters.TabIndex = 8;
             this.button_unloadfilters.Text = "הסר סינון ומיון";
             this.button_unloadfilters.UseVisualStyleBackColor = true;
-            this.button_unloadfilters.Click += new System.EventHandler(this.button_unloadfilters_Click);
+            this.button_unloadfilters.Click += new System.EventHandler(this.Button_unloadfilters_Click);
             // 
             // button_savefilters
             // 
@@ -164,7 +164,7 @@
             this.button_savefilters.TabIndex = 8;
             this.button_savefilters.Text = "שמור סינון ומיון נוכחיים";
             this.button_savefilters.UseVisualStyleBackColor = true;
-            this.button_savefilters.Click += new System.EventHandler(this.button_savefilters_Click);
+            this.button_savefilters.Click += new System.EventHandler(this.Button_savefilters_Click);
             // 
             // label_sortsaved
             // 
@@ -191,7 +191,7 @@
             this.textBox_strfilter.Name = "textBox_strfilter";
             this.textBox_strfilter.Size = new System.Drawing.Size(130, 20);
             this.textBox_strfilter.TabIndex = 6;
-            this.textBox_strfilter.TextChanged += new System.EventHandler(this.textBox_strfilter_TextChanged);
+            this.textBox_strfilter.TextChanged += new System.EventHandler(this.TextBox_strfilter_TextChanged);
             // 
             // label_strfilter
             // 
@@ -254,11 +254,11 @@
             this.button_load.TabIndex = 0;
             this.button_load.Text = "הצג נתונים אקראים";
             this.button_load.UseVisualStyleBackColor = true;
-            this.button_load.Click += new System.EventHandler(this.button_load_Click);
+            this.button_load.Click += new System.EventHandler(this.Button_load_Click);
             // 
             // bindingSource_main
             // 
-            this.bindingSource_main.ListChanged += new System.ComponentModel.ListChangedEventHandler(this.bindingSource_main_ListChanged);
+            this.bindingSource_main.ListChanged += new System.ComponentModel.ListChangedEventHandler(this.BindingSource_main_ListChanged);
             // 
             // panel_bottom
             // 
@@ -314,8 +314,8 @@
             this.advancedDataGridView_main.RowHeadersVisible = false;
             this.advancedDataGridView_main.Size = new System.Drawing.Size(827, 215);
             this.advancedDataGridView_main.TabIndex = 0;
-            this.advancedDataGridView_main.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.advancedDataGridView_main_SortStringChanged);
-            this.advancedDataGridView_main.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.advancedDataGridView_main_FilterStringChanged);
+            this.advancedDataGridView_main.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.AdvancedDataGridView_main_SortStringChanged);
+            this.advancedDataGridView_main.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.AdvancedDataGridView_main_FilterStringChanged);
             // 
             // FormMainHeb
             // 

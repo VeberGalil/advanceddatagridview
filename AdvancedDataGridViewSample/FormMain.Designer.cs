@@ -108,7 +108,7 @@
             this.btnDesc.TabIndex = 23;
             this.btnDesc.Text = "DESC";
             this.btnDesc.UseVisualStyleBackColor = true;
-            this.btnDesc.Click += new System.EventHandler(this.btnDesc_Click);
+            this.btnDesc.Click += new System.EventHandler(this.BtnDesc_Click);
             // 
             // btnAsc
             // 
@@ -118,7 +118,7 @@
             this.btnAsc.TabIndex = 23;
             this.btnAsc.Text = "ASC";
             this.btnAsc.UseVisualStyleBackColor = true;
-            this.btnAsc.Click += new System.EventHandler(this.btnAsc_Click);
+            this.btnAsc.Click += new System.EventHandler(this.BtnAsc_Click);
             // 
             // optionSortDesc
             // 
@@ -129,7 +129,7 @@
             this.optionSortDesc.TabIndex = 22;
             this.optionSortDesc.Text = "Sort DESC";
             this.optionSortDesc.UseVisualStyleBackColor = true;
-            this.optionSortDesc.CheckedChanged += new System.EventHandler(this.optionSort_ChechedChanged);
+            this.optionSortDesc.CheckedChanged += new System.EventHandler(this.OptionSort_ChechedChanged);
             // 
             // optionSortAsc
             // 
@@ -140,7 +140,7 @@
             this.optionSortAsc.TabIndex = 22;
             this.optionSortAsc.Text = "Sort ASC";
             this.optionSortAsc.UseVisualStyleBackColor = true;
-            this.optionSortAsc.CheckedChanged += new System.EventHandler(this.optionSort_ChechedChanged);
+            this.optionSortAsc.CheckedChanged += new System.EventHandler(this.OptionSort_ChechedChanged);
             // 
             // optionSortNone
             // 
@@ -151,7 +151,7 @@
             this.optionSortNone.TabIndex = 22;
             this.optionSortNone.Text = "Clear sort";
             this.optionSortNone.UseVisualStyleBackColor = true;
-            this.optionSortNone.CheckedChanged += new System.EventHandler(this.optionSort_ChechedChanged);
+            this.optionSortNone.CheckedChanged += new System.EventHandler(this.OptionSort_ChechedChanged);
             // 
             // label_date_sort
             // 
@@ -170,7 +170,7 @@
             this.btnHebrew.TabIndex = 20;
             this.btnHebrew.Text = "עברית";
             this.btnHebrew.UseVisualStyleBackColor = true;
-            this.btnHebrew.Click += new System.EventHandler(this.btnHebrew_Click);
+            this.btnHebrew.Click += new System.EventHandler(this.BtnHebrew_Click);
             // 
             // label_strfilter
             // 
@@ -187,7 +187,7 @@
             this.textBox_strfilter.Name = "textBox_strfilter";
             this.textBox_strfilter.Size = new System.Drawing.Size(100, 20);
             this.textBox_strfilter.TabIndex = 18;
-            this.textBox_strfilter.TextChanged += new System.EventHandler(this.textBox_strfilter_TextChanged);
+            this.textBox_strfilter.TextChanged += new System.EventHandler(this.TextBox_strfilter_TextChanged);
             // 
             // button_load
             // 
@@ -197,7 +197,7 @@
             this.button_load.TabIndex = 17;
             this.button_load.Text = "Load Random Data";
             this.button_load.UseVisualStyleBackColor = true;
-            this.button_load.Click += new System.EventHandler(this.button_load_Click);
+            this.button_load.Click += new System.EventHandler(this.Button_load_Click);
             // 
             // textBox_sort
             // 
@@ -258,7 +258,7 @@
             this.advancedDataGridViewSearchToolBar_main.Size = new System.Drawing.Size(784, 27);
             this.advancedDataGridViewSearchToolBar_main.TabIndex = 0;
             this.advancedDataGridViewSearchToolBar_main.Text = "advancedDataGridViewSearchToolBar_main";
-            this.advancedDataGridViewSearchToolBar_main.Search += new Zuby.ADGV.AdvancedDataGridViewSearchToolBarSearchEventHandler(this.advancedDataGridViewSearchToolBar_main_Search);
+            this.advancedDataGridViewSearchToolBar_main.Search += new Zuby.ADGV.AdvancedDataGridViewSearchToolBarSearchEventHandler(this.AdvancedDataGridViewSearchToolBar_main_Search);
             // 
             // button_unloadfilters
             // 
@@ -269,7 +269,7 @@
             this.button_unloadfilters.TabIndex = 9;
             this.button_unloadfilters.Text = "Clean Filter And Sort";
             this.button_unloadfilters.UseVisualStyleBackColor = true;
-            this.button_unloadfilters.Click += new System.EventHandler(this.button_unloadfilters_Click);
+            this.button_unloadfilters.Click += new System.EventHandler(this.Button_unloadfilters_Click);
             // 
             // label_sortsaved
             // 
@@ -309,7 +309,7 @@
             this.button_setsavedfilter.TabIndex = 5;
             this.button_setsavedfilter.Text = "Load Saved Filter And Sort";
             this.button_setsavedfilter.UseVisualStyleBackColor = true;
-            this.button_setsavedfilter.Click += new System.EventHandler(this.button_setsavedfilter_Click);
+            this.button_setsavedfilter.Click += new System.EventHandler(this.Button_setsavedfilter_Click);
             // 
             // button_savefilters
             // 
@@ -320,7 +320,7 @@
             this.button_savefilters.TabIndex = 3;
             this.button_savefilters.Text = "Save Current Filter And Sort";
             this.button_savefilters.UseVisualStyleBackColor = true;
-            this.button_savefilters.Click += new System.EventHandler(this.button_savefilters_Click);
+            this.button_savefilters.Click += new System.EventHandler(this.Button_savefilters_Click);
             // 
             // comboBox_filtersaved
             // 
@@ -373,8 +373,8 @@
             this.advancedDataGridView_main.RowHeadersVisible = false;
             this.advancedDataGridView_main.Size = new System.Drawing.Size(784, 235);
             this.advancedDataGridView_main.TabIndex = 0;
-            this.advancedDataGridView_main.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.advancedDataGridView_main_SortStringChanged);
-            this.advancedDataGridView_main.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.advancedDataGridView_main_FilterStringChanged);
+            this.advancedDataGridView_main.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.AdvancedDataGridView_main_SortStringChanged);
+            this.advancedDataGridView_main.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.AdvancedDataGridView_main_FilterStringChanged);
             // 
             // panel_bottom
             // 
@@ -388,7 +388,7 @@
             // 
             // bindingSource_main
             // 
-            this.bindingSource_main.ListChanged += new System.ComponentModel.ListChangedEventHandler(this.bindingSource_main_ListChanged);
+            this.bindingSource_main.ListChanged += new System.ComponentModel.ListChangedEventHandler(this.BindingSource_main_ListChanged);
             // 
             // optionIgnoreSort
             // 
@@ -401,7 +401,7 @@
             this.optionIgnoreSort.TabStop = true;
             this.optionIgnoreSort.Text = "Sort by Menu";
             this.optionIgnoreSort.UseVisualStyleBackColor = true;
-            this.optionIgnoreSort.CheckedChanged += new System.EventHandler(this.optionSort_ChechedChanged);
+            this.optionIgnoreSort.CheckedChanged += new System.EventHandler(this.OptionSort_ChechedChanged);
             // 
             // FormMain
             // 

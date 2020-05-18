@@ -11,8 +11,11 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace Zuby.ADGV
 {
@@ -178,14 +181,6 @@ namespace Zuby.ADGV
             errorProvider.SetIconPadding(_valControl2, -18);
         }
 
-        /// <summary>
-        /// Form loaders
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void FormCustomFilter_Load(object sender, EventArgs e)
-        { }
-
         #endregion
 
 
@@ -202,6 +197,182 @@ namespace Zuby.ADGV
         public string FilterStringDescription { get; private set; } = null;
 
         #endregion
+
+
+        #region // filter parser
+        /// <summary>
+        /// Try parse filter string for custom filter
+        /// </summary>
+        /// <param name="dataType"></param>
+        /// <param name="filterDateAndTimeEnabled"></param>
+        /// <param name="filter"></param>
+        /// <param name="visualFilter"></param>
+        /// <returns></returns>
+        public static bool TryParse(Type dataType, bool filterDateAndTimeEnabled, string filter, out string visualFilter)
+        {
+            visualFilter = null;
+            string valueText, condition;
+            if (dataType == typeof(DateTime))
+            {
+                #region // Parse DateTime values
+                // Equality condition
+                Match match = Regex.Match(filter, @"^(?n)Convert\(\[\w+\]\,\s*\'System\.String'\)\s+(?<not>NOT\s)?LIKE\s+\'\%(?<value>[^%]+)\%\'$");
+                if (match.Success)
+                {
+                    // Validate value
+                    valueText = match.Groups["value"].Value;
+                    if (DateTime.TryParse(valueText, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out DateTime dateTime))
+                    {
+                        // if time part is not enabled, filter can't contain time
+                        if (!filterDateAndTimeEnabled && dateTime.TimeOfDay.TotalHours != 0)
+                            return false;
+                    }
+                    else
+                        return false;
+                    // equal / not equal
+                    if (match.Groups["not"].Success)
+                    {
+                        // not equal
+                        condition = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotEqual.ToString()];
+                    }
+                    else
+                    {
+                        // equal
+                        condition = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVEquals.ToString()];
+                    }
+                    visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()], condition, valueText);
+
+                }
+                else
+                {
+                    // Between
+                    match = Regex.Match(filter, @"^\[(\w+)\]\s+>=\s+\'(?<val1>[^']+)\'\s+AND\s+\[\1\]\s+<=\s+\'(?<val2>[^']+)\'$");
+                    if (match.Success)
+                    {
+                        // Validate values
+                        valueText = match.Groups["val1"].Value;
+                        if (DateTime.TryParse(valueText, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out DateTime dateTime))
+                        {
+                            // if time part is not enabled, filter can't contain time
+                            if (!filterDateAndTimeEnabled && dateTime.TimeOfDay.TotalHours != 0)
+                                return false;
+                        }
+                        else
+                            return false;
+                        string val2 = match.Groups["val2"].Value;
+                        if (DateTime.TryParse(val2, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out DateTime dt))
+                        {
+                            // if time part is not enabled, filter can't contain time
+                            if (!filterDateAndTimeEnabled && dt.TimeOfDay.TotalHours != 0)
+                                return false;
+                        }
+                        else
+                            return false;
+                        // 
+                        visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()],
+                                                     AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVBetween.ToString()], valueText) + " " + 
+                                                     AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVLabelAnd.ToString()] + " \"" + val2 + "\"";
+                    }
+                    else
+                    {
+                        // Inequalities
+                        match = Regex.Match(filter, @"^\[\w+\]\s+(?<compare><|<=|>|>=)\s+\'(?<value>[^']+)\'$");
+                        if (match.Success)
+                        {
+                            // Validate value
+                            valueText = match.Groups["value"].Value;
+                            if (DateTime.TryParse(valueText, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out DateTime dateTime))
+                            {
+                                // if time part is not enabled, filter can't contain time
+                                if (!filterDateAndTimeEnabled && dateTime.TimeOfDay.TotalHours != 0)
+                                    return false;
+                            }
+                            else
+                                return false;
+                            // Validate comparison
+                            switch (match.Groups["compare"].Value)
+                            {
+                                case "<":
+                                    condition = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVEarlierThan.ToString()];
+                                    break;
+                                case "<=":
+                                    condition = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVEarlierThanOrEqualTo.ToString()];
+                                    break;
+                                case ">":
+                                    condition = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVLaterThan.ToString()];
+                                    break;
+                                case ">=":
+                                    condition = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVLaterThanOrEqualTo.ToString()];
+                                    break;
+                                default:
+                                    condition = null;
+                                    break;
+                            }
+                            if (string.IsNullOrEmpty(condition))
+                                return false;
+                            visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()], condition, valueText);
+                        }
+                        else
+                        {
+                            // total failure
+                            return false;
+                        }
+                    }
+                }
+                #endregion 
+            }
+            else if (dataType == typeof(TimeSpan))
+            {
+                #region // Parse TimeSpan values
+                Match match = Regex.Match(filter, 
+                                            @"^\(?Convert\(\[\w+\]\,\s*\'System\.String'\)\s+(?<not>NOT\s)?LIKE\s+\'\%(?<value>[-]?P(?!$)(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+(?:\.\d+)?S)?)?)\%\'\)?$");
+                if (match.Success && match.Groups["value"].Success)
+                {
+                    try
+                    {
+                        TimeSpan ts = XmlConvert.ToTimeSpan(match.Groups["value"].Value);
+                        if (match.Groups["not"].Success)
+                        {   // NOT LIKE logic
+                            visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()], 
+                                                         AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotContain.ToString()], 
+                                                         ts);
+                        }
+                        else
+                        {
+                            visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()],
+                                                         AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVContains.ToString()],
+                                                         ts);
+                        }
+                    }
+                    catch
+                    {
+                        // failed to accept
+                        return false;
+                    }
+                }
+                else
+                {
+                    // total failure
+                    return false;
+                }
+                #endregion
+            }
+            else if (dataType == typeof(Int32) || dataType == typeof(Int64) || dataType == typeof(Int16) ||
+                    dataType == typeof(UInt32) || dataType == typeof(UInt64) || dataType == typeof(UInt16) ||
+                    dataType == typeof(Byte) || dataType == typeof(SByte) || dataType == typeof(Single) ||
+                    dataType == typeof(Double) || dataType == typeof(Decimal))
+            {
+
+            }
+            else if (dataType == typeof(String))
+            {
+
+            }
+            // Any other type is unsupported in custom filter (bool, for example)
+            return !string.IsNullOrEmpty(visualFilter);
+        }
+
+        #endregion 
 
 
         #region filter builder
@@ -229,44 +400,58 @@ namespace Zuby.ADGV
             {
                 case FilterType.DateTime:
                     DateTime dt = ((DateTimePicker)control1).Value;
-                    dt = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, 0);
-
+                    if (filterDateAndTimeEnabled)
+                    {
+                        dt = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, 0);
+                    }
+                    else
+                    {
+                        dt = new DateTime(dt.Year, dt.Month, dt.Day);
+                    }
                     if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVEquals.ToString()])
-                        filterString = "Convert([{0}], 'System.String') LIKE '%" + Convert.ToString((filterDateAndTimeEnabled ? dt : dt.Date), CultureInfo.CurrentCulture) + "%'";
+                        filterString = "Convert([{0}], 'System.String') LIKE '%" + Convert.ToString(dt, CultureInfo.CurrentCulture) + "%'";
                     else if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVEarlierThan.ToString()])
-                        filterString += "< '" + Convert.ToString((filterDateAndTimeEnabled ? dt : dt.Date), CultureInfo.CurrentCulture) + "'";
+                        filterString += "< '" + Convert.ToString(dt, CultureInfo.CurrentCulture) + "'";
                     else if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVEarlierThanOrEqualTo.ToString()])
-                        filterString += "<= '" + Convert.ToString((filterDateAndTimeEnabled ? dt : dt.Date), CultureInfo.CurrentCulture) + "'";
+                        filterString += "<= '" + Convert.ToString(dt, CultureInfo.CurrentCulture) + "'";
                     else if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVLaterThan.ToString()])
-                        filterString += "> '" + Convert.ToString((filterDateAndTimeEnabled ? dt : dt.Date), CultureInfo.CurrentCulture) + "'";
+                        filterString += "> '" + Convert.ToString(dt, CultureInfo.CurrentCulture) + "'";
                     else if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVLaterThanOrEqualTo.ToString()])
-                        filterString += ">= '" + Convert.ToString((filterDateAndTimeEnabled ? dt : dt.Date), CultureInfo.CurrentCulture) + "'";
+                        filterString += ">= '" + Convert.ToString(dt, CultureInfo.CurrentCulture) + "'";
                     else if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVBetween.ToString()])
                     {
                         DateTime dt1 = ((DateTimePicker)control2).Value;
-                        dt1 = new DateTime(dt1.Year, dt1.Month, dt1.Day, dt1.Hour, dt1.Minute, 0);
-                        filterString += ">= '" + Convert.ToString((filterDateAndTimeEnabled ? dt : dt.Date), CultureInfo.CurrentCulture) + "'";
-                        filterString += " AND " + column + "<= '" + Convert.ToString((filterDateAndTimeEnabled ? dt1 : dt1.Date), CultureInfo.CurrentCulture) + "'";
+                        if (filterDateAndTimeEnabled)
+                        {
+                            dt1 = new DateTime(dt1.Year, dt1.Month, dt1.Day, dt1.Hour, dt1.Minute, 0);
+                        }
+                        else
+                        {
+                            dt1 = new DateTime(dt1.Year, dt1.Month, dt1.Day);
+                        }
+                        filterString += ">= '" + Convert.ToString(dt, CultureInfo.CurrentCulture) + "'";
+                        filterString += " AND " + column + "<= '" + Convert.ToString(dt1, CultureInfo.CurrentCulture) + "'";
                     }
                     else if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotEqual.ToString()])
-                        filterString = "Convert([{0}], 'System.String') NOT LIKE '%" + Convert.ToString((filterDateAndTimeEnabled ? dt : dt.Date), CultureInfo.CurrentCulture) + "%'";
+                        filterString = "Convert([{0}], 'System.String') NOT LIKE '%" + Convert.ToString(dt, CultureInfo.CurrentCulture) + "%'";
                     break;
 
                 case FilterType.TimeSpan:
-                    try
+                    if(TimeSpan.TryParse(control1.Text, out TimeSpan ts))
                     {
-                        TimeSpan ts = TimeSpan.Parse(control1.Text);
-
+                        // Convert timespan to ISO 8601 duration format
+                        string tsValue = XmlConvert.ToString(ts);
+                        // 
                         if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVContains.ToString()])
                         {
-                            filterString = "(Convert([{0}], 'System.String') LIKE '%P" + ((int)ts.Days > 0 ? (int)ts.Days + "D" : "") + (ts.TotalHours > 0 ? "T" : "") + ((int)ts.Hours > 0 ? (int)ts.Hours + "H" : "") + ((int)ts.Minutes > 0 ? (int)ts.Minutes + "M" : "") + ((int)ts.Seconds > 0 ? (int)ts.Seconds + "S" : "") + "%')";
+                            filterString = "Convert([{0}], 'System.String') LIKE '%" + tsValue + "%'";
                         }
                         else if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotContain.ToString()])
                         {
-                            filterString = "(Convert([{0}], 'System.String') NOT LIKE '%P" + ((int)ts.Days > 0 ? (int)ts.Days + "D" : "") + (ts.TotalHours > 0 ? "T" : "") + ((int)ts.Hours > 0 ? (int)ts.Hours + "H" : "") + ((int)ts.Minutes > 0 ? (int)ts.Minutes + "M" : "") + ((int)ts.Seconds > 0 ? (int)ts.Seconds + "S" : "") + "%')";
+                            filterString = "Convert([{0}], 'System.String') NOT LIKE '%" + tsValue + "%'";
                         }
                     }
-                    catch (FormatException)
+                    else
                     {
                         filterString = null;
                     }

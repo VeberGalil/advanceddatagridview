@@ -593,14 +593,19 @@ namespace Zuby.ADGV
         /// <param name="filter"></param>
         public void LoadFilter(IEnumerable<DataGridViewCell> valueCells, string filter)
         {
-            throw new NotImplementedException();
-            // decide whether use custom filter of mark in checklist, because ADGV is not designed to handle both
-            // use Regex static methods 
+            // Ignore image column
+            if (_dataType == typeof(Bitmap))
+                return;
 
-
-            // Something like:
-            //filterSelectionListPanel.LoadChecklist(valueCells, _dataType, this.ActiveFilterType);
-
+            // Decide whether use custom filter of mark in checklist, because ADGV is not designed to handle both
+            if (FormCustomFilter.TryParse(_dataType, IsFilterDateAndTimeEnabled, filter, out string viewFilterString))
+            {
+                AddCustomFilter(filter, viewFilterString);
+            }
+            else
+            {
+                filterSelectionListPanel.LoadChecklist(valueCells, _dataType, filter);
+            }
         }
         #endregion
 
@@ -771,42 +776,47 @@ namespace Zuby.ADGV
                 string filterString = flt.FilterString;
                 string viewFilterString = flt.FilterStringDescription;
 
-                int index = -1;
-
-                for (int i = 2; i < customFilterLastFiltersListMenuItem.DropDownItems.Count; i++)
-                {
-                    if (customFilterLastFiltersListMenuItem.DropDown.Items[i].Available)
-                    {
-                        if (customFilterLastFiltersListMenuItem.DropDownItems[i].Text == viewFilterString && 
-                            customFilterLastFiltersListMenuItem.DropDownItems[i].Tag.ToString() == filterString)
-                        {
-                            index = i;
-                            break;
-                        }
-                    }
-                    else
-                        break;
-                }
-
-                if (index < 2)
-                {
-                    for (int i = customFilterLastFiltersListMenuItem.DropDownItems.Count - 2; i > 1; i--)
-                    {
-                        if (customFilterLastFiltersListMenuItem.DropDownItems[i].Available)
-                        {
-                            customFilterLastFiltersListMenuItem.DropDownItems[i + 1].Text = customFilterLastFiltersListMenuItem.DropDownItems[i].Text;
-                            customFilterLastFiltersListMenuItem.DropDownItems[i + 1].Tag = customFilterLastFiltersListMenuItem.DropDownItems[i].Tag;
-                        }
-                    }
-                    index = 2;
-
-                    customFilterLastFiltersListMenuItem.DropDownItems[2].Text = viewFilterString;
-                    customFilterLastFiltersListMenuItem.DropDownItems[2].Tag = filterString;
-                }
-
-                // Set custom filter
-                SetCustomFilter(index);
+                AddCustomFilter(filterString, viewFilterString);
             }
+        }
+
+        private void AddCustomFilter(string filterString, string viewFilterString)
+        {
+            int index = -1;
+
+            for (int i = 2; i < customFilterLastFiltersListMenuItem.DropDownItems.Count; i++)
+            {
+                if (customFilterLastFiltersListMenuItem.DropDown.Items[i].Available)
+                {
+                    if (customFilterLastFiltersListMenuItem.DropDownItems[i].Text == viewFilterString &&
+                        customFilterLastFiltersListMenuItem.DropDownItems[i].Tag.ToString() == filterString)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+                else
+                    break;
+            }
+
+            if (index < 2)
+            {
+                for (int i = customFilterLastFiltersListMenuItem.DropDownItems.Count - 2; i > 1; i--)
+                {
+                    if (customFilterLastFiltersListMenuItem.DropDownItems[i].Available)
+                    {
+                        customFilterLastFiltersListMenuItem.DropDownItems[i + 1].Text = customFilterLastFiltersListMenuItem.DropDownItems[i].Text;
+                        customFilterLastFiltersListMenuItem.DropDownItems[i + 1].Tag = customFilterLastFiltersListMenuItem.DropDownItems[i].Tag;
+                    }
+                }
+                index = 2;
+
+                customFilterLastFiltersListMenuItem.DropDownItems[2].Text = viewFilterString;
+                customFilterLastFiltersListMenuItem.DropDownItems[2].Tag = filterString;
+            }
+
+            // Set custom filter
+            SetCustomFilter(index);
         }
 
         /// <summary>

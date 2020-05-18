@@ -115,7 +115,6 @@ namespace Zuby.ADGV
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Custom Filter";
             this.TopMost = true;
-            this.Load += new System.EventHandler(this.FormCustomFilter_Load);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
