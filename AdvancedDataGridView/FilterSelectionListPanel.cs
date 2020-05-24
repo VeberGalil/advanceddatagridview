@@ -186,7 +186,6 @@ namespace Zuby.ADGV
         private bool _textFilterSelectionChangedEnabled = true;
         #endregion
 
-
         #region // Public properties
         /// <summary>
         /// Is filter value checklist enabled
@@ -340,33 +339,12 @@ namespace Zuby.ADGV
                     // Remove all check marks
                     SetNodesCheckState(treeFilterSelection.Nodes, false);
                     // Parse filter string and mark only unfiltered nodes
-
-
-
-                    /*
-    "Blanks" node	
-        [{0}] IS NULL [ OR …]	
-    DateTime	
-        (Convert([{0}], 'System.String') LIKE '%val1%') OR …	CurrentCulture
-    TimeSpan	
-        (Convert([{0}], 'System.String') LIKE '%val1%') OR …	XmlConvert
-    Bool	
-        [{0}] = True/False	
-    Int32,Int64,Int16,UInt32,UInt64,UInt16, Byte,SByte,Decimal	
-        [{0}] NOT IN ( val1, val2, etc)	IsFilterNOTINLogicEnabled
-        [{0}] IN (val1, val2, etc)	
-    Single, Double	
-        Convert([{0}],System.String) NOT IN (val1, val2, etc)	
-        Convert([{0}],System.String) IN (val1, val2, etc)	
-    String	
-        Convert([{0}],System.String) NOT IN ('val1', 'val2', etc)	replace ' with '' in val1
-        Convert([{0}],System.String) IN ('val1', 'val2', etc)	
-
-                     */
+                    ApplyFilter(filter);
+                    // Set filter string 
+                    SetCheckListFilter();
                 }
             });
         }
-
 
         /// <summary>
         /// Restore previous filter selection
@@ -429,7 +407,6 @@ namespace Zuby.ADGV
 
         #endregion
 
-
         #region // Overrides for RTL and resizing support
         public override RightToLeft RightToLeft
         {
@@ -472,7 +449,6 @@ namespace Zuby.ADGV
 
         }
         #endregion
-
 
         #region // Control events
         /// <summary>
@@ -1222,6 +1198,33 @@ namespace Zuby.ADGV
 
             FilterSelected?.Invoke(this, new ChecklistFilterSelectedEventArgs(allNodes, filterString));
 
+        }
+
+        private void ApplyFilter(string filter)
+        {
+            throw new NotImplementedException();
+
+
+            /*
+"Blanks" node	
+[{0}] IS NULL [ OR …]	
+DateTime	
+(Convert([{0}], 'System.String') LIKE '%val1%') OR …	CurrentCulture
+TimeSpan	
+(Convert([{0}], 'System.String') LIKE '%val1%') OR …	XmlConvert
+Bool	
+[{0}] = True/False	
+Int32,Int64,Int16,UInt32,UInt64,UInt16, Byte,SByte,Decimal	
+[{0}] NOT IN ( val1, val2, etc)	IsFilterNOTINLogicEnabled
+[{0}] IN (val1, val2, etc)	
+Single, Double	
+Convert([{0}],System.String) NOT IN (val1, val2, etc)	
+Convert([{0}],System.String) IN (val1, val2, etc)	
+String	
+Convert([{0}],System.String) NOT IN ('val1', 'val2', etc)	replace ' with '' in val1
+Convert([{0}],System.String) IN ('val1', 'val2', etc)	
+
+             */
         }
 
         private void LoadChecklist(IEnumerable<DataGridViewCell> valueCells, Type valueType, Action setCheckState)
