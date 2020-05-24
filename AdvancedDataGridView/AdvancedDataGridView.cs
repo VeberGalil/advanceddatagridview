@@ -20,6 +20,29 @@ using System.Windows.Forms;
 
 namespace Zuby.ADGV
 {
+    public class SortEventArgs : EventArgs
+    {
+        public string SortString { get; set; }
+        public bool Cancel { get; set; }
+
+        public SortEventArgs()
+        {
+            SortString = null;
+            Cancel = false;
+        }
+    }
+
+    public class FilterEventArgs : EventArgs
+    {
+        public string FilterString { get; set; }
+        public bool Cancel { get; set; }
+
+        public FilterEventArgs()
+        {
+            FilterString = null;
+            Cancel = false;
+        }
+    }
 
     [System.ComponentModel.DesignerCategory("")]
     public class AdvancedDataGridView : DataGridView
@@ -27,29 +50,7 @@ namespace Zuby.ADGV
 
         #region public events
 
-        public class SortEventArgs : EventArgs
-        {
-            public string SortString { get; set; }
-            public bool Cancel { get; set; }
 
-            public SortEventArgs()
-            {
-                SortString = null;
-                Cancel = false;
-            }
-        }
-
-        public class FilterEventArgs : EventArgs
-        {
-            public string FilterString { get; set; }
-            public bool Cancel { get; set; }
-
-            public FilterEventArgs()
-            {
-                FilterString = null;
-                Cancel = false;
-            }
-        }
 
         public event EventHandler<SortEventArgs> SortStringChanged;
 

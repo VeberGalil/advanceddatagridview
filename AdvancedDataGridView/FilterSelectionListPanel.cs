@@ -341,6 +341,28 @@ namespace Zuby.ADGV
                     SetNodesCheckState(treeFilterSelection.Nodes, false);
                     // Parse filter string and mark only unfiltered nodes
 
+
+
+                    /*
+    "Blanks" node	
+        [{0}] IS NULL [ OR …]	
+    DateTime	
+        (Convert([{0}], 'System.String') LIKE '%val1%') OR …	CurrentCulture
+    TimeSpan	
+        (Convert([{0}], 'System.String') LIKE '%val1%') OR …	XmlConvert
+    Bool	
+        [{0}] = True/False	
+    Int32,Int64,Int16,UInt32,UInt64,UInt16, Byte,SByte,Decimal	
+        [{0}] NOT IN ( val1, val2, etc)	IsFilterNOTINLogicEnabled
+        [{0}] IN (val1, val2, etc)	
+    Single, Double	
+        Convert([{0}],System.String) NOT IN (val1, val2, etc)	
+        Convert([{0}],System.String) IN (val1, val2, etc)	
+    String	
+        Convert([{0}],System.String) NOT IN ('val1', 'val2', etc)	replace ' with '' in val1
+        Convert([{0}],System.String) IN ('val1', 'val2', etc)	
+
+                     */
                 }
             });
         }
@@ -1148,13 +1170,13 @@ namespace Zuby.ADGV
                                  (_filterValueType != typeof(DateTime) && _filterValueType != typeof(TimeSpan) && _filterValueType != typeof(bool)) ?
                                 treeFilterSelection.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(
                                             n => n.NodeType != TreeNodeItemSelector.CustomNodeType.SelectAll
-                                        && n.NodeType != TreeNodeItemSelector.CustomNodeType.SelectEmpty
-                                        && n.CheckState == CheckState.Unchecked) :
+                                                && n.NodeType != TreeNodeItemSelector.CustomNodeType.SelectEmpty
+                                                && n.CheckState == CheckState.Unchecked) :
                                 treeFilterSelection.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(
                                             n => n.NodeType != TreeNodeItemSelector.CustomNodeType.SelectAll
-                                        && n.NodeType != TreeNodeItemSelector.CustomNodeType.SelectEmpty
-                                        && n.CheckState != CheckState.Unchecked
-                                ))
+                                                && n.NodeType != TreeNodeItemSelector.CustomNodeType.SelectEmpty
+                                                && n.CheckState != CheckState.Unchecked)
+                                )
                         );
 
 
@@ -1174,23 +1196,17 @@ namespace Zuby.ADGV
                             }
                             else if (_filterValueType == typeof(Int32) || _filterValueType == typeof(Int64) || _filterValueType == typeof(Int16) ||
                                         _filterValueType == typeof(UInt32) || _filterValueType == typeof(UInt64) || _filterValueType == typeof(UInt16) ||
-                                        _filterValueType == typeof(Decimal) ||
+                                        _filterValueType == typeof(Decimal) || 
                                         _filterValueType == typeof(Byte) || _filterValueType == typeof(SByte) || _filterValueType == typeof(String))
                             {
                                 filterBuilder.Append(IsFilterNOTINLogicEnabled ? "[{0}] NOT IN (" : "[{0}] IN (");
                                 filterBuilder.Append(nodesFilter);
                                 filterBuilder.Append(")");
                             }
-                            //else if (_filterValueType == typeof(Double))
-                            //{   // Do we really need to separate Doubles? 
-                            //    filterBuilder.Append(IsFilterNOTINLogicEnabled ? "Convert([{0}],System.String) NOT IN (" : "Convert([{0}],System.String) IN (");
-                            //    filterBuilder.Append(nodesFilter);
-                            //    filterBuilder.Append(")");
-                            //}
                             else if (_filterValueType == typeof(Bitmap))
                             { /* Exclude bitmap columns from filter */ }
                             else
-                            {   // Any other type
+                            {   // Any other type (like String, Single or Double)
                                 filterBuilder.Append(IsFilterNOTINLogicEnabled ? "Convert([{0}],System.String) NOT IN (" : "Convert([{0}],System.String) IN (");
                                 filterBuilder.Append(nodesFilter);
                                 filterBuilder.Append(")");

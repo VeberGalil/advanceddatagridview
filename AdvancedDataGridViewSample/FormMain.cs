@@ -145,7 +145,7 @@ namespace AdvancedDataGridViewSample
             advancedDataGridView_main.SetFilterCustomEnabled(advancedDataGridView_main.Columns["double"], false);
         }
 
-        private void AdvancedDataGridView_main_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e)
+        private void AdvancedDataGridView_main_FilterStringChanged(object sender, Zuby.ADGV.FilterEventArgs e)
         {
             //eventually set the FilterString here
             //if e.Cancel is set to true one have to update the datasource here using
@@ -160,7 +160,7 @@ namespace AdvancedDataGridViewSample
             textBox_filter.Text = e.FilterString;
         }
 
-        private void AdvancedDataGridView_main_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e)
+        private void AdvancedDataGridView_main_SortStringChanged(object sender, Zuby.ADGV.SortEventArgs e)
         {
             //eventually set the SortString here
             //if e.Cancel is set to true one have to update the datasource here

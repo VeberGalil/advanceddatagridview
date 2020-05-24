@@ -344,9 +344,10 @@ namespace Zuby.ADGV
                                                          ts);
                         }
                     }
-                    catch
+                    catch (FormatException ex)
                     {
                         // failed to accept
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
                         return false;
                     }
                 }

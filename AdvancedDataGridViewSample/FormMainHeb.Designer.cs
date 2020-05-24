@@ -314,8 +314,8 @@
             this.advancedDataGridView_main.RowHeadersVisible = false;
             this.advancedDataGridView_main.Size = new System.Drawing.Size(827, 215);
             this.advancedDataGridView_main.TabIndex = 0;
-            this.advancedDataGridView_main.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.AdvancedDataGridView_main_SortStringChanged);
-            this.advancedDataGridView_main.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.AdvancedDataGridView_main_FilterStringChanged);
+            this.advancedDataGridView_main.SortStringChanged += new System.EventHandler<Zuby.ADGV.SortEventArgs>(this.AdvancedDataGridView_main_SortStringChanged);
+            this.advancedDataGridView_main.FilterStringChanged += new System.EventHandler<Zuby.ADGV.FilterEventArgs>(this.AdvancedDataGridView_main_FilterStringChanged);
             // 
             // FormMainHeb
             // 
