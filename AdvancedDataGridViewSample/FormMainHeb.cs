@@ -232,5 +232,19 @@ namespace AdvancedDataGridViewSample
             (new FormMain()).Show();
 
         }
+
+        private void BtnLoadFilter_Click(object sender, EventArgs e)
+        {
+            string filter = textLoadFilter.Text.Trim();
+            advancedDataGridView_main.LoadFilter(filter);
+            if (textBox_filter.Text == filter)
+            {
+                MessageBox.Show("Success!");
+            }
+            else
+            {
+                MessageBox.Show("Filter mismatch");
+            }
+        }
     }
 }

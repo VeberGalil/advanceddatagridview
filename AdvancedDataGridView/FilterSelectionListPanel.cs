@@ -17,6 +17,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Globalization;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace Zuby.ADGV
 {
@@ -1202,29 +1203,115 @@ namespace Zuby.ADGV
 
         private void ApplyFilter(string filter)
         {
+            string[] subfilters = filter.Split(new string[] { " OR " }, System.StringSplitOptions.RemoveEmptyEntries);
+            foreach (string subfilter in subfilters)
+            {
+                
+                if (Regex.IsMatch(subfilter.Trim(), @"^\[\w(\w|\d)*\] IS NULL$"))
+                {
+                    // Find and select 'blanks' node
+                    TreeNodeItemSelector emptyNode = GetSelectEmptyNode();
+                    if (emptyNode != null)
+                        emptyNode.Checked = true;
+                }
+                else if (_filterValueType == typeof(DateTime))
+                {
+                    // Parse value from subfilter string (Convert([{0}], 'System.String') LIKE '%val1%') (using CurrentCulture)
+                    // Search for nodes with this value and check it
+
+                    #region // sample code
+                    //foreach (TreeNodeItemSelector n in nodes)
+                    //{
+                    //    if (n.Checked && (n.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(sn => sn.CheckState != CheckState.Unchecked).Count() == 0))
+                    //    {
+                    //        DateTime dt = (DateTime)n.Value;
+                    //        sb.Append("(Convert([{0}], 'System.String') LIKE '%" + Convert.ToString((this.FilterDateAndTimeEnabled ? dt : dt.Date), CultureInfo.CurrentCulture) + "%')" + appx);
+                    //    }
+                    //    else if (n.CheckState != CheckState.Unchecked && n.Nodes.Count > 0)
+                    //    {
+                    //        string subnode = BuildNodesFilterString(n.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(sn => sn.CheckState != CheckState.Unchecked));
+                    //        if (subnode.Length > 0)
+                    //            sb.Append(subnode + appx);
+                    //    }
+                    //}
+                    #endregion
+                }
+                else if (_filterValueType == typeof(TimeSpan))
+                {
+                    // Parse value from subfilter string (Convert([{0}], 'System.String') LIKE '%val1%') (using XmlConvert)
+                    // Search for nodes with this value and check it
+
+                    #region // sample code
+                    //foreach (TreeNodeItemSelector n in nodes)
+                    //{
+                    //    if (n.Checked && (n.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(sn => sn.CheckState != CheckState.Unchecked).Count() == 0))
+                    //    {
+                    //        TimeSpan ts = (TimeSpan)n.Value;
+                    //        sb.Append("(Convert([{0}], 'System.String') LIKE '%" + XmlConvert.ToString(ts) + "%')" + appx);
+                    //    }
+                    //    else if (n.CheckState != CheckState.Unchecked && n.Nodes.Count > 0)
+                    //    {
+                    //        string subnode = BuildNodesFilterString(n.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(sn => sn.CheckState != CheckState.Unchecked));
+                    //        if (subnode.Length > 0)
+                    //            sb.Append(subnode + appx);
+                    //    }
+                    //}
+                    #endregion
+                }
+                else if (_filterValueType == typeof(bool))
+                {
+                    // Parse value from subfilter string [{0}] = True/False
+                    // Search for nodes with this value and check it
+
+                    #region // sample code
+                    //foreach (TreeNodeItemSelector n in nodes)
+                    //{
+                    //    sb.Append(n.Value.ToString());
+                    //    break;
+                    //}
+                    #endregion 
+                }
+                else if (_filterValueType == typeof(Int32) || _filterValueType == typeof(Int64) || _filterValueType == typeof(Int16) ||
+                    _filterValueType == typeof(UInt32) || _filterValueType == typeof(UInt64) || _filterValueType == typeof(UInt16) ||
+                    _filterValueType == typeof(Byte) || _filterValueType == typeof(SByte) || _filterValueType == typeof(Decimal))
+                {
+                    // Parse values from subfilter string:
+                    //  if IsFilterNOTINLogicEnabled, then [{0}] NOT IN (val1, val2, etc) 
+                    //  else  [{0}] IN (val1, val2, etc)
+                    // Search for nodes with these values and check them
+
+                    //foreach (TreeNodeItemSelector n in nodes)
+                    //    sb.Append(n.Value.ToString() + appx);
+                }
+                else if (_filterValueType == typeof(Single) || _filterValueType == typeof(Double))
+                {
+                    // Parse values from subfilter string:
+                    //  if IsFilterNOTINLogicEnabled, then Convert([{ 0}],System.String) NOT IN(val1, val2, etc)
+                    //  else  Convert([{ 0}],System.String) IN(val1, val2, etc)
+                    // Search for nodes with these values and check them
+
+                    //foreach (TreeNodeItemSelector n in nodes)
+                    //    sb.Append(n.Value.ToString().Replace(",", ".") + appx);
+                }
+                else if (_filterValueType == typeof(Bitmap))
+                { }
+                else
+                {
+                    // Parse values from subfilter string:
+                    //  if IsFilterNOTINLogicEnabled, then Convert([{ 0}],System.String) NOT IN('val1', 'val2', etc) 
+                    //  else  Convert([{ 0}],System.String) IN('val1', 'val2', etc)
+                    // Anyway, replace '' with ' in each valN
+                    // Search for nodes with these values and check them
+
+                    //foreach (TreeNodeItemSelector n in nodes)
+                    //    sb.Append("'" + n.Value.ToString().Replace("'", "''") + "'" + appx);
+                }
+
+            }
+
+
             throw new NotImplementedException();
 
-
-            /*
-"Blanks" node	
-[{0}] IS NULL [ OR …]	
-DateTime	
-(Convert([{0}], 'System.String') LIKE '%val1%') OR …	CurrentCulture
-TimeSpan	
-(Convert([{0}], 'System.String') LIKE '%val1%') OR …	XmlConvert
-Bool	
-[{0}] = True/False	
-Int32,Int64,Int16,UInt32,UInt64,UInt16, Byte,SByte,Decimal	
-[{0}] NOT IN ( val1, val2, etc)	IsFilterNOTINLogicEnabled
-[{0}] IN (val1, val2, etc)	
-Single, Double	
-Convert([{0}],System.String) NOT IN (val1, val2, etc)	
-Convert([{0}],System.String) IN (val1, val2, etc)	
-String	
-Convert([{0}],System.String) NOT IN ('val1', 'val2', etc)	replace ' with '' in val1
-Convert([{0}],System.String) IN ('val1', 'val2', etc)	
-
-             */
         }
 
         private void LoadChecklist(IEnumerable<DataGridViewCell> valueCells, Type valueType, Action setCheckState)

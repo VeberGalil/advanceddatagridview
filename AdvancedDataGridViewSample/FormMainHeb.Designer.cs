@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel_top = new System.Windows.Forms.Panel();
             this.btnEnglish = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -54,6 +54,9 @@
             this.label_total = new System.Windows.Forms.Label();
             this.panel_grid = new System.Windows.Forms.Panel();
             this.advancedDataGridView_main = new Zuby.ADGV.AdvancedDataGridView();
+            this.labelLoadFilter = new System.Windows.Forms.Label();
+            this.textLoadFilter = new System.Windows.Forms.TextBox();
+            this.btnLoadFilter = new System.Windows.Forms.Button();
             this.panel_top.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource_main)).BeginInit();
@@ -64,6 +67,9 @@
             // 
             // panel_top
             // 
+            this.panel_top.Controls.Add(this.btnLoadFilter);
+            this.panel_top.Controls.Add(this.textLoadFilter);
+            this.panel_top.Controls.Add(this.labelLoadFilter);
             this.panel_top.Controls.Add(this.btnEnglish);
             this.panel_top.Controls.Add(this.panel1);
             this.panel_top.Controls.Add(this.button_setsavedfilter);
@@ -302,8 +308,8 @@
             // 
             this.advancedDataGridView_main.AllowUserToAddRows = false;
             this.advancedDataGridView_main.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.advancedDataGridView_main.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.advancedDataGridView_main.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             this.advancedDataGridView_main.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.advancedDataGridView_main.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.advancedDataGridView_main.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -316,6 +322,34 @@
             this.advancedDataGridView_main.TabIndex = 0;
             this.advancedDataGridView_main.SortStringChanged += new System.EventHandler<Zuby.ADGV.SortEventArgs>(this.AdvancedDataGridView_main_SortStringChanged);
             this.advancedDataGridView_main.FilterStringChanged += new System.EventHandler<Zuby.ADGV.FilterEventArgs>(this.AdvancedDataGridView_main_FilterStringChanged);
+            // 
+            // labelLoadFilter
+            // 
+            this.labelLoadFilter.AutoSize = true;
+            this.labelLoadFilter.Location = new System.Drawing.Point(279, 82);
+            this.labelLoadFilter.Name = "labelLoadFilter";
+            this.labelLoadFilter.Size = new System.Drawing.Size(129, 13);
+            this.labelLoadFilter.TabIndex = 22;
+            this.labelLoadFilter.Text = "קבע סינון באופן חופשי";
+            // 
+            // textLoadFilter
+            // 
+            this.textLoadFilter.Location = new System.Drawing.Point(118, 98);
+            this.textLoadFilter.Multiline = true;
+            this.textLoadFilter.Name = "textLoadFilter";
+            this.textLoadFilter.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textLoadFilter.Size = new System.Drawing.Size(287, 68);
+            this.textLoadFilter.TabIndex = 23;
+            // 
+            // btnLoadFilter
+            // 
+            this.btnLoadFilter.Location = new System.Drawing.Point(13, 143);
+            this.btnLoadFilter.Name = "btnLoadFilter";
+            this.btnLoadFilter.Size = new System.Drawing.Size(99, 23);
+            this.btnLoadFilter.TabIndex = 24;
+            this.btnLoadFilter.Text = "סנן";
+            this.btnLoadFilter.UseVisualStyleBackColor = true;
+            this.btnLoadFilter.Click += new System.EventHandler(this.BtnLoadFilter_Click);
             // 
             // FormMainHeb
             // 
@@ -368,5 +402,8 @@
         private System.Windows.Forms.Panel panel1;
         private Zuby.ADGV.AdvancedDataGridViewSearchToolBar advancedDataGridViewSearchToolBar_main;
         private System.Windows.Forms.Button btnEnglish;
+        private System.Windows.Forms.Button btnLoadFilter;
+        private System.Windows.Forms.TextBox textLoadFilter;
+        private System.Windows.Forms.Label labelLoadFilter;
     }
 }
