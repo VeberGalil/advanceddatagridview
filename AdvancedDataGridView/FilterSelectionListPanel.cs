@@ -1206,7 +1206,7 @@ namespace Zuby.ADGV
             string[] subfilters = filter.Split(new string[] { " OR " }, System.StringSplitOptions.RemoveEmptyEntries);
             foreach (string subfilter in subfilters)
             {
-                
+
                 if (Regex.IsMatch(subfilter.Trim(), @"^\[\w(\w|\d)*\] IS NULL$"))
                 {
                     // Find and select 'blanks' node
@@ -1217,59 +1217,136 @@ namespace Zuby.ADGV
                 else if (_filterValueType == typeof(DateTime))
                 {
                     // Parse value from subfilter string (Convert([{0}], 'System.String') LIKE '%val1%') (using CurrentCulture)
-                    // Search for nodes with this value and check it
+                    Match match = Regex.Match(subfilter,
+                                                @"^(?n)\(?Convert\(\[\w(\w|\d)\]\,\s*\'?System\.String\'?\)\s+LIKE\s+\'%(?<value>[^%]+)%\'\)?$");
+                    if (match.Success && DateTime.TryParse(match.Groups["value"].Value,
+                                                            CultureInfo.CurrentCulture,
+                                                            DateTimeStyles.AssumeLocal,
+                                                            out DateTime date))
+                    {
+                        SetDateTimeNodesCheckState(treeFilterSelection.Nodes, date, 0);
+                    }
 
-                    #region // sample code
-                    //foreach (TreeNodeItemSelector n in nodes)
-                    //{
-                    //    if (n.Checked && (n.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(sn => sn.CheckState != CheckState.Unchecked).Count() == 0))
-                    //    {
-                    //        DateTime dt = (DateTime)n.Value;
-                    //        sb.Append("(Convert([{0}], 'System.String') LIKE '%" + Convert.ToString((this.FilterDateAndTimeEnabled ? dt : dt.Date), CultureInfo.CurrentCulture) + "%')" + appx);
-                    //    }
-                    //    else if (n.CheckState != CheckState.Unchecked && n.Nodes.Count > 0)
-                    //    {
-                    //        string subnode = BuildNodesFilterString(n.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(sn => sn.CheckState != CheckState.Unchecked));
-                    //        if (subnode.Length > 0)
-                    //            sb.Append(subnode + appx);
-                    //    }
-                    //}
-                    #endregion
+                    // Local function to traverse tree and set DateTime nodes state
+                    CheckState SetDateTimeNodesCheckState(TreeNodeCollection nodes, DateTime dateValue, int treeLevel)
+                    {
+                        // If function is called, it means that parent node is OK to select
+                        if (nodes.Count == 0)
+                        {
+                            return CheckState.Checked;
+                        }
+                        // Value to asses nodes
+                        int testValue = -1;
+                        switch (treeLevel)
+                        {
+                            case 0: testValue = dateValue.Year; break;
+                            case 1: testValue = dateValue.Month; break;
+                            case 2: testValue = dateValue.Day; break;
+                            case 3: testValue = dateValue.Hour; break;
+                            case 4: testValue = dateValue.Minute; break;
+                            case 5: testValue = dateValue.Second; break;
+                        }
+                        CheckState parentState = CheckState.Unchecked;
+                        CheckState nodeState;
+                        // Search for nodes with this value and check it
+                        foreach (TreeNodeItemSelector n in nodes)
+                        {
+                            if ((int)n.Value == testValue)
+                            {
+                                nodeState = SetDateTimeNodesCheckState(n.Nodes, dateValue, treeLevel + 1);
+                                if (nodeState != CheckState.Unchecked)
+                                {   // node is already in unchecked state
+                                    n.CheckState = nodeState;
+                                }
+                            }
+                            else
+                            {
+                                nodeState = CheckState.Unchecked;
+                            }
+                            // Determin parent state
+                            if (nodeState == CheckState.Checked && parentState != CheckState.Indeterminate)
+                            {
+                                parentState = CheckState.Checked;
+                            }
+                            else if (!(nodeState == CheckState.Unchecked && parentState == CheckState.Unchecked))
+                            {
+                                parentState = CheckState.Indeterminate;
+                            }
+                        }
+                        return parentState;
+                    }
                 }
                 else if (_filterValueType == typeof(TimeSpan))
                 {
                     // Parse value from subfilter string (Convert([{0}], 'System.String') LIKE '%val1%') (using XmlConvert)
-                    // Search for nodes with this value and check it
+                    Match match = Regex.Match(subfilter,
+                        @"^\(?Convert\(\[\w(\w|\d)*\]\,\s*\'System\.String'\)\s+LIKE\s+\'\%(?<value>[-]?P(?!$)(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+(?:\.\d+)?S)?)?)\%\'\)?$");
+                    if (match.Success && match.Groups["value"].Success)
+                    {
+                        try
+                        {
+                            TimeSpan ts = XmlConvert.ToTimeSpan(match.Groups["value"].Value);
+                            SetTimeSpanNodesCheckState(treeFilterSelection.Nodes, ts, 0);
+                        }
+                        catch (FormatException ex)
+                        {
+                            // failed to accept
+                            System.Diagnostics.Debug.WriteLine(ex.Message);
+                        }
 
-                    #region // sample code
-                    //foreach (TreeNodeItemSelector n in nodes)
-                    //{
-                    //    if (n.Checked && (n.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(sn => sn.CheckState != CheckState.Unchecked).Count() == 0))
-                    //    {
-                    //        TimeSpan ts = (TimeSpan)n.Value;
-                    //        sb.Append("(Convert([{0}], 'System.String') LIKE '%" + XmlConvert.ToString(ts) + "%')" + appx);
-                    //    }
-                    //    else if (n.CheckState != CheckState.Unchecked && n.Nodes.Count > 0)
-                    //    {
-                    //        string subnode = BuildNodesFilterString(n.Nodes.AsParallel().Cast<TreeNodeItemSelector>().Where(sn => sn.CheckState != CheckState.Unchecked));
-                    //        if (subnode.Length > 0)
-                    //            sb.Append(subnode + appx);
-                    //    }
-                    //}
-                    #endregion
+                        CheckState SetTimeSpanNodesCheckState(TreeNodeCollection nodes, TimeSpan ts, int treeLevel)
+                        {
+                            int checkedCnt = 0;
+                            CheckState nodeState = CheckState.Unchecked;
+                            // Search for nodes with this value and check it
+                            foreach (TreeNodeItemSelector n in nodes)
+                            {
+                                if (treeLevel < 3)
+                                {
+                                    nodeState = SetTimeSpanNodesCheckState(n.Nodes, ts, treeLevel + 1);
+                                }
+                                else
+                                {   // Seconds level, where each node holds TimeSpan value
+                                    if ((TimeSpan)n.Value == ts)
+                                    {
+                                        nodeState = CheckState.Checked;
+                                    }
+                                }
+                                if (nodeState != CheckState.Unchecked)
+                                {   // node is already in unchecked state
+                                    n.CheckState = nodeState;
+                                    if (nodeState == CheckState.Checked)
+                                    {
+                                        checkedCnt++;
+                                    }
+                                }
+                            }
+                            CheckState parentState = CheckState.Unchecked;
+                            if (checkedCnt > 0)
+                            {
+                                parentState = (nodes.Count == checkedCnt ? CheckState.Checked : CheckState.Indeterminate);
+                            }
+                            return parentState;
+                        }
+                    }
                 }
                 else if (_filterValueType == typeof(bool))
                 {
                     // Parse value from subfilter string [{0}] = True/False
-                    // Search for nodes with this value and check it
-
-                    #region // sample code
-                    //foreach (TreeNodeItemSelector n in nodes)
-                    //{
-                    //    sb.Append(n.Value.ToString());
-                    //    break;
-                    //}
-                    #endregion 
+                    Match match = Regex.Match(subfilter.ToLower(),
+                                                @"(?n)^\(?\[\w(\w|\d)*\]\s+=\s+(?<value>true|false)\)?$");
+                    if (match.Success && match.Groups["value"].Success)
+                    {
+                        bool checkVal = (match.Groups["value"].Value == "true");
+                        // Search for nodes with this value and check it
+                        foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
+                        {
+                            if ((bool)n.Value == checkVal)
+                            {
+                                n.Checked = true;
+                            }
+                        }
+                    }
                 }
                 else if (_filterValueType == typeof(Int32) || _filterValueType == typeof(Int64) || _filterValueType == typeof(Int16) ||
                     _filterValueType == typeof(UInt32) || _filterValueType == typeof(UInt64) || _filterValueType == typeof(UInt16) ||
@@ -1278,25 +1355,83 @@ namespace Zuby.ADGV
                     // Parse values from subfilter string:
                     //  if IsFilterNOTINLogicEnabled, then [{0}] NOT IN (val1, val2, etc) 
                     //  else  [{0}] IN (val1, val2, etc)
-                    // Search for nodes with these values and check them
+                    string predicate = IsFilterNOTINLogicEnabled ? "NOT IN" : "IN";
+                    string decimalPattern = @"(?<value>[-+]?[0-9]*\.?[0-9]*)";
+                    Match match = Regex.Match(subfilter.Trim(),
+                                                @"(?n)^\(?\[\w(\w|\d)*\]\s+" + predicate + @"\s+\(" + 
+                                                decimalPattern+ @"(\s*,\s*" + decimalPattern + @"\){1,2}$");
+                    if (match.Success && match.Groups["value"].Success)
+                    {
+                        // decimal has largest value range among these types
+                        List<decimal> values = new List<decimal>();
+                        foreach (Capture val in match.Groups["value"].Captures)
+                        {
+                            if (decimal.TryParse(val.Value, out decimal value))
+                            {
+                                values.Add(value);
+                            }
+                        }
 
-                    //foreach (TreeNodeItemSelector n in nodes)
-                    //    sb.Append(n.Value.ToString() + appx);
+                        // Search for nodes with these values and check them
+                        foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
+                        {
+                            foreach (decimal value in values)
+                            {
+                                if ((decimal)n.Value == value)
+                                {
+                                    n.Checked = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
                 else if (_filterValueType == typeof(Single) || _filterValueType == typeof(Double))
                 {
                     // Parse values from subfilter string:
-                    //  if IsFilterNOTINLogicEnabled, then Convert([{ 0}],System.String) NOT IN(val1, val2, etc)
-                    //  else  Convert([{ 0}],System.String) IN(val1, val2, etc)
-                    // Search for nodes with these values and check them
+                    //  if IsFilterNOTINLogicEnabled, then Convert([{0}],System.String) NOT IN (val1, val2, etc)
+                    //  else  Convert([{0}],System.String) IN (val1, val2, etc)
+                    string predicate = IsFilterNOTINLogicEnabled ? "NOT IN" : "IN";
+                    string doublePattern = @"(?<value>^[+-]?[0-9]*\.?[Ee]?[+-]?[0-9]*$)";   // add exponential form?
+                    Match match = Regex.Match(subfilter.Trim(),
+                                                @"(?n)^\(?Convert\(\[\w(\w|\d)\]\,\s*\'?System\.String\'?\)\s+" + 
+                                                predicate + @"\s+\(" + doublePattern + 
+                                                @"(\s*,\s*" + doublePattern + @"\){1,2}$"); 
+                    if (match.Success && match.Groups["value"].Success)
+                    {
+                        // Double has largest value range among these types
+                        List<double> values = new List<double>();
+                        foreach (Capture val in match.Groups["value"].Captures)
+                        {
+                            if (double.TryParse(val.Value, out double value))
+                            {
+                                values.Add(value);
+                            }
+                        }
 
-                    //foreach (TreeNodeItemSelector n in nodes)
-                    //    sb.Append(n.Value.ToString().Replace(",", ".") + appx);
+                        // Search for nodes with these values and check them
+                        foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
+                        {
+                            foreach (double value in values)
+                            {
+                                if ((double)n.Value == value)
+                                {
+                                    n.Checked = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
                 else if (_filterValueType == typeof(Bitmap))
-                { }
-                else
+                { /* do nothing */ }
+                else if (_filterValueType == typeof(Guid))
                 {
+                    // ???
+                }
+                else
+                {   // String, Guid and likewise
+
                     // Parse values from subfilter string:
                     //  if IsFilterNOTINLogicEnabled, then Convert([{ 0}],System.String) NOT IN('val1', 'val2', etc) 
                     //  else  Convert([{ 0}],System.String) IN('val1', 'val2', etc)

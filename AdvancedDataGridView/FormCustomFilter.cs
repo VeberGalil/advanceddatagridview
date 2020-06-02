@@ -216,7 +216,7 @@ namespace Zuby.ADGV
             {
                 #region // Parse DateTime values
                 // Equality condition
-                Match match = Regex.Match(filter, @"^(?n)Convert\(\[\w+\]\,\s*\'System\.String'\)\s+(?<not>NOT\s)?LIKE\s+\'\%(?<value>[^%]+)\%\'$");
+                Match match = Regex.Match(filter, @"^(?n)Convert\(\[\w(\w|\d)*\]\,\s*\'System\.String'\)\s+(?<not>NOT\s)?LIKE\s+\'\%(?<value>[^%]+)\%\'$");
                 if (match.Success)
                 {
                     // Validate value
@@ -324,8 +324,8 @@ namespace Zuby.ADGV
             else if (dataType == typeof(TimeSpan))
             {
                 #region // Parse TimeSpan values
-                Match match = Regex.Match(filter, 
-                                            @"^\(?Convert\(\[\w+\]\,\s*\'System\.String'\)\s+(?<not>NOT\s)?LIKE\s+\'\%(?<value>[-]?P(?!$)(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+(?:\.\d+)?S)?)?)\%\'\)?$");
+                Match match = Regex.Match(filter,
+                                            @"^\(?Convert\(\[\w(\w|\d)*\]\,\s*\'System\.String'\)\s+(?<not>NOT\s)?LIKE\s+\'\%(?<value>[-]?P(?!$)(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+(?:\.\d+)?S)?)?)\%\'\)?$");
                 if (match.Success && match.Groups["value"].Success)
                 {
                     try
@@ -365,7 +365,7 @@ namespace Zuby.ADGV
             {
                 #region // Parse numeric data types
                 Match match = Regex.Match(filter,
-                                          @"^\[\w+\]\s+(?<operator>=|<>|>|>=|<|<=)\s+(?<value>\d+(?:\.\d+)?)(?<between>\s+AND\s+\[\w+\]\s+<=\s+(?<value2>\d+(?:\.\d+)?))?$");
+                                          @"^\[\w(\w|\d)*\]\s+(?<operator>=|<>|>|>=|<|<=)\s+(?<value>\d+(?:\.\d+)?)(?<between>\s+AND\s+\[\w+\]\s+<=\s+(?<value2>\d+(?:\.\d+)?))?$");
                 if (match.Success)
                 {
                     string value = match.Groups["value"].Value;
@@ -424,7 +424,7 @@ namespace Zuby.ADGV
             {
                 #region // Parse string
                 Match match = Regex.Match(filter,
-                                @"^\[\w+\]\s+(?<not>NOT\s+)?LIKE\s+\'(?<sall>%)?(?<value>.+?(?=%?\'$))(?<eall>%)?\'$");
+                                @"^\[\w(\w|\d)*\]\s+(?<not>NOT\s+)?LIKE\s+\'(?<sall>%)?(?<value>.+?(?=%?\'$))(?<eall>%)?\'$");
                 if (match.Success)
                 {
                     string value = match.Groups["value"].Value;
