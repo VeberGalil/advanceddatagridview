@@ -429,7 +429,81 @@ namespace Zuby.ADGV
                 {
                     string value = match.Groups["value"].Value;
                     value = value.Replace("''", "'");
-                    value = Regex.Replace(value, "\\[(?<spchar>\\%|\\[|\\]|\\*|\\\\{1,2})\\]", "${spchar}");
+                    value = Regex.Replace(value, @"\[(?<spchar>\%|\[|\]|\*|\\{1,2})\]", "${spchar}");
+                    //value = Regex.Replace(value, "\\[(?<spchar>\\%|\\[|\\]|\\*|\\\\{1,2})\\]", "${spchar}");
+                    bool sall = match.Groups["sall"].Success;
+                    bool eall = match.Groups["eall"].Success;
+                    if (match.Groups["not"].Success)
+                    {
+                        if (sall && eall)
+                        {
+                            visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()],
+                                                        AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotContain.ToString()],
+                                                        value);
+                        }
+                        else if(sall)
+                        {
+                            visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()],
+                                                        AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotEndWith.ToString()],
+                                                        value);
+                        }
+                        else if(eall)
+                        {
+                            visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()],
+                                                        AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotBeginWith.ToString()],
+                                                        value);
+                        }
+                        else
+                        {
+                            visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()],
+                                                        AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotEqual.ToString()],
+                                                        value);
+                        }
+                    }
+                    else
+                    {
+                        if (sall && eall)
+                        {
+                            visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()],
+                                                        AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVContains.ToString()],
+                                                        value);
+                        }
+                        else if (sall)
+                        {
+                            visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()],
+                                                        AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVEndsWith.ToString()],
+                                                        value);
+                        }
+                        else if (eall)
+                        {
+                            visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()],
+                                                        AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVBeginsWith.ToString()],
+                                                        value);
+                        }
+                        else
+                        {
+                            visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()],
+                                                        AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVEquals.ToString()],
+                                                        value);
+                        }
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+                #endregion 
+            }
+            else if (dataType == typeof(Guid))
+            {
+                #region // Parse Guid
+                Match match = Regex.Match(filter,
+                                @"^Convert\(\[\w(\w|\d)*\]\,\s*\'System\.String'\)\s+(?<not>NOT\s+)?LIKE\s+\'(?<sall>%)?(?<value>.+?(?=%?\'$))(?<eall>%)?\'$");
+                if (match.Success)
+                {
+                    string value = match.Groups["value"].Value;
+                    value = Regex.Replace(value, @"\[(?<spchar>\%|\[|\]|\*|\\{1,2})\]", "${spchar}");
+                    //value = Regex.Replace(value, "\\[(?<spchar>\\%|\\[|\\]|\\*|\\\\{1,2})\\]", "${spchar}");
                     bool sall = match.Groups["sall"].Success;
                     bool eall = match.Groups["eall"].Success;
                     if (match.Groups["not"].Success)

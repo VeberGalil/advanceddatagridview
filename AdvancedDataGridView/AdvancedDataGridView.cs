@@ -520,11 +520,23 @@ namespace Zuby.ADGV
             {
                 // Block filter event until FilterString is ready
                 _blockFilterEvent = true;
-                // Parse filter string and set filter in columns
-                Regex rxColname = new Regex(@"(?=\[?)\w+(?=\])");
-                foreach (Match match in Regex.Matches(filter, @"(?<=\().*?(?=\)(?:\sAND|$))"))
+                // Single filter doesn't have to be in parenthesis, so we unifie results
+                List<string> columnFilters = new List<string>();
+                if (Regex.IsMatch(filter, @"\(.+\)"))
                 {
-                    string colFilter = match.Value;
+                    foreach (Match match in Regex.Matches(filter.Trim(), @"(?<=\().*?(?=\)(?:\sAND|$))"))
+                    {
+                        columnFilters.Add(match.Value);
+                    }
+                }
+                else
+                {
+                    columnFilters.Add(filter);
+                }
+                // Parse filter string and set filter in columns
+                Regex rxColname = new Regex(@"(?=\[?)\w(\w|\d)*(?=\])");
+                foreach (string colFilter in columnFilters)
+                {
                     Match nameMatch = rxColname.Match(colFilter);
                     if (nameMatch.Success)
                     {
