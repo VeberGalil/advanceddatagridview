@@ -1183,7 +1183,7 @@ namespace Zuby.ADGV
                             else if (_filterValueType == typeof(Bitmap))
                             { /* Exclude bitmap columns from filter */ }
                             else
-                            {   // Any other type (like String, Single or Double)
+                            {   // Any other type (like Single, Double, Guid, etc)
                                 filterBuilder.Append(IsFilterNOTINLogicEnabled ? "Convert([{0}],System.String) NOT IN (" : "Convert([{0}],System.String) IN (");
                                 filterBuilder.Append(nodesFilter);
                                 filterBuilder.Append(")");
@@ -1206,7 +1206,6 @@ namespace Zuby.ADGV
             string[] subfilters = filter.Split(new string[] { " OR " }, System.StringSplitOptions.RemoveEmptyEntries);
             foreach (string subfilter in subfilters)
             {
-
                 if (Regex.IsMatch(subfilter.Trim(), @"^\[\w(\w|\d)*\] IS NULL$"))
                 {
                     // Find and select 'blanks' node
@@ -1359,7 +1358,7 @@ namespace Zuby.ADGV
                     string decimalPattern = @"(?<value>[-+]?[0-9]*\.?[0-9]*)";
                     Match match = Regex.Match(subfilter.Trim(),
                                                 @"(?n)^\(?\[\w(\w|\d)*\]\s+" + predicate + @"\s+\(" + 
-                                                decimalPattern+ @"(\s*,\s*" + decimalPattern + @"\){1,2}$");
+                                                decimalPattern+ @"\s*,\s*" + decimalPattern + @"\){1,2}$");
                     if (match.Success && match.Groups["value"].Success)
                     {
                         // decimal has largest value range among these types
@@ -1425,28 +1424,59 @@ namespace Zuby.ADGV
                 }
                 else if (_filterValueType == typeof(Bitmap))
                 { /* do nothing */ }
-                else if (_filterValueType == typeof(Guid))
+                else if (_filterValueType == typeof(String))
                 {
-                    // ???
+                    // Parse values from subfilter string:
+                    //  if IsFilterNOTINLogicEnabled, then [{0}] NOT IN ('val1', 'val2', etc) 
+                    //  else  [{0}] IN ('val1', 'val2', etc)
+                    // Anyway, replace '' with ' in each valN
+                    string predicate = IsFilterNOTINLogicEnabled ? "NOT IN" : "IN";
+                    Match match = Regex.Match(subfilter.Trim(),
+                                                @"(?n)^\(?\[\w(\w|\d)*\]\s+" + predicate + @"\s+\(\'(?<value>.*?)\'\s*(,\s*\'(?<value>.*?)\')*\)$");
+                    if (match.Success && match.Groups["value"].Success)
+                    {
+                        // Search for nodes with these values and check them
+                        foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
+                        {
+                            foreach (Capture val in match.Groups["value"].Captures)
+                            {
+                                string value = val.Value.Replace("''", "'");
+                                if (n.Value.ToString() == value)
+                                {
+                                    n.Checked = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
-                else
-                {   // String, Guid and likewise
-
+                else  // GUID and all others
+                { 
                     // Parse values from subfilter string:
                     //  if IsFilterNOTINLogicEnabled, then Convert([{ 0}],System.String) NOT IN('val1', 'val2', etc) 
                     //  else  Convert([{ 0}],System.String) IN('val1', 'val2', etc)
-                    // Anyway, replace '' with ' in each valN
-                    // Search for nodes with these values and check them
-
-                    //foreach (TreeNodeItemSelector n in nodes)
-                    //    sb.Append("'" + n.Value.ToString().Replace("'", "''") + "'" + appx);
+                    string predicate = IsFilterNOTINLogicEnabled ? "NOT IN" : "IN";
+                    Match match = Regex.Match(subfilter.Trim(),
+                                                @"(?n)^\(?Convert\(\[\w(\w|\d)\]\,\s*\'?System\.String\'?\)\s+" + predicate + 
+                                                @"\s+\(\'(?<value>.*?)\'\s*(,\s*\'(?<value>.*?)\')*\)$");
+                    if (match.Success && match.Groups["value"].Success)
+                    {
+                        // Search for nodes with these values and check them
+                        foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
+                        {
+                            foreach (Capture val in match.Groups["value"].Captures)
+                            {
+                                // Doubled apostrophe ('') is not supposed to be part of the value
+                                if (n.Value.ToString() == val.Value)
+                                {
+                                    n.Checked = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
-
             }
-
-
-            throw new NotImplementedException();
-
         }
 
         private void LoadChecklist(IEnumerable<DataGridViewCell> valueCells, Type valueType, Action setCheckState)
