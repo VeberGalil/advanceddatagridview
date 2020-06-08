@@ -1356,9 +1356,9 @@ namespace Zuby.ADGV
                     //  else  [{0}] IN (val1, val2, etc)
                     string predicate = IsFilterNOTINLogicEnabled ? "NOT IN" : "IN";
                     string decimalPattern = @"(?<value>[-+]?[0-9]*\.?[0-9]*)";
-                    Match match = Regex.Match(subfilter.Trim(),
-                                                @"(?n)^\(?\[\w(\w|\d)*\]\s+" + predicate + @"\s+\(" + 
-                                                decimalPattern+ @"\s*,\s*" + decimalPattern + @"\){1,2}$");
+                    string filterPattern = @"(?n)^\(?\[\w(\w|\d)*\]\s+" + predicate + @"\s+\(" +
+                                                decimalPattern + @"\s*(,\s*" + decimalPattern + @")*\){1,2}$";
+                    Match match = Regex.Match(subfilter.Trim(), filterPattern);
                     if (match.Success && match.Groups["value"].Success)
                     {
                         // decimal has largest value range among these types
@@ -1374,12 +1374,16 @@ namespace Zuby.ADGV
                         // Search for nodes with these values and check them
                         foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
                         {
-                            foreach (decimal value in values)
+                            if (n.NodeType == TreeNodeItemSelector.CustomNodeType.Default)
                             {
-                                if ((decimal)n.Value == value)
+                                foreach (decimal value in values)
                                 {
-                                    n.Checked = true;
-                                    break;
+                                    decimal nodeValue = (decimal)Convert.ChangeType(n.Value, TypeCode.Decimal);
+                                    if (nodeValue == value)
+                                    {
+                                        n.Checked = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -1392,10 +1396,10 @@ namespace Zuby.ADGV
                     //  else  Convert([{0}],System.String) IN (val1, val2, etc)
                     string predicate = IsFilterNOTINLogicEnabled ? "NOT IN" : "IN";
                     string doublePattern = @"(?<value>^[+-]?[0-9]*\.?[Ee]?[+-]?[0-9]*$)";   // add exponential form?
-                    Match match = Regex.Match(subfilter.Trim(),
-                                                @"(?n)^\(?Convert\(\[\w(\w|\d)\]\,\s*\'?System\.String\'?\)\s+" + 
-                                                predicate + @"\s+\(" + doublePattern + 
-                                                @"(\s*,\s*" + doublePattern + @"\){1,2}$"); 
+                    string filterPattern = @"(?n)^\(?Convert\(\[\w(\w|\d)\]\,\s*\'?System\.String\'?\)\s+" +
+                                                predicate + @"\s+\(" + doublePattern +
+                                                @"\s*(,\s*" + doublePattern + @")*\){1,2}$";
+                    Match match = Regex.Match(subfilter.Trim(), filterPattern); 
                     if (match.Success && match.Groups["value"].Success)
                     {
                         // Double has largest value range among these types
@@ -1411,12 +1415,15 @@ namespace Zuby.ADGV
                         // Search for nodes with these values and check them
                         foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
                         {
-                            foreach (double value in values)
+                            if (n.NodeType == TreeNodeItemSelector.CustomNodeType.Default)
                             {
-                                if ((double)n.Value == value)
+                                foreach (double value in values)
                                 {
-                                    n.Checked = true;
-                                    break;
+                                    if ((double)n.Value == value)
+                                    {
+                                        n.Checked = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -1431,8 +1438,8 @@ namespace Zuby.ADGV
                     //  else  [{0}] IN ('val1', 'val2', etc)
                     // Anyway, replace '' with ' in each valN
                     string predicate = IsFilterNOTINLogicEnabled ? "NOT IN" : "IN";
-                    Match match = Regex.Match(subfilter.Trim(),
-                                                @"(?n)^\(?\[\w(\w|\d)*\]\s+" + predicate + @"\s+\(\'(?<value>.*?)\'\s*(,\s*\'(?<value>.*?)\')*\)$");
+                    string filterPattern = @"(?n)^\(?\[\w(\w|\d)*\]\s+" + predicate + @"\s+\(\'(?<value>.*?)\'\s*(,\s*\'(?<value>.*?)\')*\)$";
+                    Match match = Regex.Match(subfilter.Trim(), filterPattern);
                     if (match.Success && match.Groups["value"].Success)
                     {
                         // Search for nodes with these values and check them
@@ -1456,9 +1463,9 @@ namespace Zuby.ADGV
                     //  if IsFilterNOTINLogicEnabled, then Convert([{ 0}],System.String) NOT IN('val1', 'val2', etc) 
                     //  else  Convert([{ 0}],System.String) IN('val1', 'val2', etc)
                     string predicate = IsFilterNOTINLogicEnabled ? "NOT IN" : "IN";
-                    Match match = Regex.Match(subfilter.Trim(),
-                                                @"(?n)^\(?Convert\(\[\w(\w|\d)\]\,\s*\'?System\.String\'?\)\s+" + predicate + 
-                                                @"\s+\(\'(?<value>.*?)\'\s*(,\s*\'(?<value>.*?)\')*\)$");
+                    string filterPattern = @"(?n)^\(?Convert\(\[\w(\w|\d)\]\,\s*\'?System\.String\'?\)\s+" + predicate +
+                                                @"\s+\(\'(?<value>.*?)\'\s*(,\s*\'(?<value>.*?)\')*\)$";
+                    Match match = Regex.Match(subfilter.Trim(),filterPattern);
                     if (match.Success && match.Groups["value"].Success)
                     {
                         // Search for nodes with these values and check them
@@ -1477,6 +1484,7 @@ namespace Zuby.ADGV
                     }
                 }
             }
+            SetCheckListFilter();
         }
 
         private void LoadChecklist(IEnumerable<DataGridViewCell> valueCells, Type valueType, Action setCheckState)

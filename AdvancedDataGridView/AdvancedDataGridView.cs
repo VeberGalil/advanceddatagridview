@@ -512,8 +512,10 @@ namespace Zuby.ADGV
         public void LoadFilter(string filter)
         {
             // Clean current filter
-            CleanFilter(false);
+            _loadedFilter = false;
             _filteredColumns.Clear();
+            this.SuspendLayout();
+            CleanFilter(true);
 
             // 
             if (!string.IsNullOrWhiteSpace(filter))
@@ -522,7 +524,7 @@ namespace Zuby.ADGV
                 _blockFilterEvent = true;
                 // Single filter doesn't have to be in parenthesis, so we unifie results
                 List<string> columnFilters = new List<string>();
-                if (Regex.IsMatch(filter, @"\(.+\)"))
+                if (Regex.IsMatch(filter, @"\(\[\w(\w|\d)*\].+\)"))
                 {
                     foreach (Match match in Regex.Matches(filter.Trim(), @"(?<=\().*?(?=\)(?:\sAND|$))"))
                     {
@@ -557,6 +559,7 @@ namespace Zuby.ADGV
 
             // Do actual filtering
             TriggerFilterStringChanged();
+            this.ResumeLayout();
         }
 
 
