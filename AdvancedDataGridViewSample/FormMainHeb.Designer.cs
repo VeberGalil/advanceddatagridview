@@ -36,7 +36,6 @@
             this.labelLoadFilter = new System.Windows.Forms.Label();
             this.btnEnglish = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.advancedDataGridViewSearchToolBar_main = new Zuby.ADGV.AdvancedDataGridViewSearchToolBar();
             this.button_setsavedfilter = new System.Windows.Forms.Button();
             this.comboBox_sortsaved = new System.Windows.Forms.ComboBox();
             this.comboBox_filtersaved = new System.Windows.Forms.ComboBox();
@@ -57,6 +56,9 @@
             this.label_total = new System.Windows.Forms.Label();
             this.panel_grid = new System.Windows.Forms.Panel();
             this.advancedDataGridView_main = new Zuby.ADGV.AdvancedDataGridView();
+            this.advancedDataGridViewSearchToolBar_main = new Zuby.ADGV.AdvancedDataGridViewSearchToolBar();
+            this.linkFilterHelp = new System.Windows.Forms.LinkLabel();
+            this.tooltipHelpLink = new System.Windows.Forms.ToolTip(this.components);
             this.panel_top.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource_main)).BeginInit();
@@ -67,6 +69,7 @@
             // 
             // panel_top
             // 
+            this.panel_top.Controls.Add(this.linkFilterHelp);
             this.panel_top.Controls.Add(this.btnLoadFilter);
             this.panel_top.Controls.Add(this.textLoadFilter);
             this.panel_top.Controls.Add(this.labelLoadFilter);
@@ -109,6 +112,7 @@
             this.textLoadFilter.Location = new System.Drawing.Point(118, 98);
             this.textLoadFilter.Multiline = true;
             this.textLoadFilter.Name = "textLoadFilter";
+            this.textLoadFilter.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.textLoadFilter.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textLoadFilter.Size = new System.Drawing.Size(287, 68);
             this.textLoadFilter.TabIndex = 23;
@@ -142,20 +146,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(827, 29);
             this.panel1.TabIndex = 11;
-            // 
-            // advancedDataGridViewSearchToolBar_main
-            // 
-            this.advancedDataGridViewSearchToolBar_main.AllowMerge = false;
-            this.advancedDataGridViewSearchToolBar_main.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.advancedDataGridViewSearchToolBar_main.Location = new System.Drawing.Point(0, 0);
-            this.advancedDataGridViewSearchToolBar_main.MaximumSize = new System.Drawing.Size(0, 27);
-            this.advancedDataGridViewSearchToolBar_main.MinimumSize = new System.Drawing.Size(0, 27);
-            this.advancedDataGridViewSearchToolBar_main.Name = "advancedDataGridViewSearchToolBar_main";
-            this.advancedDataGridViewSearchToolBar_main.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.advancedDataGridViewSearchToolBar_main.Size = new System.Drawing.Size(827, 27);
-            this.advancedDataGridViewSearchToolBar_main.TabIndex = 12;
-            this.advancedDataGridViewSearchToolBar_main.Text = "advancedDataGridViewSearchToolBar1";
-            this.advancedDataGridViewSearchToolBar_main.Search += new Zuby.ADGV.AdvancedDataGridViewSearchToolBarSearchEventHandler(this.AdvancedDataGridViewSearchToolBar_main_Search);
             // 
             // button_setsavedfilter
             // 
@@ -354,6 +344,31 @@
             this.advancedDataGridView_main.SortStringChanged += new System.EventHandler<Zuby.ADGV.SortEventArgs>(this.AdvancedDataGridView_main_SortStringChanged);
             this.advancedDataGridView_main.FilterStringChanged += new System.EventHandler<Zuby.ADGV.FilterEventArgs>(this.AdvancedDataGridView_main_FilterStringChanged);
             // 
+            // advancedDataGridViewSearchToolBar_main
+            // 
+            this.advancedDataGridViewSearchToolBar_main.AllowMerge = false;
+            this.advancedDataGridViewSearchToolBar_main.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.advancedDataGridViewSearchToolBar_main.Location = new System.Drawing.Point(0, 0);
+            this.advancedDataGridViewSearchToolBar_main.MaximumSize = new System.Drawing.Size(0, 27);
+            this.advancedDataGridViewSearchToolBar_main.MinimumSize = new System.Drawing.Size(0, 27);
+            this.advancedDataGridViewSearchToolBar_main.Name = "advancedDataGridViewSearchToolBar_main";
+            this.advancedDataGridViewSearchToolBar_main.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
+            this.advancedDataGridViewSearchToolBar_main.Size = new System.Drawing.Size(827, 27);
+            this.advancedDataGridViewSearchToolBar_main.TabIndex = 12;
+            this.advancedDataGridViewSearchToolBar_main.Text = "advancedDataGridViewSearchToolBar1";
+            this.advancedDataGridViewSearchToolBar_main.Search += new Zuby.ADGV.AdvancedDataGridViewSearchToolBarSearchEventHandler(this.AdvancedDataGridViewSearchToolBar_main_Search);
+            // 
+            // linkFilterHelp
+            // 
+            this.linkFilterHelp.AutoSize = true;
+            this.linkFilterHelp.Location = new System.Drawing.Point(265, 82);
+            this.linkFilterHelp.Name = "linkFilterHelp";
+            this.linkFilterHelp.Size = new System.Drawing.Size(19, 13);
+            this.linkFilterHelp.TabIndex = 25;
+            this.linkFilterHelp.TabStop = true;
+            this.linkFilterHelp.Text = "(?)";
+            this.linkFilterHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkFilterHelp_LinkClicked);
+            // 
             // FormMainHeb
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -408,5 +423,7 @@
         private System.Windows.Forms.Button btnLoadFilter;
         private System.Windows.Forms.TextBox textLoadFilter;
         private System.Windows.Forms.Label labelLoadFilter;
+        private System.Windows.Forms.LinkLabel linkFilterHelp;
+        private System.Windows.Forms.ToolTip tooltipHelpLink;
     }
 }

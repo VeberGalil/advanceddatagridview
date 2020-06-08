@@ -246,5 +246,10 @@ namespace AdvancedDataGridViewSample
                 MessageBox.Show("Filter mismatch");
             }
         }
+
+        private void linkFilterHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("FilterHelp.htm");
+        }
     }
 }
