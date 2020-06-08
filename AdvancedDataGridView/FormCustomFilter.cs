@@ -115,8 +115,10 @@ namespace Zuby.ADGV
                     _valControl1 = new TextBox();
                     _valControl2 = new TextBox();
                     comboBox_filterType.Items.AddRange(new string[] {
-                        AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVContains.ToString()],
-                        AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotContain.ToString()]
+                        AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVEquals.ToString()],
+                        AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotEqual.ToString()]
+                        //AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVContains.ToString()],
+                        //AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotContain.ToString()]
                     });
                     break;
 
@@ -334,13 +336,13 @@ namespace Zuby.ADGV
                         if (match.Groups["not"].Success)
                         {   // NOT LIKE logic
                             visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()], 
-                                                         AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotContain.ToString()], 
+                                                         AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotEqual.ToString()], 
                                                          ts);
                         }
                         else
                         {
                             visualFilter = String.Format(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVFilterStringDescription.ToString()],
-                                                         AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVContains.ToString()],
+                                                         AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVEquals.ToString()],
                                                          ts);
                         }
                     }
@@ -638,17 +640,30 @@ namespace Zuby.ADGV
                 case FilterType.TimeSpan:
                     if(TimeSpan.TryParse(control1.Text, out TimeSpan ts))
                     {
+                        // New approach: equal / not equal
                         // Convert timespan to ISO 8601 duration format
                         string tsValue = XmlConvert.ToString(ts);
                         // 
-                        if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVContains.ToString()])
+                        if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVEquals.ToString()])
                         {
                             filterString = "Convert([{0}], 'System.String') LIKE '%" + tsValue + "%'";
                         }
-                        else if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotContain.ToString()])
+                        else if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotEqual.ToString()])
                         {
                             filterString = "Convert([{0}], 'System.String') NOT LIKE '%" + tsValue + "%'";
                         }
+
+                        //// Old approach(Contains / Not contains)
+                        //if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVContains.ToString()])
+                        //{
+                        //    filterString = "(Convert([{0}], 'System.String') LIKE '%P" + ((int)ts.Days > 0 ? (int)ts.Days + "D" : "") + (ts.TotalHours > 0 ? "T" : "") + ((int)ts.Hours > 0 ? (int)ts.Hours + "H" : "") + ((int)ts.Minutes > 0 ? (int)ts.Minutes + "M" : "") + ((int)ts.Seconds > 0 ? (int)ts.Seconds + "S" : "") + "%')";
+                        //}
+                        //else if (filterTypeConditionText == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVDoesNotContain.ToString()])
+                        //{
+                        //    filterString = "(Convert([{0}], 'System.String') NOT LIKE '%P" + ((int)ts.Days > 0 ? (int)ts.Days + "D" : "") + (ts.TotalHours > 0 ? "T" : "") + ((int)ts.Hours > 0 ? (int)ts.Hours + "H" : "") + ((int)ts.Minutes > 0 ? (int)ts.Minutes + "M" : "") + ((int)ts.Seconds > 0 ? (int)ts.Seconds + "S" : "") + "%')";
+                        //}
+                        // Possible future development:
+                        // Add contains / does not contain, but only non-zero parts
                     }
                     else
                     {
