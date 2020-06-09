@@ -3,12 +3,42 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <title>Syntax for use with ADVG.LoadFilter(filter) method</title>
+    <title>AdvancedDataGridView.LoadFilter(String) method</title>
 </head>
 <body>
+    <h1>AdvancedDataGridView.LoadFilter(String) method</h1>
+    
     <div>
-        ADVG.LoadFilter() method allows user to programmatically apply filter to grid (and underlying data source), as if it was selected by end user in filter menus for ADVG columns. LoadFilter() method will first parse filter string, applying each recognized filter part to filter menus in corresponding columns. It will then generate filter event, returning regenerated filter string to hosting form and apply filter to associated BindingSource.
+        <p>Sets the filter to be used to exclude items from the collection of items returned by the data source.</p>
+    </div>
 
+    <pre><code dir="ltr">public void LoadFilter(string filter);</code></pre>
+
+    <h3>Parameters</h3>
+    <div>
+        <dl>
+        	<dt><i>filter</i></dt>
+            <dd>The string used to filter items out in the item collection returned by the data source.</dd>
+        </dl>
+    </div>
+
+    <h3>Remarks</h3>
+    <div style="line-height: 150%;">
+        <p>
+            LoadFilter method allows programmatically apply filter to grid (and underlying data source), 
+            as if it was selected by end user in filter menus for ADVG columns.
+        </p>
+        <p>
+            AdvancedDataGridView will parse provided filter string, splitting it to filters for individual columns. 
+            Each column filter will be tested in compliance with column data type.
+            If column filter is recognized as custom filter, it will be added to list of custom filters for this column.
+            If filter is not custom filter, AdvancedDataGridView will try to use it as value source for checklist filter.
+            In any case, control will build new filter string according to recognized filter parts and generate 
+            FilterStringChanged event, passing new filter string in FilterString property of FilterEventArgs parameter.
+            AdvancedDataGridView will also apply generated filter to binding source, associated with DataSource property.        
+        </p>
+        
+        <h4>Filter String Syntax</h4>
     </div>
 </body>
 </html>
