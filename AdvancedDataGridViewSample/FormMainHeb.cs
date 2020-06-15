@@ -98,7 +98,7 @@ namespace AdvancedDataGridViewSample
                     DateTime.Today.AddHours(i*2).AddHours(i%2 == 0 ?i*10+1:0).AddMinutes(i%2 == 0 ?i*10+1:0).AddSeconds(i%2 == 0 ?i*10+1:0).AddMilliseconds(i%2 == 0 ?i*10+1:0).Date,
                     DateTime.Today.AddHours(i*2).AddHours(i%2 == 0 ?i*10+1:0).AddMinutes(i%2 == 0 ?i*10+1:0).AddSeconds(i%2 == 0 ?i*10+1:0).AddMilliseconds(i%2 == 0 ?i*10+1:0),
                     i*2 % 3 == 0 ? null : i.ToString()+" מחרוזת",
-                    i % 2 == 0 ? true:false,
+                    i % 2 == 0,
                     Guid.NewGuid(),
                     sampleimages[r.Next(0, 2)],
                     TimeSpan.FromSeconds(r.Next(maxSeconds))
@@ -247,7 +247,7 @@ namespace AdvancedDataGridViewSample
             }
         }
 
-        private void linkFilterHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void LinkFilterHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start("FilterHelp.htm");
         }

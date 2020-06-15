@@ -367,7 +367,7 @@
             this.linkFilterHelp.TabIndex = 25;
             this.linkFilterHelp.TabStop = true;
             this.linkFilterHelp.Text = "(?)";
-            this.linkFilterHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkFilterHelp_LinkClicked);
+            this.linkFilterHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkFilterHelp_LinkClicked);
             // 
             // FormMainHeb
             // 
