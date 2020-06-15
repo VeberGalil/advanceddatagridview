@@ -582,7 +582,7 @@ namespace Zuby.ADGV
         }
 
         /// <summary>
-        /// Set the NOTIN Logic for checkbox filter
+        /// Set the NOT IN Logic for checkbox filter (doesn't work with DateTime, TimeSpan and Boolean)
         /// </summary>
         /// <param name="enabled"></param>
         public void SetMenuStripFilterNOTINLogic(bool enabled)

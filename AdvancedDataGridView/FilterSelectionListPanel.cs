@@ -1352,11 +1352,9 @@ namespace Zuby.ADGV
                     _filterValueType == typeof(Byte) || _filterValueType == typeof(SByte) || _filterValueType == typeof(Decimal))
                 {
                     // Parse values from subfilter string:
-                    //  if IsFilterNOTINLogicEnabled, then [{0}] NOT IN (val1, val2, etc) 
-                    //  else  [{0}] IN (val1, val2, etc)
-                    string predicate = IsFilterNOTINLogicEnabled ? "NOT IN" : "IN";
+                    //  [{0}] [NOT] IN (val1, val2, etc) 
                     string decimalPattern = @"(?<value>[-+]?[0-9]*\.?[0-9]*)";
-                    string filterPattern = @"(?n)^\(?\[\w(\w|\d)*\]\s+" + predicate + @"\s+\(" +
+                    string filterPattern = @"(?n)^\(?\[\w(\w|\d)*\](?:\s+(?<not>NOT))?\s+IN\s+\(" +
                                                 decimalPattern + @"\s*(,\s*" + decimalPattern + @")*\){1,2}$";
                     Match match = Regex.Match(subfilter.Trim(), filterPattern);
                     if (match.Success && match.Groups["value"].Success)
@@ -1371,19 +1369,25 @@ namespace Zuby.ADGV
                             }
                         }
 
+                        bool notIn = match.Groups["not"].Success;
+
                         // Search for nodes with these values and check them
                         foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
                         {
                             if (n.NodeType == TreeNodeItemSelector.CustomNodeType.Default)
                             {
+                                decimal nodeValue = (decimal)Convert.ChangeType(n.Value, TypeCode.Decimal);
                                 foreach (decimal value in values)
                                 {
-                                    decimal nodeValue = (decimal)Convert.ChangeType(n.Value, TypeCode.Decimal);
                                     if (nodeValue == value)
                                     {
                                         n.Checked = true;
                                         break;
                                     }
+                                }
+                                if (notIn)
+                                {   
+                                    n.Checked = !n.Checked;
                                 }
                             }
                         }
@@ -1392,13 +1396,11 @@ namespace Zuby.ADGV
                 else if (_filterValueType == typeof(Single) || _filterValueType == typeof(Double))
                 {
                     // Parse values from subfilter string:
-                    //  if IsFilterNOTINLogicEnabled, then Convert([{0}],System.String) NOT IN (val1, val2, etc)
-                    //  else  Convert([{0}],System.String) IN (val1, val2, etc)
-                    string predicate = IsFilterNOTINLogicEnabled ? "NOT IN" : "IN";
+                    //  Convert([{0}],System.String) [NOT] IN (val1, val2, etc)
                     string doublePattern = @"(?<value>^[+-]?[0-9]*\.?[Ee]?[+-]?[0-9]*$)";   // add exponential form?
-                    string filterPattern = @"(?n)^\(?Convert\(\[\w(\w|\d)\]\,\s*\'?System\.String\'?\)\s+" +
-                                                predicate + @"\s+\(" + doublePattern +
-                                                @"\s*(,\s*" + doublePattern + @")*\){1,2}$";
+                    string filterPattern = 
+                            @"(?n)^\(?Convert\(\[\w(\w|\d)*\]\,\s*\'?System\.String\'?\)(?:\s+(?<not>NOT))?\s+IN\s+\(" + 
+                            doublePattern + @"\s*(,\s*" + doublePattern + @")*\){1,2}$";
                     Match match = Regex.Match(subfilter.Trim(), filterPattern); 
                     if (match.Success && match.Groups["value"].Success)
                     {
@@ -1411,6 +1413,8 @@ namespace Zuby.ADGV
                                 values.Add(value);
                             }
                         }
+
+                        bool notIn = match.Groups["not"].Success;
 
                         // Search for nodes with these values and check them
                         foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
@@ -1425,6 +1429,10 @@ namespace Zuby.ADGV
                                         break;
                                     }
                                 }
+                                if (notIn)
+                                {
+                                    n.Checked = !n.Checked;
+                                }
                             }
                         }
                     }
@@ -1434,24 +1442,34 @@ namespace Zuby.ADGV
                 else if (_filterValueType == typeof(String))
                 {
                     // Parse values from subfilter string:
-                    //  if IsFilterNOTINLogicEnabled, then [{0}] NOT IN ('val1', 'val2', etc) 
-                    //  else  [{0}] IN ('val1', 'val2', etc)
+                    //  [{0}] [NOT] IN ('val1', 'val2', etc) 
                     // Anyway, replace '' with ' in each valN
-                    string predicate = IsFilterNOTINLogicEnabled ? "NOT IN" : "IN";
-                    string filterPattern = @"(?n)^\(?\[\w(\w|\d)*\]\s+" + predicate + @"\s+\(\'(?<value>.*?)\'\s*(,\s*\'(?<value>.*?)\')*\)$";
+                    string filterPattern = 
+                        @"(?n)^\(?\[\w(\w|\d)*\](?:\s+(?<not>NOT))?\s+IN\s+\(\'(?<value>.*?)\'\s*(,\s*\'(?<value>.*?)\')*\)$";
                     Match match = Regex.Match(subfilter.Trim(), filterPattern);
                     if (match.Success && match.Groups["value"].Success)
                     {
+
+                        bool notIn = match.Groups["not"].Success;
+
                         // Search for nodes with these values and check them
                         foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
                         {
-                            foreach (Capture val in match.Groups["value"].Captures)
+                            if (n.NodeType == TreeNodeItemSelector.CustomNodeType.Default)
                             {
-                                string value = val.Value.Replace("''", "'");
-                                if (n.Value.ToString() == value)
+                                string nodeValue = n.Value.ToString();
+                                foreach (Capture val in match.Groups["value"].Captures)
                                 {
-                                    n.Checked = true;
-                                    break;
+                                    string value = val.Value.Replace("''", "'");
+                                    if (nodeValue == value)
+                                    {
+                                        n.Checked = true;
+                                        break;
+                                    }
+                                    if (notIn)
+                                    {
+                                        n.Checked = !n.Checked;
+                                    }
                                 }
                             }
                         }
@@ -1460,24 +1478,31 @@ namespace Zuby.ADGV
                 else  // GUID and all others
                 { 
                     // Parse values from subfilter string:
-                    //  if IsFilterNOTINLogicEnabled, then Convert([{ 0}],System.String) NOT IN('val1', 'val2', etc) 
-                    //  else  Convert([{ 0}],System.String) IN('val1', 'val2', etc)
-                    string predicate = IsFilterNOTINLogicEnabled ? "NOT IN" : "IN";
-                    string filterPattern = @"(?n)^\(?Convert\(\[\w(\w|\d)\]\,\s*\'?System\.String\'?\)\s+" + predicate +
-                                                @"\s+\(\'(?<value>.*?)\'\s*(,\s*\'(?<value>.*?)\')*\)$";
+                    //  Convert([{ 0}],System.String) [NOT] IN('val1', 'val2', etc) 
+                    string filterPattern =
+                        @"(?n)^\(?Convert\(\[\w(\w|\d)\]\,\s*\'?System\.String\'?\)(?:\s+(?<not>NOT))?\s+IN\s+\(\'(?<value>.*?)\'\s*(,\s*\'(?<value>.*?)\')*\)$";
                     Match match = Regex.Match(subfilter.Trim(),filterPattern);
                     if (match.Success && match.Groups["value"].Success)
                     {
+                        bool notIn = match.Groups["not"].Success;
+
                         // Search for nodes with these values and check them
                         foreach (TreeNodeItemSelector n in treeFilterSelection.Nodes)
                         {
-                            foreach (Capture val in match.Groups["value"].Captures)
+                            if (n.NodeType == TreeNodeItemSelector.CustomNodeType.Default)
                             {
-                                // Doubled apostrophe ('') is not supposed to be part of the value
-                                if (n.Value.ToString() == val.Value)
+                                foreach (Capture val in match.Groups["value"].Captures)
                                 {
-                                    n.Checked = true;
-                                    break;
+                                    // Doubled apostrophe ('') is not supposed to be part of the value
+                                    if (n.Value.ToString() == val.Value)
+                                    {
+                                        n.Checked = true;
+                                        break;
+                                    }
+                                    if (notIn)
+                                    {
+                                        n.Checked = !n.Checked;
+                                    }
                                 }
                             }
                         }

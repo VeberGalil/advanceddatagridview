@@ -251,5 +251,10 @@ namespace AdvancedDataGridViewSample
         {
             System.Diagnostics.Process.Start("FilterHelp.htm");
         }
+
+        private void checkNotIn_CheckedChanged(object sender, EventArgs e)
+        {
+            advancedDataGridView_main.SetMenuStripFilterNOTINLogic(checkNotIn.Checked);
+        }
     }
 }

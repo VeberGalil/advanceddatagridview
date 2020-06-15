@@ -33,6 +33,7 @@
             this.panel_top = new System.Windows.Forms.Panel();
             this.btnDesc = new System.Windows.Forms.Button();
             this.btnAsc = new System.Windows.Forms.Button();
+            this.optionIgnoreSort = new System.Windows.Forms.RadioButton();
             this.optionSortDesc = new System.Windows.Forms.RadioButton();
             this.optionSortAsc = new System.Windows.Forms.RadioButton();
             this.optionSortNone = new System.Windows.Forms.RadioButton();
@@ -60,7 +61,7 @@
             this.advancedDataGridView_main = new Zuby.ADGV.AdvancedDataGridView();
             this.panel_bottom = new System.Windows.Forms.Panel();
             this.bindingSource_main = new System.Windows.Forms.BindingSource(this.components);
-            this.optionIgnoreSort = new System.Windows.Forms.RadioButton();
+            this.checkNotIn = new System.Windows.Forms.CheckBox();
             this.panel_top.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel_grid.SuspendLayout();
@@ -119,6 +120,19 @@
             this.btnAsc.Text = "ASC";
             this.btnAsc.UseVisualStyleBackColor = true;
             this.btnAsc.Click += new System.EventHandler(this.BtnAsc_Click);
+            // 
+            // optionIgnoreSort
+            // 
+            this.optionIgnoreSort.AutoSize = true;
+            this.optionIgnoreSort.Checked = true;
+            this.optionIgnoreSort.Location = new System.Drawing.Point(571, 139);
+            this.optionIgnoreSort.Name = "optionIgnoreSort";
+            this.optionIgnoreSort.Size = new System.Drawing.Size(88, 17);
+            this.optionIgnoreSort.TabIndex = 22;
+            this.optionIgnoreSort.TabStop = true;
+            this.optionIgnoreSort.Text = "Sort by Menu";
+            this.optionIgnoreSort.UseVisualStyleBackColor = true;
+            this.optionIgnoreSort.CheckedChanged += new System.EventHandler(this.OptionSort_ChechedChanged);
             // 
             // optionSortDesc
             // 
@@ -378,6 +392,7 @@
             // 
             // panel_bottom
             // 
+            this.panel_bottom.Controls.Add(this.checkNotIn);
             this.panel_bottom.Controls.Add(this.textBox_total);
             this.panel_bottom.Controls.Add(this.label_total);
             this.panel_bottom.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -390,18 +405,17 @@
             // 
             this.bindingSource_main.ListChanged += new System.ComponentModel.ListChangedEventHandler(this.BindingSource_main_ListChanged);
             // 
-            // optionIgnoreSort
+            // checkNotIn
             // 
-            this.optionIgnoreSort.AutoSize = true;
-            this.optionIgnoreSort.Checked = true;
-            this.optionIgnoreSort.Location = new System.Drawing.Point(571, 139);
-            this.optionIgnoreSort.Name = "optionIgnoreSort";
-            this.optionIgnoreSort.Size = new System.Drawing.Size(88, 17);
-            this.optionIgnoreSort.TabIndex = 22;
-            this.optionIgnoreSort.TabStop = true;
-            this.optionIgnoreSort.Text = "Sort by Menu";
-            this.optionIgnoreSort.UseVisualStyleBackColor = true;
-            this.optionIgnoreSort.CheckedChanged += new System.EventHandler(this.OptionSort_ChechedChanged);
+            this.checkNotIn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkNotIn.AutoSize = true;
+            this.checkNotIn.Location = new System.Drawing.Point(584, 11);
+            this.checkNotIn.Name = "checkNotIn";
+            this.checkNotIn.Size = new System.Drawing.Size(188, 17);
+            this.checkNotIn.TabIndex = 17;
+            this.checkNotIn.Text = "Use NOT IN logic in checklist filter";
+            this.checkNotIn.UseVisualStyleBackColor = true;
+            this.checkNotIn.CheckedChanged += new System.EventHandler(this.checkNotIn_CheckedChanged);
             // 
             // FormMain
             // 
@@ -461,6 +475,7 @@
         private System.Windows.Forms.Button btnDesc;
         private System.Windows.Forms.Button btnAsc;
         private System.Windows.Forms.RadioButton optionIgnoreSort;
+        private System.Windows.Forms.CheckBox checkNotIn;
     }
 }
 

@@ -310,5 +310,10 @@ namespace AdvancedDataGridViewSample
             advancedDataGridView_main.SortDESC(advancedDataGridView_main.Columns["date"]);
 
         }
+
+        private void checkNotIn_CheckedChanged(object sender, EventArgs e)
+        {
+            advancedDataGridView_main.SetMenuStripFilterNOTINLogic(checkNotIn.Checked);
+        }
     }
 }

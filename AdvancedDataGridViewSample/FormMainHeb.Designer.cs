@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel_top = new System.Windows.Forms.Panel();
+            this.linkFilterHelp = new System.Windows.Forms.LinkLabel();
             this.btnLoadFilter = new System.Windows.Forms.Button();
             this.textLoadFilter = new System.Windows.Forms.TextBox();
             this.labelLoadFilter = new System.Windows.Forms.Label();
@@ -55,10 +56,10 @@
             this.textBox_total = new System.Windows.Forms.TextBox();
             this.label_total = new System.Windows.Forms.Label();
             this.panel_grid = new System.Windows.Forms.Panel();
+            this.tooltipHelpLink = new System.Windows.Forms.ToolTip(this.components);
             this.advancedDataGridView_main = new Zuby.ADGV.AdvancedDataGridView();
             this.advancedDataGridViewSearchToolBar_main = new Zuby.ADGV.AdvancedDataGridViewSearchToolBar();
-            this.linkFilterHelp = new System.Windows.Forms.LinkLabel();
-            this.tooltipHelpLink = new System.Windows.Forms.ToolTip(this.components);
+            this.checkNotIn = new System.Windows.Forms.CheckBox();
             this.panel_top.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource_main)).BeginInit();
@@ -94,6 +95,18 @@
             this.panel_top.Name = "panel_top";
             this.panel_top.Size = new System.Drawing.Size(827, 205);
             this.panel_top.TabIndex = 0;
+            // 
+            // linkFilterHelp
+            // 
+            this.linkFilterHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkFilterHelp.AutoSize = true;
+            this.linkFilterHelp.Location = new System.Drawing.Point(265, 82);
+            this.linkFilterHelp.Name = "linkFilterHelp";
+            this.linkFilterHelp.Size = new System.Drawing.Size(19, 13);
+            this.linkFilterHelp.TabIndex = 25;
+            this.linkFilterHelp.TabStop = true;
+            this.linkFilterHelp.Text = "(?)";
+            this.linkFilterHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkFilterHelp_LinkClicked);
             // 
             // btnLoadFilter
             // 
@@ -289,6 +302,7 @@
             // 
             // panel_bottom
             // 
+            this.panel_bottom.Controls.Add(this.checkNotIn);
             this.panel_bottom.Controls.Add(this.textBox_total);
             this.panel_bottom.Controls.Add(this.label_total);
             this.panel_bottom.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -358,16 +372,16 @@
             this.advancedDataGridViewSearchToolBar_main.Text = "advancedDataGridViewSearchToolBar1";
             this.advancedDataGridViewSearchToolBar_main.Search += new Zuby.ADGV.AdvancedDataGridViewSearchToolBarSearchEventHandler(this.AdvancedDataGridViewSearchToolBar_main_Search);
             // 
-            // linkFilterHelp
+            // checkNotIn
             // 
-            this.linkFilterHelp.AutoSize = true;
-            this.linkFilterHelp.Location = new System.Drawing.Point(265, 82);
-            this.linkFilterHelp.Name = "linkFilterHelp";
-            this.linkFilterHelp.Size = new System.Drawing.Size(19, 13);
-            this.linkFilterHelp.TabIndex = 25;
-            this.linkFilterHelp.TabStop = true;
-            this.linkFilterHelp.Text = "(?)";
-            this.linkFilterHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkFilterHelp_LinkClicked);
+            this.checkNotIn.AutoSize = true;
+            this.checkNotIn.Location = new System.Drawing.Point(12, 13);
+            this.checkNotIn.Name = "checkNotIn";
+            this.checkNotIn.Size = new System.Drawing.Size(291, 17);
+            this.checkNotIn.TabIndex = 2;
+            this.checkNotIn.Text = "השתמש בלוגיקה \"לא כולל\" בסינון לפי רשימת תיוג";
+            this.checkNotIn.UseVisualStyleBackColor = true;
+            this.checkNotIn.CheckedChanged += new System.EventHandler(this.checkNotIn_CheckedChanged);
             // 
             // FormMainHeb
             // 
@@ -425,5 +439,6 @@
         private System.Windows.Forms.Label labelLoadFilter;
         private System.Windows.Forms.LinkLabel linkFilterHelp;
         private System.Windows.Forms.ToolTip tooltipHelpLink;
+        private System.Windows.Forms.CheckBox checkNotIn;
     }
 }
