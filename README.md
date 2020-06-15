@@ -4,6 +4,9 @@ About
 **[Advanced DataGridView](https://github.com/davidegironi/advanceddatagridview)** is a .NET WinForm **DataGridView with advanced Filtering and Sorting** capabilities. 
 This fork was created to add RTL capabilities to ADGV.
 
+## Updates
+* 2020-06-15 LoadSort(String) and LoadFilter(String) methods allow to apply sort and filter without locking column menus
+  * View **[Help on AdvancedDataGridView.LoadFilter(String) method](https://github.com/VeberGalil/advanceddatagridview/blob/master/AdvancedDataGridViewSample/FilterHelp.htm)**
 
 ## Download
 
