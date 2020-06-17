@@ -1397,9 +1397,9 @@ namespace Zuby.ADGV
                 {
                     // Parse values from subfilter string:
                     //  Convert([{0}],System.String) [NOT] IN (val1, val2, etc)
-                    string doublePattern = @"(?<value>^[+-]?[0-9]*\.?[Ee]?[+-]?[0-9]*$)";   // add exponential form?
+                    string doublePattern = @"(?<value>[+-]?[0-9]*\.?[Ee]?[+-]?[0-9]*)";   // add exponential form?
                     string filterPattern = 
-                            @"(?n)^\(?Convert\(\[\w(\w|\d)*\]\,\s*\'?System\.String\'?\)(?:\s+(?<not>NOT))?\s+IN\s+\(" + 
+                            @"(?n)^\(?Convert\(\[\w(\w|\d)*\],\s*\'?System\.String\'?\)(?:\s+(?<not>NOT))?\s+IN\s+\(" + 
                             doublePattern + @"\s*(,\s*" + doublePattern + @")*\){1,2}$";
                     Match match = Regex.Match(subfilter.Trim(), filterPattern); 
                     if (match.Success && match.Groups["value"].Success)

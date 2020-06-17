@@ -299,27 +299,21 @@
             </tbody>
         </table>
         <h5>Checklist filter</h5>
-        <p>Depending on whether 'NOT IN' logic was set on for control by SetMenuStripFilterNOTINLogic method, 
-            checklist filter for floating-point numeric values should have following syntax:
-        </p>
         <table>
             <thead>
                 <tr style="text-align:left">
-                    <th style="width:100px">Setting</th>
-                    <th style="width:400px">Description</th>
                     <th>Syntax</th>
+                    <th>Description</th>
                 </tr>
             </thead>
             <tbody style="padding:7px">
                 <tr>
-                    <td>Off (default)</td>
-                    <td>Rows with values selected in checklist are shown in control</td>
                     <td><pre><code><i>column_name</i> IN ('<i>value1</i>' [,'<i>value2</i>' ...])</code></pre></td>
+                    <td>Rows with listed values are shown in control</td>
                 </tr>
                 <tr>
-                    <td>On</td>
-                    <td>Rows with values excluded from checklist are shown in control</td>
                     <td><pre><code><i>column_name</i> NOT IN ('<i>value1</i>' [,'<i>value2</i>' ...])</code></pre></td>
+                    <td>Rows with listed values are hidden in control</td>
                 </tr>
             </tbody>
         </table>
@@ -366,27 +360,21 @@
             </tbody>
         </table>
         <h5>Checklist filter</h5>
-        <p>Depending on whether 'NOT IN' logic was set on for control by SetMenuStripFilterNOTINLogic method, 
-            checklist filter for floating-point numeric values should have following syntax:
-        </p>
         <table>
             <thead>
                 <tr style="text-align:left">
-                    <th style="width:100px">Setting</th>
-                    <th style="width:400px">Description</th>
                     <th>Syntax</th>
+                    <th>Description</th>
                 </tr>
             </thead>
             <tbody style="padding:7px">
                 <tr>
-                    <td>Off (default)</td>
-                    <td>Rows with values selected in checklist are shown in control</td>
                     <td><pre><code>Convert(<i>column_name</i>,'System.String') IN ('<i>value1</i>' [,'<i>value2</i>' ...])</code></pre></td>
+                    <td>Rows with values selected in checklist are shown in control</td>
                 </tr>
                 <tr>
-                    <td>On</td>
-                    <td>Rows with values excluded from checklist are shown in control</td>
                     <td><pre><code>Convert(<i>column_name</i>,'System.String') NOT IN ('<i>value1</i>' [,'<i>value2</i>' ...])</code></pre></td>
+                    <td>Rows with values excluded from checklist are shown in control</td>
                 </tr>
             </tbody>
         </table>
