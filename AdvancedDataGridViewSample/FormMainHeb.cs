@@ -247,10 +247,6 @@ namespace AdvancedDataGridViewSample
             }
         }
 
-        private void LinkFilterHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("FilterHelp.htm");
-        }
 
         private void checkNotIn_CheckedChanged(object sender, EventArgs e)
         {

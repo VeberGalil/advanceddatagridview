@@ -31,12 +31,12 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel_top = new System.Windows.Forms.Panel();
-            this.linkFilterHelp = new System.Windows.Forms.LinkLabel();
             this.btnLoadFilter = new System.Windows.Forms.Button();
             this.textLoadFilter = new System.Windows.Forms.TextBox();
             this.labelLoadFilter = new System.Windows.Forms.Label();
             this.btnEnglish = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.advancedDataGridViewSearchToolBar_main = new Zuby.ADGV.AdvancedDataGridViewSearchToolBar();
             this.button_setsavedfilter = new System.Windows.Forms.Button();
             this.comboBox_sortsaved = new System.Windows.Forms.ComboBox();
             this.comboBox_filtersaved = new System.Windows.Forms.ComboBox();
@@ -53,13 +53,12 @@
             this.button_load = new System.Windows.Forms.Button();
             this.bindingSource_main = new System.Windows.Forms.BindingSource(this.components);
             this.panel_bottom = new System.Windows.Forms.Panel();
+            this.checkNotIn = new System.Windows.Forms.CheckBox();
             this.textBox_total = new System.Windows.Forms.TextBox();
             this.label_total = new System.Windows.Forms.Label();
             this.panel_grid = new System.Windows.Forms.Panel();
-            this.tooltipHelpLink = new System.Windows.Forms.ToolTip(this.components);
             this.advancedDataGridView_main = new Zuby.ADGV.AdvancedDataGridView();
-            this.advancedDataGridViewSearchToolBar_main = new Zuby.ADGV.AdvancedDataGridViewSearchToolBar();
-            this.checkNotIn = new System.Windows.Forms.CheckBox();
+            this.tooltipHelpLink = new System.Windows.Forms.ToolTip(this.components);
             this.panel_top.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource_main)).BeginInit();
@@ -70,7 +69,6 @@
             // 
             // panel_top
             // 
-            this.panel_top.Controls.Add(this.linkFilterHelp);
             this.panel_top.Controls.Add(this.btnLoadFilter);
             this.panel_top.Controls.Add(this.textLoadFilter);
             this.panel_top.Controls.Add(this.labelLoadFilter);
@@ -95,18 +93,6 @@
             this.panel_top.Name = "panel_top";
             this.panel_top.Size = new System.Drawing.Size(827, 205);
             this.panel_top.TabIndex = 0;
-            // 
-            // linkFilterHelp
-            // 
-            this.linkFilterHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.linkFilterHelp.AutoSize = true;
-            this.linkFilterHelp.Location = new System.Drawing.Point(265, 82);
-            this.linkFilterHelp.Name = "linkFilterHelp";
-            this.linkFilterHelp.Size = new System.Drawing.Size(19, 13);
-            this.linkFilterHelp.TabIndex = 25;
-            this.linkFilterHelp.TabStop = true;
-            this.linkFilterHelp.Text = "(?)";
-            this.linkFilterHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkFilterHelp_LinkClicked);
             // 
             // btnLoadFilter
             // 
@@ -159,6 +145,20 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(827, 29);
             this.panel1.TabIndex = 11;
+            // 
+            // advancedDataGridViewSearchToolBar_main
+            // 
+            this.advancedDataGridViewSearchToolBar_main.AllowMerge = false;
+            this.advancedDataGridViewSearchToolBar_main.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.advancedDataGridViewSearchToolBar_main.Location = new System.Drawing.Point(0, 0);
+            this.advancedDataGridViewSearchToolBar_main.MaximumSize = new System.Drawing.Size(0, 27);
+            this.advancedDataGridViewSearchToolBar_main.MinimumSize = new System.Drawing.Size(0, 27);
+            this.advancedDataGridViewSearchToolBar_main.Name = "advancedDataGridViewSearchToolBar_main";
+            this.advancedDataGridViewSearchToolBar_main.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
+            this.advancedDataGridViewSearchToolBar_main.Size = new System.Drawing.Size(827, 27);
+            this.advancedDataGridViewSearchToolBar_main.TabIndex = 12;
+            this.advancedDataGridViewSearchToolBar_main.Text = "advancedDataGridViewSearchToolBar1";
+            this.advancedDataGridViewSearchToolBar_main.Search += new Zuby.ADGV.AdvancedDataGridViewSearchToolBarSearchEventHandler(this.AdvancedDataGridViewSearchToolBar_main_Search);
             // 
             // button_setsavedfilter
             // 
@@ -311,6 +311,17 @@
             this.panel_bottom.Size = new System.Drawing.Size(827, 44);
             this.panel_bottom.TabIndex = 4;
             // 
+            // checkNotIn
+            // 
+            this.checkNotIn.AutoSize = true;
+            this.checkNotIn.Location = new System.Drawing.Point(12, 13);
+            this.checkNotIn.Name = "checkNotIn";
+            this.checkNotIn.Size = new System.Drawing.Size(291, 17);
+            this.checkNotIn.TabIndex = 2;
+            this.checkNotIn.Text = "השתמש בלוגיקה \"לא כולל\" בסינון לפי רשימת תיוג";
+            this.checkNotIn.UseVisualStyleBackColor = true;
+            this.checkNotIn.CheckedChanged += new System.EventHandler(this.checkNotIn_CheckedChanged);
+            // 
             // textBox_total
             // 
             this.textBox_total.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -357,31 +368,6 @@
             this.advancedDataGridView_main.TabIndex = 0;
             this.advancedDataGridView_main.SortStringChanged += new System.EventHandler<Zuby.ADGV.SortEventArgs>(this.AdvancedDataGridView_main_SortStringChanged);
             this.advancedDataGridView_main.FilterStringChanged += new System.EventHandler<Zuby.ADGV.FilterEventArgs>(this.AdvancedDataGridView_main_FilterStringChanged);
-            // 
-            // advancedDataGridViewSearchToolBar_main
-            // 
-            this.advancedDataGridViewSearchToolBar_main.AllowMerge = false;
-            this.advancedDataGridViewSearchToolBar_main.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.advancedDataGridViewSearchToolBar_main.Location = new System.Drawing.Point(0, 0);
-            this.advancedDataGridViewSearchToolBar_main.MaximumSize = new System.Drawing.Size(0, 27);
-            this.advancedDataGridViewSearchToolBar_main.MinimumSize = new System.Drawing.Size(0, 27);
-            this.advancedDataGridViewSearchToolBar_main.Name = "advancedDataGridViewSearchToolBar_main";
-            this.advancedDataGridViewSearchToolBar_main.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.advancedDataGridViewSearchToolBar_main.Size = new System.Drawing.Size(827, 27);
-            this.advancedDataGridViewSearchToolBar_main.TabIndex = 12;
-            this.advancedDataGridViewSearchToolBar_main.Text = "advancedDataGridViewSearchToolBar1";
-            this.advancedDataGridViewSearchToolBar_main.Search += new Zuby.ADGV.AdvancedDataGridViewSearchToolBarSearchEventHandler(this.AdvancedDataGridViewSearchToolBar_main_Search);
-            // 
-            // checkNotIn
-            // 
-            this.checkNotIn.AutoSize = true;
-            this.checkNotIn.Location = new System.Drawing.Point(12, 13);
-            this.checkNotIn.Name = "checkNotIn";
-            this.checkNotIn.Size = new System.Drawing.Size(291, 17);
-            this.checkNotIn.TabIndex = 2;
-            this.checkNotIn.Text = "השתמש בלוגיקה \"לא כולל\" בסינון לפי רשימת תיוג";
-            this.checkNotIn.UseVisualStyleBackColor = true;
-            this.checkNotIn.CheckedChanged += new System.EventHandler(this.checkNotIn_CheckedChanged);
             // 
             // FormMainHeb
             // 
@@ -437,7 +423,6 @@
         private System.Windows.Forms.Button btnLoadFilter;
         private System.Windows.Forms.TextBox textLoadFilter;
         private System.Windows.Forms.Label labelLoadFilter;
-        private System.Windows.Forms.LinkLabel linkFilterHelp;
         private System.Windows.Forms.ToolTip tooltipHelpLink;
         private System.Windows.Forms.CheckBox checkNotIn;
     }

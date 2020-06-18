@@ -1480,7 +1480,7 @@ namespace Zuby.ADGV
                     // Parse values from subfilter string:
                     //  Convert([{ 0}],System.String) [NOT] IN('val1', 'val2', etc) 
                     string filterPattern =
-                        @"(?n)^\(?Convert\(\[\w(\w|\d)\]\,\s*\'?System\.String\'?\)(?:\s+(?<not>NOT))?\s+IN\s+\(\'(?<value>.*?)\'\s*(,\s*\'(?<value>.*?)\')*\)$";
+                        @"(?n)^\(?Convert\(\[\w(\w|\d)*\]\,\s*\'?System\.String\'?\)(?:\s+(?<not>NOT))?\s+IN\s+\(\'(?<value>.*?)\'\s*(?:,\s*\'(?<value>.*?)\')*\)$";
                     Match match = Regex.Match(subfilter.Trim(),filterPattern);
                     if (match.Success && match.Groups["value"].Success)
                     {
