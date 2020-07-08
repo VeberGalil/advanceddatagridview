@@ -4,6 +4,7 @@ Sets the filter to be used to exclude items from the collection of items returne
     public void LoadFilter(string filter);
 
 ###Parameters
+
 *filter*   
 <table><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>The string used to filter items out in the item collection returned by the data source.</td></tr></table>
 
