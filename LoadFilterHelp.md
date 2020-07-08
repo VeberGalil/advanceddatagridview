@@ -1,4 +1,5 @@
-#AdvancedDataGridView.LoadFilter(String) method
+AdvancedDataGridView.LoadFilter(String) method
+==
 
 Sets the filter to be used to exclude items from the collection of items returned by the data source.
 
