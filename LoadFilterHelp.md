@@ -5,13 +5,13 @@ Sets the filter to be used to exclude items from the collection of items returne
 
     public void LoadFilter(string filter);
 
-###Parameters   
+### Parameters   
 
 *filter*   
 <table><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>The string used to filter items out in the item collection returned by the data source.</td></tr></table>
 
 
-###Remarks   
+### Remarks   
 
 LoadFilter method allows programmatically apply filter to grid (and underlying data source), as if it was selected 
 by end user in filter menus for ADVG columns.
@@ -25,7 +25,7 @@ FilterStringChanged event, passing new filter string in FilterString property of
 AdvancedDataGridView will also apply generated filter to binding source associated with DataSource property.        
 
         
-###Filter String Syntax    
+### Filter String Syntax    
 
 Filter string may consist of one or more column filters, delimited with AND:   
 
@@ -52,9 +52,9 @@ If column data type allows 'empty' values (`null`, `DbNull.Value` or `String.Emp
 
 Following are column filter syntax and rules for different data types.
 
-####DateTime    
+#### DateTime    
 
-#####Custom filter   
+##### Custom filter   
 
 <table>
   <thead>
@@ -92,15 +92,15 @@ Following are column filter syntax and rules for different data types.
   </tbody>
 </table>
 
-#####Checklist filter   
+##### Checklist filter   
 
 Checklist filter may consist of one or more equality filters, separated with OR:
 
 <table><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Convert(<i>column_name</i>,'System.String') LIKE '%<i>value</i>%' [ OR Convert(<i>column_name</i>,'System.String') LIKE '%<i>value</i>%' ...]</td></tr></table>
 
-####TimeStamp   
+#### TimeStamp   
 
-#####Custom filter   
+##### Custom filter   
 
 TimeStamp values must conform to the W3C XML Schema Part 2: Datatypes recommendation for duration.
 
@@ -120,16 +120,16 @@ TimeStamp values must conform to the W3C XML Schema Part 2: Datatypes recommenda
 	</tbody>
 </table>
 
-#####Checklist filter   
+##### Checklist filter   
 
 Checklist filter may consist of one or more equality filters, separated with OR:
 
 <table><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Convert(<i>column_name</i>,'System.String') LIKE '%<i>value</i>%' [ OR Convert(<i>column_name</i>,'System.String') LIKE '%<i>value</i>%' ...]</td></tr></table>
 
 
-####Int32, Int64, Int16, UInt32, UInt64, UInt16, Byte, SByte and Decimal   
+#### Int32, Int64, Int16, UInt32, UInt64, UInt16, Byte, SByte and Decimal   
 
-#####Custom filter   
+##### Custom filter   
 
 <table>
 	<thead>
@@ -167,7 +167,7 @@ Checklist filter may consist of one or more equality filters, separated with OR:
 	</tbody>
 </table>
 
-#####Checklist filter   
+##### Checklist filter   
 
 <table>
 	<thead>
@@ -188,9 +188,9 @@ Checklist filter may consist of one or more equality filters, separated with OR:
 	</tbody>
 </table>
         
-####Single and Double   
+#### Single and Double   
 
-#####Custom filter   
+##### Custom filter   
 
 <table>
 	<thead>
@@ -228,7 +228,7 @@ Checklist filter may consist of one or more equality filters, separated with OR:
 	</tbody>
 </table>
 
-#####Checklist filter   
+##### Checklist filter   
 
 <table>
 	<thead>
@@ -249,7 +249,7 @@ Checklist filter may consist of one or more equality filters, separated with OR:
 	</tbody>
 </table>
 
-####String   
+#### String   
 
 If string value, used in either custom or checklist filter, contains apostroph (') character,
 this character must be doubled in filter. For example, to show only rows that contain value "that's it"
@@ -257,7 +257,7 @@ in column Column1, use:
 
 <table><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Column1 LIKE '%that''s it%'</td></tr></table>
 
-#####Custom filter   
+##### Custom filter   
 
 <table>
 	<thead>
@@ -299,7 +299,7 @@ in column Column1, use:
 	</tbody>
 </table>
 
-#####Checklist filter   
+##### Checklist filter   
 
 <table>
 	<thead>
@@ -320,9 +320,9 @@ in column Column1, use:
 	</tbody>
 </table>
 
-####Guid   
+#### Guid   
 
-#####Custom filter   
+##### Custom filter   
 
 <table>
 	<thead>
@@ -364,7 +364,7 @@ in column Column1, use:
 	</tbody>
 </table>
 
-#####Checklist filter   
+##### Checklist filter   
 
 <table>
 	<thead>
