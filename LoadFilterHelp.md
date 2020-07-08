@@ -1,4 +1,5 @@
 #AdvancedDataGridView.LoadFilter(String) method
+
 Sets the filter to be used to exclude items from the collection of items returned by the data source.
 
     public void LoadFilter(string filter);
@@ -10,6 +11,7 @@ Sets the filter to be used to exclude items from the collection of items returne
 
 
 ###Remarks
+
 LoadFilter method allows programmatically apply filter to grid (and underlying data source), as if it was selected 
 by end user in filter menus for ADVG columns.
 
@@ -23,6 +25,7 @@ AdvancedDataGridView will also apply generated filter to binding source associat
 
         
 ###Filter String Syntax
+
 Filter string may consist of one or more column filters, delimited with AND:   
 
 <table><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>(<i>column_filter</i>) [AND (<i>column_filter</i>) ...]</td></tr></table>
@@ -86,13 +89,17 @@ Following are column filter syntax and rules for different data types.
 	</tr>
   </tbody>
 </table>
+
 #####Checklist filter
+
 Checklist filter may consist of one or more equality filters, separated with OR:
 
 <table><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Convert(<i>column_name</i>,'System.String') LIKE '%<i>value</i>%' [ OR Convert(<i>column_name</i>,'System.String') LIKE '%<i>value</i>%' ...]</td></tr></table>
 
 ####TimeStamp
+
 #####Custom filter
+
 TimeStamp values must conform to the W3C XML Schema Part 2: Datatypes recommendation for duration.
 
 <table>
@@ -112,12 +119,14 @@ TimeStamp values must conform to the W3C XML Schema Part 2: Datatypes recommenda
 </table>
 
 #####Checklist filter
+
 Checklist filter may consist of one or more equality filters, separated with OR:
 
 <table><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Convert(<i>column_name</i>,'System.String') LIKE '%<i>value</i>%' [ OR Convert(<i>column_name</i>,'System.String') LIKE '%<i>value</i>%' ...]</td></tr></table>
 
 
 ####Int32, Int64, Int16, UInt32, UInt64, UInt16, Byte, SByte and Decimal
+
 #####Custom filter
 
 <table>
@@ -178,6 +187,7 @@ Checklist filter may consist of one or more equality filters, separated with OR:
 </table>
         
 ####Single and Double
+
 #####Custom filter
 
 <table>
@@ -238,6 +248,7 @@ Checklist filter may consist of one or more equality filters, separated with OR:
 </table>
 
 ####String
+
 If string value, used in either custom or checklist filter, contains apostroph (') character,
 this character must be doubled in filter. For example, to show only rows that contain value "that's it"
 in column Column1, use: 
@@ -308,6 +319,7 @@ in column Column1, use:
 </table>
 
 ####Guid
+
 #####Custom filter
 
 <table>
