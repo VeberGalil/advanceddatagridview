@@ -14,7 +14,7 @@ This fork was created to add RTL capabilities to ADGV.
 
 ## Requirements
 
-* Microsoft Windows with .NET framework 4.5 or later
+* Microsoft Windows with .NET framework 4.8
 
 ## FAQ
 
