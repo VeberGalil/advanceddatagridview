@@ -44,7 +44,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>galnet.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -107,6 +110,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="galnet.pfx" />
     <None Include="Resources\Images\AdvancedDataGridView_logo.png" />
     <None Include="Resources\Images\ColumnHeader_Filtered.png" />
     <None Include="Resources\Images\ColumnHeader_FilteredAndOrderedASC.png" />
