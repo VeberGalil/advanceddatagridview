@@ -26,7 +26,7 @@ This fork was created to add RTL capabilities to ADGV.
 
 ## Development
 
-If you want to contribute, or you found a bug, please send an e-mail to the software author.
+If you want to contribute, or you found a bug, please [create an issue](https://github.com/VeberGalil/advanceddatagridview/issues/new).
 
 ## License
 
